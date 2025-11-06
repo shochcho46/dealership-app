@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller;
 use Modules\Product\Models\Order;
 use Modules\Product\Models\VendorAccount;
 use Modules\Product\Models\Vendor;
-use Barryvdh\DomPDF\Facade\Pdf;  
+use Barryvdh\DomPDF\Facade\Pdf;
 use setasign\Fpdi\Fpdi;
 
 class InvoiceController extends Controller
@@ -22,55 +22,55 @@ class InvoiceController extends Controller
         if (!in_array($order->order_status_id, [4, 5])) {
             return back()->with('error', 'Invoice can only be generated for shipped or delivered orders.');
         }
-        
+
         $order->load(['vendor', 'orderItems.product', 'orderStatus', 'admin']);
-        
+
         // Get vendor account information for dues calculation
         $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
             ->where('type', 1) // Debit type
-            
+
             ->sum('amount');
-            
+
         $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
             ->where('type', 2) // Credit type
-            
+
             ->sum('amount');
-            $vendorNetDue = $vendorTotalDue - $vendorPaidAmount;
-            $previousdue =  $vendorTotalDue - $order->total_amount;
+        $vendorNetDue = $vendorTotalDue - $vendorPaidAmount;
+        $previousdue =  $vendorTotalDue - $order->total_amount;
 
-         $pdf = Pdf::setOptions([
-                'margin-top' => 5,
-                'margin-right' => 5,
-                'margin-bottom' => 5,
-                'margin-left' => 5,
-                'dpi' => 150,
-                'defaultFont' => 'dejavu sans',
-                'isHtml5ParserEnabled' => true, // Enable HTML5 parsing
-                'isRemoteEnabled' => true, // Allow loading remote assets (e.g., fonts, logo)
-                'isFontSubsettingEnabled' => true, // Reduce font file size
-                'chroot' => public_path(), // Restrict file access to public directory
-                'defaultMediaType' => 'print', // Optimize for print
-            ]);
+        $pdf = Pdf::setOptions([
+            'margin-top' => 5,
+            'margin-right' => 5,
+            'margin-bottom' => 5,
+            'margin-left' => 5,
+            'dpi' => 150,
+            'defaultFont' => 'dejavu sans',
+            'isHtml5ParserEnabled' => true, // Enable HTML5 parsing
+            'isRemoteEnabled' => true, // Allow loading remote assets (e.g., fonts, logo)
+            'isFontSubsettingEnabled' => true, // Reduce font file size
+            'chroot' => public_path(), // Restrict file access to public directory
+            'defaultMediaType' => 'print', // Optimize for print
+        ]);
 
-    $pdf->loadView('product::invoice.template', [
-        'order' => $order,
-        'vendor' => $order->vendor,
-        'orderItems' => $order->orderItems,
-        'vendorTotalDue' => $vendorNetDue,
-        'vendorPaidAmount' => $vendorPaidAmount,
-        'previousDue' => $previousdue,
-        'companyInfo' => $this->getCompanyInfo(),
-        'preview' => true
-    ])
-        ->setPaper('A4', 'portrait');
+        $pdf->loadView('product::invoice.template', [
+            'order' => $order,
+            'vendor' => $order->vendor,
+            'orderItems' => $order->orderItems,
+            'vendorTotalDue' => $vendorNetDue,
+            'vendorPaidAmount' => $vendorPaidAmount,
+            'previousDue' => $previousdue,
+            'companyInfo' => $this->getCompanyInfo(),
+            'preview' => true
+        ])
+            ->setPaper('A4', 'portrait');
 
 
-$pdf->getDomPDF()->set_option('isPhpEnabled', true);
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
         // return $pdf->download("Invoice-{$order->invoice_id}.pdf");
 
         return $pdf->stream("Invoice-{$order->invoice_id}.pdf");
     }
-    
+
     /**
      * Preview invoice in browser
      */
@@ -80,18 +80,18 @@ $pdf->getDomPDF()->set_option('isPhpEnabled', true);
         if (!in_array($order->order_status_id, [4, 5])) {
             return back()->with('error', 'Invoice can only be generated for shipped or delivered orders.');
         }
-        
+
         $order->load(['vendor', 'orderItems.product', 'orderStatus', 'admin']);
-        
+
         // Get vendor account information for dues calculation
         $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
             ->where('type', 1) // Debit type
-          
+
             ->sum('amount');
-            
+
         $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
             ->where('type', 2) // Debit type
-           
+
             ->sum('amount');
         $previousdue =  $vendorTotalDue - $order->total_amount;
 
@@ -107,7 +107,7 @@ $pdf->getDomPDF()->set_option('isPhpEnabled', true);
             'preview' => true
         ]);
     }
-    
+
     /**
      * Generate bulk invoices
      */
@@ -117,40 +117,40 @@ $pdf->getDomPDF()->set_option('isPhpEnabled', true);
     //         'order_ids' => 'required|array|min:1',
     //         'order_ids.*' => 'exists:orders,id'
     //     ]);
-        
+
     //     $orders = Order::with(['vendor', 'orderItems.product', 'orderStatus', 'admin'])
     //         ->whereIn('id', $request->order_ids)
     //         ->whereIn('order_status_id', [4, 5]) // Only shipped or delivered
     //         ->get();
-            
+
     //     if ($orders->isEmpty()) {
     //         return back()->with('error', 'No valid orders found for invoice generation.');
     //     }
-        
+
     //     // Create a ZIP file with all invoices
     //     $zipFileName = 'bulk-invoices-' . date('Y-m-d-H-i-s') . '.zip';
     //     $zipPath = storage_path('app/temp/' . $zipFileName);
-        
+
     //     // Ensure temp directory exists
     //     if (!file_exists(storage_path('app/temp'))) {
     //         mkdir(storage_path('app/temp'), 0755, true);
     //     }
-        
+
     //     $zip = new \ZipArchive();
     //     if ($zip->open($zipPath, \ZipArchive::CREATE) !== TRUE) {
     //         return back()->with('error', 'Cannot create zip file for bulk invoices.');
     //     }
-        
+
     //     foreach ($orders as $order) {
     //         // Get vendor account information
     //         $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
     //             ->where('type', 1)
-               
+
     //             ->sum('amount');
-                
+
     //         $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
     //             ->where('type', 1)
-              
+
     //             ->sum('amount');
     //         $previousdue =  $vendorTotalDue - $order->total_amount;
     //         $data = [
@@ -162,103 +162,103 @@ $pdf->getDomPDF()->set_option('isPhpEnabled', true);
     //             'previousDue' => $previousdue,
     //             'companyInfo' => $this->getCompanyInfo()
     //         ];
-            
+
     //         $pdf = PDF::loadView('product::invoice.template', $data);
     //         $pdf->setPaper('A4', 'portrait');
-            
+
     //         $pdfContent = $pdf->output();
     //         $zip->addFromString("Invoice-{$order->invoice_id}.pdf", $pdfContent);
     //     }
-        
+
     //     $zip->close();
-        
+
     //     return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
     // }
 
 
-public function bulkInvoices(Request $request)
-{
-    $request->validate([
-        'order_ids' => 'required|array|min:1',
-        'order_ids.*' => 'exists:orders,id'
-    ]);
-    
-    $orders = Order::with(['vendor', 'orderItems.product', 'orderStatus', 'admin'])
-        ->whereIn('id', $request->order_ids)
-        ->whereIn('order_status_id', [4, 5]) // shipped or delivered
-        ->get();
+    public function bulkInvoices(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array|min:1',
+            'order_ids.*' => 'exists:orders,id'
+        ]);
 
-    if ($orders->isEmpty()) {
-        return back()->with('error', 'No valid orders found for invoice generation.');
-    }
+        $orders = Order::with(['vendor', 'orderItems.product', 'orderStatus', 'admin'])
+            ->whereIn('id', $request->order_ids)
+            ->whereIn('order_status_id', [4, 5]) // shipped or delivered
+            ->get();
 
-    // Ensure temp directory exists
-    $tempDir = storage_path('app/temp');
-    if (!file_exists($tempDir)) {
-        mkdir($tempDir, 0755, true);
-    }
-
-    $tempFiles = [];
-
-    // Step 1: Generate individual PDFs
-    foreach ($orders as $order) {
-        $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
-            ->where('type', 1)
-            ->sum('amount');
-            
-        $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
-            ->where('type', 1)
-            ->sum('amount');
-
-        $previousDue = $vendorTotalDue - $order->total_amount;
-
-        $data = [
-            'order' => $order,
-            'vendor' => $order->vendor,
-            'orderItems' => $order->orderItems,
-            'vendorTotalDue' => $vendorTotalDue,
-            'vendorPaidAmount' => $vendorPaidAmount,
-            'previousDue' => $previousDue,
-            'companyInfo' => $this->getCompanyInfo(),
-        ];
-
-        // Generate individual invoice
-        $pdf = Pdf::loadView('product::invoice.template', $data)
-            ->setPaper('A4', 'portrait');
-
-        // Save each temporary file
-        $tempPath = "{$tempDir}/invoice_{$order->id}.pdf";
-        $pdf->save($tempPath);
-        $tempFiles[] = $tempPath;
-    }
-
-    // Step 2: Merge PDFs into one
-    $mergedPath = "{$tempDir}/bulk-invoices-" . date('Y-m-d-H-i-s') . ".pdf";
-    $fpdi = new Fpdi();
-
-    foreach ($tempFiles as $file) {
-        $pageCount = $fpdi->setSourceFile($file);
-
-        for ($page = 1; $page <= $pageCount; $page++) {
-            $tpl = $fpdi->importPage($page);
-            $size = $fpdi->getTemplateSize($tpl);
-            $fpdi->AddPage($size['orientation'], [$size['width'], $size['height']]);
-            $fpdi->useTemplate($tpl);
+        if ($orders->isEmpty()) {
+            return back()->with('error', 'No valid orders found for invoice generation.');
         }
+
+        // Ensure temp directory exists
+        $tempDir = storage_path('app/temp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        $tempFiles = [];
+
+        // Step 1: Generate individual PDFs
+        foreach ($orders as $order) {
+            $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
+                ->where('type', 1)
+                ->sum('amount');
+
+            $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
+                ->where('type', 1)
+                ->sum('amount');
+
+            $previousDue = $vendorTotalDue - $order->total_amount;
+
+            $data = [
+                'order' => $order,
+                'vendor' => $order->vendor,
+                'orderItems' => $order->orderItems,
+                'vendorTotalDue' => $vendorTotalDue,
+                'vendorPaidAmount' => $vendorPaidAmount,
+                'previousDue' => $previousDue,
+                'companyInfo' => $this->getCompanyInfo(),
+            ];
+
+            // Generate individual invoice
+            $pdf = Pdf::loadView('product::invoice.template', $data)
+                ->setPaper('A4', 'portrait');
+
+            // Save each temporary file
+            $tempPath = "{$tempDir}/invoice_{$order->id}.pdf";
+            $pdf->save($tempPath);
+            $tempFiles[] = $tempPath;
+        }
+
+        // Step 2: Merge PDFs into one
+        $mergedPath = "{$tempDir}/bulk-invoices-" . date('Y-m-d-H-i-s') . ".pdf";
+        $fpdi = new Fpdi();
+
+        foreach ($tempFiles as $file) {
+            $pageCount = $fpdi->setSourceFile($file);
+
+            for ($page = 1; $page <= $pageCount; $page++) {
+                $tpl = $fpdi->importPage($page);
+                $size = $fpdi->getTemplateSize($tpl);
+                $fpdi->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $fpdi->useTemplate($tpl);
+            }
+        }
+
+        $fpdi->Output($mergedPath, 'F');
+
+        // Step 3: Clean up individual temp files
+        foreach ($tempFiles as $file) {
+            @unlink($file);
+        }
+
+        // Step 4: Return merged file for download
+        return response()->download($mergedPath, 'bulk-invoices.pdf')->deleteFileAfterSend(true);
     }
 
-    $fpdi->Output($mergedPath, 'F');
 
-    // Step 3: Clean up individual temp files
-    foreach ($tempFiles as $file) {
-        @unlink($file);
-    }
-
-    // Step 4: Return merged file for download
-    return response()->download($mergedPath, 'bulk-invoices.pdf')->deleteFileAfterSend(true);
-}
-
-    
     /**
      * Invoice management page
      */
@@ -266,35 +266,35 @@ public function bulkInvoices(Request $request)
     {
         $query = Order::with(['vendor', 'orderStatus', 'orderItems'])
             ->whereIn('order_status_id', [4, 5]); // Shipped or delivered only
-        
+
         // Apply filters
         if ($request->filled('invoice_search')) {
             $query->where('invoice_id', 'like', '%' . $request->invoice_search . '%');
         }
-        
+
         if ($request->filled('vendor_filter')) {
             $query->where('vendor_id', $request->vendor_filter);
         }
-        
+
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        
+
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
-        
+
         $orders = $query->orderBy('created_at', 'desc')->paginate(15);
-        
+
         // Summary data
         $totalInvoices = Order::whereIn('order_status_id', [4, 5])->count();
         $totalInvoiceAmount = Order::whereIn('order_status_id', [4, 5])->sum('total_amount');
         $paidInvoices = Order::whereIn('order_status_id', [4, 5])->where('payment_status', 2)->count();
         $unpaidInvoices = Order::whereIn('order_status_id', [4, 5])->where('payment_status', 0)->count();
-        
+
         // Get vendors for filter
         $vendors = Vendor::orderBy('shop_name')->get();
-        
+
         return view('product::invoice.index', compact(
             'orders',
             'totalInvoices',
@@ -304,7 +304,7 @@ public function bulkInvoices(Request $request)
             'vendors'
         ));
     }
-    
+
     /**
      * Get company information for invoice header
      */

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -15,14 +16,14 @@ return new class extends Migration
         if (Schema::hasColumn('order_items', 'stock_id')) {
             // Get foreign key constraints
             $foreignKeys = DB::select("
-                SELECT CONSTRAINT_NAME 
-                FROM information_schema.KEY_COLUMN_USAGE 
-                WHERE TABLE_SCHEMA = DATABASE() 
-                AND TABLE_NAME = 'order_items' 
-                AND COLUMN_NAME = 'stock_id' 
+                SELECT CONSTRAINT_NAME
+                FROM information_schema.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'order_items'
+                AND COLUMN_NAME = 'stock_id'
                 AND CONSTRAINT_NAME != 'PRIMARY'
             ");
-            
+
             Schema::table('order_items', function (Blueprint $table) use ($foreignKeys) {
                 // Drop foreign key if it exists
                 foreach ($foreignKeys as $fk) {

@@ -19,7 +19,7 @@
         "propaganistas/laravel-phone": "^5.3",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
-        "spatie/laravel-medialibrary": "^11.9",
+        "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-permission": "^6.9"
     },
     "require-dev": {

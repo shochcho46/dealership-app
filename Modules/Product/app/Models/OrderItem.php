@@ -70,7 +70,7 @@ class OrderItem extends Model
      */
     public function getNetPriceAttribute()
     {
-        return $this->total_price - $this->discount_price;
+        return ($this->sell_price * $this->quantity) - $this->discount_price;
     }
 
     /**

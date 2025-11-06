@@ -175,18 +175,22 @@
         .items-table th {
             background: #007bff;
             color: #fff;
-            padding: 3px;
+            padding: 2px;
             text-align: left;
             font-weight: bold;
             border: 1px solid #007bff;
             font-size: 9pt;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .items-table td {
-            padding: 3px;
+            padding: 2px;
             border: 1px solid #ddd;
             vertical-align: top;
-            font-size: 8.5pt;
+            font-size: 8.25pt;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .items-table small {
@@ -194,64 +198,87 @@
             font-size: 8pt;
         }
 
+        /* Company copy table column widths (9 columns) */
         .items-table.company-copy th:nth-child(1),
-        .items-table.company-copy td:nth-child(1) {
-            width: 6%;
-        }
-
-        .items-table.company-copy th:nth-child(2),
-        .items-table.company-copy td:nth-child(2) {
-            width: 42%;
-        }
-
+        .items-table.company-copy td:nth-child(1) { width: 5%; }
+    .items-table.company-copy th:nth-child(2),
+    .items-table.company-copy td:nth-child(2) { width: 32%; }
         .items-table.company-copy th:nth-child(3),
-        .items-table.company-copy td:nth-child(3) {
-            width: 10%;
-        }
-
+        .items-table.company-copy td:nth-child(3) { width: 6%; }
         .items-table.company-copy th:nth-child(4),
-        .items-table.company-copy td:nth-child(4) {
-            width: 15%;
-        }
-
+        .items-table.company-copy td:nth-child(4) { width: 8%; }
         .items-table.company-copy th:nth-child(5),
-        .items-table.company-copy td:nth-child(5) {
-            width: 12%;
-        }
+        .items-table.company-copy td:nth-child(5) { width: 8%; }
+        .items-table.company-copy th:nth-child(6),
+        .items-table.company-copy td:nth-child(6) { width: 8%; }
+        .items-table.company-copy th:nth-child(7),
+        .items-table.company-copy td:nth-child(7) { width: 12%; }
+    .items-table.company-copy th:nth-child(8),
+    .items-table.company-copy td:nth-child(8) { width: 10%; }
+    .items-table.company-copy th:nth-child(9),
+    .items-table.company-copy td:nth-child(9) { width: 11%; }
 
+        /* Alignment for company copy columns */
+        /* Qty, Damage, Lost, Return (columns 3-6) center */
+        .items-table.company-copy th:nth-child(3),
+        .items-table.company-copy td:nth-child(3),
+        .items-table.company-copy th:nth-child(4),
+        .items-table.company-copy td:nth-child(4),
+        .items-table.company-copy th:nth-child(5),
+        .items-table.company-copy td:nth-child(5),
         .items-table.company-copy th:nth-child(6),
         .items-table.company-copy td:nth-child(6) {
-            width: 15%;
+            text-align: center;
         }
 
+        /* Unit Price, Discount, Total (columns 7-9) right */
+        .items-table.company-copy th:nth-child(7),
+        .items-table.company-copy td:nth-child(7),
+        .items-table.company-copy th:nth-child(8),
+        .items-table.company-copy td:nth-child(8),
+        .items-table.company-copy th:nth-child(9),
+        .items-table.company-copy td:nth-child(9) {
+            text-align: right;
+        }
+
+        /* Customer copy table column widths (9 columns) */
         .items-table.customer-copy th:nth-child(1),
-        .items-table.customer-copy td:nth-child(1) {
-            width: 6%;
-        }
-
-        .items-table.customer-copy th:nth-child(2),
-        .items-table.customer-copy td:nth-child(2) {
-            width: 42%;
-        }
-
+        .items-table.customer-copy td:nth-child(1) { width: 5%; }
+    .items-table.customer-copy th:nth-child(2),
+    .items-table.customer-copy td:nth-child(2) { width: 32%; }
         .items-table.customer-copy th:nth-child(3),
-        .items-table.customer-copy td:nth-child(3) {
-            width: 10%;
-        }
-
+        .items-table.customer-copy td:nth-child(3) { width: 6%; }
         .items-table.customer-copy th:nth-child(4),
-        .items-table.customer-copy td:nth-child(4) {
-            width: 15%;
-        }
-
+        .items-table.customer-copy td:nth-child(4) { width: 8%; }
         .items-table.customer-copy th:nth-child(5),
-        .items-table.customer-copy td:nth-child(5) {
-            width: 12%;
-        }
+        .items-table.customer-copy td:nth-child(5) { width: 8%; }
+        .items-table.customer-copy th:nth-child(6),
+        .items-table.customer-copy td:nth-child(6) { width: 8%; }
+        .items-table.customer-copy th:nth-child(7),
+        .items-table.customer-copy td:nth-child(7) { width: 12%; }
+    .items-table.customer-copy th:nth-child(8),
+    .items-table.customer-copy td:nth-child(8) { width: 10%; }
+    .items-table.customer-copy th:nth-child(9),
+    .items-table.customer-copy td:nth-child(9) { width: 11%; }
 
+        /* Alignment for customer copy columns */
+        .items-table.customer-copy th:nth-child(3),
+        .items-table.customer-copy td:nth-child(3),
+        .items-table.customer-copy th:nth-child(4),
+        .items-table.customer-copy td:nth-child(4),
+        .items-table.customer-copy th:nth-child(5),
+        .items-table.customer-copy td:nth-child(5),
         .items-table.customer-copy th:nth-child(6),
         .items-table.customer-copy td:nth-child(6) {
-            width: 15%;
+            text-align: center;
+        }
+        .items-table.customer-copy th:nth-child(7),
+        .items-table.customer-copy td:nth-child(7),
+        .items-table.customer-copy th:nth-child(8),
+        .items-table.customer-copy td:nth-child(8),
+        .items-table.customer-copy th:nth-child(9),
+        .items-table.customer-copy td:nth-child(9) {
+            text-align: right;
         }
 
         .text-right {
@@ -554,7 +581,7 @@
                 margin-bottom: 5px;
             }
 
-            
+
         }
     </style>
 </head>
@@ -618,7 +645,8 @@
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                        <strong> New Balance Due: </strong>৳
-                        <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong>
+                        {{-- <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong> --}}
+                        <strong class="price">{{ number_format($vendorTotalDue - $vendorPaidAmount, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -630,6 +658,9 @@
                         <th>#</th>
                         <th>Product Description</th>
                         <th class="text-center">Qty</th>
+                        <th class="text-center">Damage</th>
+                        <th class="text-center">Lost</th>
+                        <th class="text-center">Return</th>
                         <th class="text-right">Unit Price</th>
                         <th class="text-right">Discount</th>
                         <th class="text-right">Total</th>
@@ -645,10 +676,13 @@
                                     <br><small>{{ \Illuminate\Support\Str::limit($item->product->description, 60) }}</small>
                                 @endif
                             </td>
-                            <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
-                            <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($item->discount_amount, 2) }}</span></td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * $item->quantity - $item->discount_amount, 2) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
+                                <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
+                                <td class="text-right">৳ <span class="price">{{ number_format($item->discount_price, 2) }}</span></td>
+                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * $item->quantity - $item->discount_price, 2) }}</span></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -758,7 +792,7 @@
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                         <strong> New Balance Due: </strong> ৳
-                        <strong>{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong>
+                        <strong>{{ number_format($vendorTotalDue - $vendorPaidAmount, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -770,6 +804,9 @@
                         <th>#</th>
                         <th>Product Description</th>
                         <th class="text-center">Qty</th>
+                        <th class="text-center">Damage</th>
+                        <th class="text-center">Lost</th>
+                        <th class="text-center">Return</th>
                         <th class="text-right">Unit Price</th>
                         <th class="text-right">Discount</th>
                         <th class="text-right">Total</th>
@@ -786,6 +823,9 @@
                                 @endif
                             </td>
                             <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
+                            <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
                             <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
                             <td class="text-right">৳ <span class="price">{{ number_format($item->discount_amount, 2) }}</span></td>
                             <td class="text-right">৳

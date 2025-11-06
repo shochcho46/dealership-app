@@ -102,7 +102,7 @@ Route::prefix('admin')->group(function () {
             Route::delete('payment-method/{paymentMethod}/delete', 'destroy')->name('admin.paymentMethodDestroy');
         });
 
-        
+
 
         // Invoice routes
         Route::controller(InvoiceController::class)->group(function () {
@@ -131,11 +131,10 @@ Route::prefix('admin')->group(function () {
             Route::get('damage-return-lost/create', 'create')->name('damage-return-lost.create');
             Route::post('damage-return-lost/store', 'store')->name('damage-return-lost.store');
             Route::get('damage-return-lost/{damageReturnLost}', 'show')->name('damage-return-lost.show');
-            Route::get('damage-return-lost/{damageReturnLost}/edit', 'edit')->name('damage-return-lost.edit');
-            Route::put('damage-return-lost/{damageReturnLost}', 'update')->name('damage-return-lost.update');
             Route::delete('damage-return-lost/{damageReturnLost}', 'destroy')->name('damage-return-lost.destroy');
             Route::get('damage-return-lost-search/orders', 'searchOrders')->name('damage-return-lost.searchOrders');
             Route::get('damage-return-lost-search/order-items', 'getOrderItems')->name('damage-return-lost.getOrderItems');
+            Route::get('damage-return-lost/test', 'test')->name('damage-return-lost.test');
         });
 
         // Order routes
@@ -146,7 +145,7 @@ Route::prefix('admin')->group(function () {
             Route::get('order/{order}/show', 'show')->name('orders.show');
             Route::get('order/{order}/edit', 'edit')->name('orders.edit');
             Route::put('order/{order}/update', 'update')->name('orders.update');
-            Route::post('order/{order}/cancel', 'cancel')->name('orders.cancel');
+            Route::delete('order/{order}/cancel', 'cancel')->name('orders.cancel');
             Route::get('order/cancelled', 'cancelled')->name('orders.cancelled');
 
             // AJAX routes for product and stock details

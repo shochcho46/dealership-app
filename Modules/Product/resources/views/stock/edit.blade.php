@@ -90,6 +90,23 @@
                             </div>
 
                             <div class="row">
+
+                                 <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label text-dark">Quantity <span class="text-danger">*</span></label>
+                                        <input type="number"
+                                               name="quantity"
+                                               id="quantity"
+                                               class="form-control"
+                                               min="1"
+                                               value="{{ old('quantity', $stock->quantity) }}"
+                                               required>
+                                        @error('quantity')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="purchase_price" class="form-label text-dark">Purchase Price <span class="text-danger">*</span></label>
@@ -106,21 +123,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="quantity" class="form-label text-dark">Quantity <span class="text-danger">*</span></label>
-                                        <input type="number"
-                                               name="quantity"
-                                               id="quantity"
-                                               class="form-control"
-                                               min="1"
-                                               value="{{ old('quantity', $stock->quantity) }}"
-                                               required>
-                                        @error('quantity')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+
+
+
+
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="sell_price" class="form-label text-dark">Sale Price <span class="text-danger">*</span></label>

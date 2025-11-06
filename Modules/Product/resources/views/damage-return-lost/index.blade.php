@@ -11,18 +11,18 @@
         padding: 20px;
         margin-bottom: 20px;
     }
-    
+
     .summary-card .number {
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 5px;
     }
-    
+
     .summary-card .label {
         font-size: 0.9rem;
         opacity: 0.9;
     }
-    
+
     .type-badge {
         font-size: 0.75rem;
         padding: 0.25rem 0.5rem;
@@ -30,28 +30,28 @@
         font-weight: bold;
         text-transform: uppercase;
     }
-    
+
     .type-damage {
         background: #dc3545;
         color: white;
     }
-    
+
     .type-return {
-        background: #28a745;
-        color: white;
+        background: #fffb00;
+        color: rgb(0, 0, 0);
     }
-    
+
     .type-lost {
-        background: #6c757d;
+        background: #1b1e20;
         color: white;
     }
-    
+
     .evidence-images {
         display: flex;
         gap: 5px;
         flex-wrap: wrap;
     }
-    
+
     .evidence-thumb {
         width: 40px;
         height: 40px;
@@ -59,12 +59,12 @@
         border-radius: 5px;
         cursor: pointer;
     }
-    
+
     @media (max-width: 768px) {
         .summary-card .number {
             font-size: 1.5rem;
         }
-        
+
         .table-responsive {
             font-size: 0.85rem;
         }
@@ -97,7 +97,7 @@
                 <div class="label">Total Damaged Items</div>
             </div>
         </div>
-        
+
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="summary-card" style="background: linear-gradient(135deg, #6c757d 0%, #8e9499 100%);">
                 <div class="number">{{ number_format($totalLost) }}</div>
@@ -130,7 +130,7 @@
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
                             @foreach($vendors as $vendor)
-                                <option value="{{ $vendor->id }}" 
+                                <option value="{{ $vendor->id }}"
                                     {{ request('vendor_filter') == $vendor->id ? 'selected' : '' }}>
                                     {{ $vendor->shop_name }}
                                 </option>
@@ -139,7 +139,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Product Search</label>
-                        <input type="text" name="product_search" class="form-control" 
+                        <input type="text" name="product_search" class="form-control"
                                value="{{ request('product_search') }}" placeholder="Search by product name or">
                     </div>
                     <div class="col-md-2">
@@ -193,46 +193,48 @@
                         @forelse($records as $record)
                             <tr>
                                 <td>
-                                    <span class="type-badge type-{{ $record->type }}">
-                                        {{ ucfirst($record->type) }}
+                                    <span class="type-badge type-{{ $record->status_text }}">
+                                        {{ ucfirst($record->status_text) }}
                                     </span>
                                 </td>
                                 <td>
                                     <strong>{{ $record->order->invoice_id ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $record->orderItem->product->name ?? 'N/A' }}</small>
-                                    
+
                                 </td>
                                 <td>
-                                    <strong>{{ $record->vendor->shop_name ?? 'N/A' }}</strong>
-                                    <br><small class="text-muted">{{ $record->vendor->mobile ?? 'N/A' }}</small>
+                                    <strong>{{ $record?->order?->vendor->shop_name ?? 'N/A' }}</strong>
+                                    <br><small class="text-muted">{{ $record?->order?->vendor->mobile ?? 'N/A' }}</small>
+                                    <br><small class="text-muted">{{ $record?->order?->vendor->full_address ?? 'N/A' }}</small>
                                 </td>
                                 <td>
-                                    <strong class="text-danger">{{ number_format($record->quantity) }}</strong>
-                                    <br><small class="text-muted">@ ৳{{ number_format($record->unit_price, 2) }}</small>
+                                    <strong class="text-danger">{{ number_format($record?->quantity) }}</strong>
+                                    <br><small class="text-muted">@ ৳{{ number_format($record?->unit_price, 2) }}</small>
                                 </td>
                                 <td>
-                                    <strong class="text-danger">৳{{ number_format($record->total_amount, 2) }}</strong>
+                                    <strong class="text-danger">৳{{ number_format($record?->total_amount, 2) }}</strong>
                                 </td>
                                 <td>
                                     <div style="max-width: 200px;">
-                                        {{ Str::limit($record->reason, 50) }}
-                                        @if(strlen($record->reason) > 50)
-                                            <br><a href="#" class="text-primary" data-bs-toggle="tooltip" 
-                                                   title="{{ $record->reason }}">Read more</a>
+                                        {{ Str::limit($record?->reason, 50) }}
+                                        @if(strlen($record?->reason) > 50)
+                                            <br><a href="#" class="text-primary" data-bs-toggle="tooltip"
+                                                   title="{{ $record?->reason }}">Read more</a>
                                         @endif
                                     </div>
                                 </td>
                                 <td>
-                                    @if($record->hasMedia('evidence'))
+
+                                    @if($record->hasMedia('evidence_pic'))
                                         <div class="evidence-images">
-                                            @foreach($record->getMedia('evidence')->take(3) as $media)
-                                                <img src="{{ $media->getUrl() }}" alt="Evidence" 
-                                                     class="evidence-thumb" 
+                                            @foreach($record->getMedia('evidence_pic')->take(3) as $media)
+                                                <img src="{{ $media->getUrl() }}" alt="Evidence"
+                                                     class="evidence-thumb"
                                                      onclick="showImageModal('{{ $media->getUrl() }}')">
                                             @endforeach
-                                            @if($record->getMedia('evidence')->count() > 3)
+                                            @if($record->getMedia('evidence_pic')->count() > 3)
                                                 <span class="badge bg-secondary">
-                                                    +{{ $record->getMedia('evidence')->count() - 3 }}
+                                                    +{{ $record->getMedia('evidence_pic')->count() - 3 }}
                                                 </span>
                                             @endif
                                         </div>
@@ -249,13 +251,9 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('damage-return-lost.show', $record) }}" 
+                                        <a href="{{ route('damage-return-lost.show', $record) }}"
                                            class="btn btn-outline-info" title="View Details">
                                             <i class="mdi mdi-eye"></i>
-                                        </a>
-                                        <a href="{{ route('damage-return-lost.edit', $record) }}" 
-                                           class="btn btn-outline-primary" title="Edit">
-                                            <i class="mdi mdi-pencil"></i>
                                         </a>
                                         <button type="button" class="btn btn-outline-danger" title="Delete"
                                                 onclick="confirmDelete({{ $record->id }})">
@@ -276,7 +274,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             @if($records->hasPages())
                 <div class="mt-3">
                     {{ $records->links() }}
@@ -334,8 +332,16 @@ function showImageModal(imageUrl) {
 }
 
 function confirmDelete(recordId) {
-    document.getElementById('deleteForm').action = `{{ route('damage-return-lost.index') }}/${recordId}`;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    //  Use a route placeholder generated by Blade, then replace :id in JS
+    let url = '{{ route("damage-return-lost.destroy", ":id") }}';
+    url = url.replace(':id', recordId);
+
+    document.getElementById('deleteForm').action = url;
+
+    // Show bootstrap modal
+    const modalEl = document.getElementById('deleteModal');
+    const modal = new bootstrap.Modal(modalEl);
     modal.show();
 }
 

@@ -16,6 +16,7 @@ use Modules\Product\Models\VendorAccount;
 use Modules\Product\Models\PaymentMethod;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -25,45 +26,45 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = Order::with(['vendor', 'orderStatus', 'orderItems.product']);
-        
+
         // Apply filters
         if ($request->filled('invoice_search')) {
             $query->where('invoice_id', 'like', '%' . $request->invoice_search . '%');
         }
-        
+
         if ($request->filled('status_filter')) {
             $query->where('order_status_id', $request->status_filter);
         }
-        
+
         if ($request->filled('vendor_filter')) {
             $query->where('vendor_id', $request->vendor_filter);
         }
-        
+
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        
+
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
-        
+
         $orders = $query->orderBy('created_at', 'desc')->paginate(15);
-        
+
         // Summary data
         $totalOrders = Order::count();
         $totalAmount = Order::sum('total_amount');
         $pendingOrders = Order::where('order_status_id', 1)->count(); // Assuming 1 is pending
         $completedOrders = Order::whereIn('order_status_id', [4, 5])->count(); // Shipped/Delivered
-        
+
         // Get all order statuses and vendors for filters
         $orderStatuses = OrderStatus::orderBy('name')->get();
         $vendors = Vendor::orderBy('shop_name')->get();
-        
+
         return view('product::order.index', compact(
-            'orders', 
-            'totalOrders', 
-            'totalAmount', 
-            'pendingOrders', 
+            'orders',
+            'totalOrders',
+            'totalAmount',
+            'pendingOrders',
             'completedOrders',
             'orderStatuses',
             'vendors'
@@ -76,7 +77,7 @@ class OrderController extends Controller
     public function create()
     {
         $products = Product::active()->with(['stocks' => function ($query) {
-            $query->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + transfer_quantity)');
+            $query->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + transfer_quantity + froze_quantity)');
         }])->get();
 
         $vendors = Vendor::active()->get();
@@ -184,7 +185,7 @@ class OrderController extends Controller
         foreach ($availableStocks as $stock) {
             if ($remainingQuantity <= 0) break;
 
-            $availableQuantity = $stock->quantity - $stock->sold_quantity - 
+            $availableQuantity = $stock->quantity - $stock->sold_quantity -
                                $stock->damage_quantity - $stock->stolen_quantity - $stock->froze_quantity;
 
             if ($availableQuantity <= 0) continue;
@@ -243,7 +244,7 @@ class OrderController extends Controller
 
         $order->load(['orderItems.product', 'orderItems.stock']);
         $products = Product::active()->with(['stocks' => function ($query) {
-            $query->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + transfer_quantity)');
+            $query->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + transfer_quantity + froze_quantity)');
         }])->get();
 
         $vendors = Vendor::active()->get();
@@ -264,10 +265,8 @@ class OrderController extends Controller
 
         $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
-            'order_status_id' => 'required|exists:order_statuses,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.stock_id' => 'required|exists:stocks,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.sell_price' => 'required|numeric|min:0',
             'items.*.discount_price' => 'nullable|numeric|min:0',
@@ -276,61 +275,55 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            // Restore stock transfer quantities from existing items
+            // First, restore stock quantities from existing order items
             foreach ($order->orderItems as $existingItem) {
-                $stock = Stock::find($existingItem->stock_id);
-                if ($stock) {
-                    $stock->transfer_quantity = max(0, $stock->transfer_quantity - $existingItem->quantity);
-                    $stock->save();
+                // Restore stock from order item stocks
+                foreach ($existingItem->orderItemStocks as $orderItemStock) {
+                    $stock = $orderItemStock->stock;
+                    if ($stock) {
+                        $stock->froze_quantity = max(0, $stock->froze_quantity - $orderItemStock->quantity);
+                        $stock->save();
+                    }
                 }
             }
 
-            // Delete existing order items
+            // Delete existing order items and their stocks
+            foreach ($order->orderItems as $existingItem) {
+                $existingItem->orderItemStocks()->delete();
+            }
             $order->orderItems()->delete();
 
             $totalAmount = 0;
             $totalQuantity = 0;
             $totalDiscount = 0;
 
-            // Create new order items
+            // Create new order items with smart stock allocation
             foreach ($request->items as $item) {
-                $stock = Stock::findOrFail($item['stock_id']);
-
-                $availableQuantity = $stock->quantity - $stock->sold_quantity -
-                                   $stock->damage_quantity - $stock->stolen_quantity -
-                                   $stock->transfer_quantity;
-
-                if ($availableQuantity < $item['quantity']) {
-                    throw new \Exception("Insufficient stock for {$stock->product->name}. Available: {$availableQuantity}");
-                }
-
                 $discountPrice = $item['discount_price'] ?? 0;
                 $totalPrice = ($item['sell_price'] * $item['quantity']) - $discountPrice;
 
-                OrderItem::create([
+                // Create order item
+                $orderItem = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
-                    'stock_id' => $item['stock_id'],
                     'quantity' => $item['quantity'],
-                    'purchase_price' => $stock->purchase_price,
+                    'purchase_price' => 0, // Will be calculated from stocks
                     'sell_price' => $item['sell_price'],
                     'total_price' => $totalPrice,
                     'discount_price' => $discountPrice,
                 ]);
 
-                // Update stock transfer quantity
-                $stock->transfer_quantity += $item['quantity'];
-                $stock->save();
+                // Smart stock allocation for the new order item
+                $this->allocateStockForOrderItem($orderItem, $item['quantity']);
 
                 $totalAmount += $totalPrice;
                 $totalQuantity += $item['quantity'];
                 $totalDiscount += $discountPrice;
             }
 
-            // Update order
+            // Update order totals
             $order->update([
                 'vendor_id' => $request->vendor_id,
-                'order_status_id' => $request->order_status_id,
                 'total_amount' => $totalAmount,
                 'total_quantity' => $totalQuantity,
                 'total_discount_amount' => $totalDiscount,
@@ -354,6 +347,7 @@ class OrderController extends Controller
      */
     public function cancel(Order $order)
     {
+        Log::info('Attempting to cancel order ID: ' . $order->id);
         if ($order->cancelOrder()) {
             return redirect()->route('orders.index')
                            ->with('success', 'Order cancelled successfully and stock restored.');
@@ -411,7 +405,7 @@ class OrderController extends Controller
                                 return max(0, $stock->quantity - $stock->sold_quantity - $stock->damage_quantity - $stock->stolen_quantity - ($stock->froze_quantity ?? 0));
                             });
                         }
-                        
+
                         return [
                             'id' => $product->id,
                             'name' => $product->name,
@@ -419,7 +413,7 @@ class OrderController extends Controller
                             'available_quantity' => $availableQuantity
                         ];
                     });
-                    
+
                 return response()->json(['products' => $products]);
             }
 
@@ -484,14 +478,14 @@ class OrderController extends Controller
      */
     public function searchVendors(Request $request)
     {
-        $search = $request->get('search', '');
-        
+        $search = $request->get('query', $request->get('search', ''));
+
         $vendors = Vendor::where('shop_name', 'LIKE', "%{$search}%")
             ->orWhere('mobile', 'LIKE', "%{$search}%")
             ->orWhere('contact_person', 'LIKE', "%{$search}%")
             ->limit(10)
             ->get(['id', 'shop_name', 'mobile', 'contact_person', 'full_address']);
-            
+
         return response()->json($vendors);
     }
 
@@ -505,40 +499,53 @@ class OrderController extends Controller
             'status_id' => 'required|exists:order_statuses,id'
         ]);
 
+         $orders = Order::whereIn('id', $request->order_ids)->get();
+         foreach ($orders as $order) {
+             if ($order->order_status_id == 4 || $order->order_status_id == 5 || $order->order_status_id == 6) {
+                return response()->json(['message' => 'Orders status cannot be changed as they are already shipped, delivered, or cancelled.'], 400);
+             }
+            }
+
         DB::beginTransaction();
         try {
             $orders = Order::whereIn('id', $request->order_ids)->get();
             $orderStatus = OrderStatus::find($request->status_id);
-            
+
             foreach ($orders as $order) {
                 $order->update(['order_status_id' => $request->status_id]);
-                
+
                 // If status is shipped (4) or delivered (5), convert froze to sold and create vendor account record
                 if (in_array($request->status_id, [4, 5])) {
                     foreach ($order->orderItems as $orderItem) {
                         foreach ($orderItem->orderItemStocks as $orderItemStock) {
                             $stock = $orderItemStock->stock;
-                            
+
                             // Convert froze quantity to sold quantity
                             $stock->froze_quantity = max(0, $stock->froze_quantity - $orderItemStock->quantity);
                             $stock->sold_quantity += $orderItemStock->quantity;
                             $stock->save();
                         }
                     }
-                    
+
                     // Create vendor account record
                     VendorAccount::create([
                         'vendor_id' => $order->vendor_id,
                         'order_id' => $order->id,
                         'amount' => $order->total_amount,
                         'type' => 1, // Debit
+                        'deposite_by' => $order->admin_id,
                         'note' => 'Product order - ' . $order->invoice_id
                     ]);
                 }
             }
-            
+
             DB::commit();
-            return response()->json(['message' => 'Orders updated successfully']);
+
+             return response()->json([
+                            'status' => true,
+                            'message' => 'Orders updated successfully',
+                            'alert_type' => 'success'
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['error' => $e->getMessage()], 500);

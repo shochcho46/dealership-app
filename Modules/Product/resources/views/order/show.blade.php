@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
 @section('title', 'Order Details')
+@push('custome-css')
+<style>
+    @media print {
+        .btn, .card-header .d-flex .d-flex, .breadcrumb, .page-title-box {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="container-fluid">
@@ -104,7 +117,6 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Product</th>
-                                    <th>Batch ID</th>
                                     <th>Purchase Price</th>
                                     <th>Sell Price</th>
                                     <th>Quantity</th>
@@ -128,14 +140,26 @@
                                                 <div>
                                                     <strong>{{ $item->product->name }}</strong>
                                                     <br>
-                                                    
+
                                                 </div>
                                             </div>
                                         </td>
+
                                         <td>
-                                            <span class="badge bg-info">{{ $item->stock->batch_id ?? 'N/A' }}</span>
+                                            ৳{{ number_format($item->purchase_price, 2) }}
+                                           @if ($item->orderItemStocks->count() > 0)
+                                           <div class="mt-2 border-top pt-1">
+                                                @foreach ($item->orderItemStocks as $itemstock)
+                                                    <small class="d-block text-muted">
+                                                        Qty: <strong>{{ $itemstock->quantity }}</strong> |
+                                                        ৳{{ number_format($itemstock->purchase_price, 2) }}
+                                                    </small>
+
+                                                @endforeach
+                                                </div>
+                                            @endif
+
                                         </td>
-                                        <td>৳{{ number_format($item->purchase_price, 2) }}</td>
                                         <td>৳{{ number_format($item->sell_price, 2) }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>
@@ -274,9 +298,6 @@
                                 <i class="mdi mdi-pencil me-1"></i>Edit Order
                             </a>
                         @endif
-                        <button onclick="window.print()" class="btn btn-outline-info">
-                            <i class="mdi mdi-printer me-1"></i>Print Order
-                        </button>
                     </div>
                 </div>
             </div>
@@ -285,16 +306,3 @@
 </div>
 @endsection
 
-@push('custome-css')
-<style>
-    @media print {
-        .btn, .card-header .d-flex .d-flex, .breadcrumb, .page-title-box {
-            display: none !important;
-        }
-        .card {
-            border: none !important;
-            box-shadow: none !important;
-        }
-    }
-</style>
-@endpush

@@ -63,7 +63,7 @@
     .product-search-item .product-name {
         font-weight: bold;
         color: #333;
-        font-size: 10px;
+        font-size: 12px;
     }
     .product-search-item .product-details {
         color: #666;
@@ -96,7 +96,7 @@
     .selected-product-display .selected-product-name {
         font-weight: bold;
         color: #333;
-        font-size: 10px;
+        font-size: 12 px;
     }
     .selected-product-display .selected-product-details {
         color: #666;
@@ -149,9 +149,9 @@
                                             <div class="col-md-3">
                                                 <label class="form-label text-dark">Product <span class="text-danger">*</span></label>
                                                 <div class="product-search-wrapper">
-                                                    <input type="text" 
-                                                           class="form-control product-search-input" 
-                                                           placeholder="Search product..." 
+                                                    <input type="text"
+                                                           class="form-control product-search-input"
+                                                           placeholder="Search product..."
                                                            autocomplete="off">
                                                     <input type="hidden" data-name="product_id" class="product-id-input" required>
                                                     <div class="product-search-results"></div>
@@ -171,15 +171,17 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
-                                                <label class="form-label text-dark">Purchase Price <span class="text-danger">*</span></label>
-                                                <input type="number" data-name="purchase_price" class="form-control purchase-price" step="0.01" min="0" required>
-                                            </div>
 
                                             <div class="col-md-3">
                                                 <label class="form-label text-dark">Quantity <span class="text-danger">*</span></label>
                                                 <input type="number" data-name="quantity" class="form-control quantity" min="1" required>
                                             </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label text-dark">Purchase Price <span class="text-danger">*</span></label>
+                                                <input type="number" data-name="purchase_price" class="form-control purchase-price" step="0.01" min="0" required>
+                                            </div>
+
 
                                             <div class="col-md-3">
                                                 <label class="form-label text-dark">Sell Price <span class="text-danger">*</span></label>
@@ -236,7 +238,7 @@
 <script>
 $(document).ready(function () {
     let searchTimeout;
-    
+
     // Initialize repeater
     $("#repeater").createRepeater({
         showFirstItemToDefault: true,
@@ -306,7 +308,7 @@ $(document).ready(function () {
             products.forEach(function(product) {
                 const stockBadgeClass = product.total_stock > 10 ? 'bg-success' : (product.total_stock > 0 ? 'bg-warning' : 'bg-danger');
                 const imageSrc = product.image || 'https://via.placeholder.com/50x50?text=No+Image';
-                
+
                 html += `
                     <div class="product-search-item" data-product='${JSON.stringify(product)}'>
                         <img src="${imageSrc}" alt="${product.name}">
@@ -331,21 +333,21 @@ $(document).ready(function () {
     $(document).on('click', '.product-search-item[data-product]', function() {
         const product = JSON.parse($(this).attr('data-product'));
         const $wrapper = $(this).closest('.product-search-wrapper');
-        
+
         selectProduct($wrapper, product);
     });
 
     function selectProduct($wrapper, product) {
         const imageSrc = product.image || 'https://via.placeholder.com/50x50?text=No+Image';
         const stockBadgeClass = product.total_stock > 10 ? 'bg-success' : (product.total_stock > 0 ? 'bg-warning' : 'bg-danger');
-        
+
         // Set hidden input value
         $wrapper.find('.product-id-input').val(product.id);
-        
+
         // Hide search input and results
         $wrapper.find('.product-search-input').hide();
         $wrapper.find('.product-search-results').hide();
-        
+
         // Show selected product display
         const $display = $wrapper.find('.selected-product-display');
         $display.find('.selected-product-image').attr('src', imageSrc).attr('alt', product.name);
@@ -363,7 +365,7 @@ $(document).ready(function () {
     // Clear selection
     $(document).on('click', '.clear-selection', function() {
         const $wrapper = $(this).closest('.product-search-wrapper');
-        
+
         $wrapper.find('.product-id-input').val('');
         $wrapper.find('.product-search-input').val('').show();
         $wrapper.find('.selected-product-display').hide();
