@@ -9,18 +9,18 @@
     .order-container {
         padding: 10px;
     }
-    
+
     @media (min-width: 768px) {
         .order-container {
             padding: 20px;
         }
     }
-    
+
     .vendor-search-box {
         position: relative;
         margin-bottom: 20px;
     }
-    
+
     .vendor-dropdown {
         position: absolute;
         top: 100%;
@@ -34,28 +34,28 @@
         z-index: 1000;
         display: none;
     }
-    
+
     .vendor-option {
         padding: 10px;
         border-bottom: 1px solid #eee;
         cursor: pointer;
         transition: background-color 0.2s;
     }
-    
+
     .vendor-option:hover {
         background-color: #f8f9fa;
     }
-    
+
     .vendor-option:last-child {
         border-bottom: none;
     }
-    
+
     .vendor-info {
         font-size: 14px;
         color: #666;
         margin-top: 5px;
     }
-    
+
     .order-item-card {
         border: 1px solid #dee2e6;
         border-radius: 8px;
@@ -64,13 +64,13 @@
         background-color: #f8f9fa;
         position: relative;
     }
-    
+
     @media (max-width: 767px) {
         .order-item-card {
             padding: 10px;
         }
     }
-    
+
     .remove-item-btn {
         position: absolute;
         top: 10px;
@@ -83,14 +83,14 @@
         height: 30px;
         font-size: 14px;
         cursor: pointer;
-         z-index: 100; 
+         z-index: 100;
     }
-    
+
     .product-search-box {
         position: relative;
         margin-bottom: 15px;
     }
-    
+
     .product-dropdown {
         position: absolute;
         top: 100%;
@@ -104,7 +104,7 @@
         z-index: 999;
         display: none;
     }
-    
+
     .product-option {
         padding: 10px;
         border-bottom: 1px solid #eee;
@@ -114,11 +114,11 @@
         align-items: center;
         gap: 10px;
     }
-    
+
     .product-option:hover {
         background-color: #f8f9fa;
     }
-    
+
     .product-image {
         width: 40px;
         height: 40px;
@@ -126,28 +126,28 @@
         border-radius: 5px;
         border: 1px solid #ddd;
     }
-    
+
     .product-info {
         flex: 1;
     }
-    
+
     .product-name {
         font-weight: 500;
         color: #333;
     }
-    
+
     .product-details {
         font-size: 12px;
         color: #666;
         margin-top: 2px;
     }
-    
+
     .quantity-controls {
         display: flex;
         align-items: center;
         gap: 10px;
     }
-    
+
     .quantity-btn {
         background: #007bff;
         color: white;
@@ -158,7 +158,7 @@
         font-size: 18px;
         cursor: pointer;
     }
-    
+
     .quantity-input {
         width: 80px;
         text-align: center;
@@ -166,18 +166,18 @@
         border-radius: 5px;
         padding: 8px;
     }
-    
+
     .form-row {
         margin-bottom: 15px;
     }
-    
+
     .form-row label {
         display: block;
         font-weight: 500;
         margin-bottom: 5px;
         font-size: 14px;
     }
-    
+
     .form-row input, .form-row select {
         width: 100%;
         padding: 10px;
@@ -185,7 +185,7 @@
         border-radius: 5px;
         font-size: 16px; /* Prevent zoom on iOS */
     }
-    
+
     .order-summary {
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         color: white;
@@ -196,7 +196,7 @@
         bottom: 0;
         z-index: 100;
     }
-    
+
     @media (max-width: 767px) {
         .order-summary {
             padding: 15px;
@@ -204,13 +204,13 @@
             border-radius: 0;
         }
     }
-    
+
     .summary-row {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
     }
-    
+
     .summary-row:last-child {
         margin-bottom: 0;
         font-weight: bold;
@@ -218,7 +218,7 @@
         border-top: 1px solid rgba(255,255,255,0.3);
         padding-top: 10px;
     }
-    
+
     .add-item-btn {
         background: #28a745;
         color: white;
@@ -230,7 +230,7 @@
         width: 100%;
         margin-bottom: 20px;
     }
-    
+
     .submit-order-btn {
         background: #007bff;
         color: white;
@@ -241,39 +241,39 @@
         cursor: pointer;
         width: 100%;
     }
-    
+
     .loading {
         opacity: 0.7;
         pointer-events: none;
     }
-    
+
     .error-message {
         color: #dc3545;
         font-size: 14px;
         margin-top: 5px;
     }
-    
+
     .available-stock-info {
         font-size: 12px;
         color: #666;
         margin-top: 5px;
     }
-    
+
     @media (max-width: 576px) {
         .form-row {
             margin-bottom: 10px;
         }
-        
+
         .quantity-controls {
             gap: 5px;
         }
-        
+
         .quantity-btn {
             width: 30px;
             height: 30px;
             font-size: 16px;
         }
-        
+
         .quantity-input {
             width: 60px;
             padding: 6px;
@@ -305,7 +305,7 @@
         <div class="container-fluid">
             <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
                 @csrf
-                
+
                 <!-- Vendor Selection -->
                 <div class="card mb-3">
                     <div class="card-header">
@@ -314,10 +314,10 @@
                     <div class="card-body">
                         <div class="vendor-search-box">
                             <label for="vendor_search">Search Vendor by Name or Mobile</label>
-                            <input type="text" id="vendor_search" class="form-control" placeholder="Type vendor name or mobile number..." autocomplete="off">
+                            <input type="text" id="vendor_search" class="form-control" placeholder="Type vendor name or mobile number..." autocomplete="off" required>
                             <div class="vendor-dropdown" id="vendor_dropdown"></div>
                         </div>
-                        
+
                         <input type="hidden" name="vendor_id" id="selected_vendor_id" required>
                         <div id="selected_vendor_info" style="display: none;" class="alert alert-info mt-2">
                             <strong>Selected Vendor:</strong> <span id="vendor_display_name"></span><br>
@@ -338,7 +338,7 @@
                         <div id="order_items_container">
                             <!-- Order items will be added here -->
                         </div>
-                        
+
                         <button type="button" class="add-item-btn" onclick="addOrderItem()">
                             <i class="mdi mdi-plus"></i> Add Another Product
                         </button>
@@ -370,7 +370,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="text-center mb-4">
+                <div class="text-center mb-4 mt-2">
                     <button type="submit" class="submit-order-btn" id="submit_order_btn">
                         <i class="mdi mdi-check"></i> Create Order
                     </button>
@@ -386,17 +386,24 @@
         <button type="button" class="remove-item-btn" title="Remove Item">
             ×
         </button>
-        
+
         <div class="mt-3 product-search-box">
             <label>Search Product</label>
             <input type="text" class="form-control product-search" placeholder="Type product name..." autocomplete="off">
             <div class="product-dropdown"></div>
         </div>
-        
+
         <input type="hidden" name="items[][product_id]" class="product-id" required>
-        
+
         <div class="row">
-            <div class="col-md-6">
+
+            <div class="col-md-3">
+                <div class="form-row">
+                    <label>Sell Price (per unit)</label>
+                    <input type="number" name="items[][sell_price]" class="form-control sell-price" step="0.01" min="0" required readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="form-row">
                     <label>Quantity</label>
                     <div class="quantity-controls">
@@ -407,29 +414,24 @@
                     <div class="available-stock-info"></div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-row">
-                    <label>Sell Price (per unit)</label>
-                    <input type="number" name="items[][sell_price]" class="form-control sell-price" step="0.01" min="0" required readonly>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-6">
+
+        {{-- </div> --}}
+
+        {{-- <div class="row"> --}}
+            <div class="col-md-3">
                 <div class="form-row">
                     <label>Discount Amount</label>
                     <input type="number" name="items[][discount_price]" class="form-control discount-price" step="0.01" min="0" value="0">
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="form-row">
                     <label>Item Total</label>
                     <input type="text" class="form-control item-total" readonly>
                 </div>
             </div>
         </div>
-        
+
         <div class="error-message" style="display: none;"></div>
     </div>
 </template>
@@ -443,10 +445,10 @@ let availableProducts = [];
 $(document).ready(function() {
     // Load products
     loadProducts();
-    
+
     // Add first order item
     addOrderItem();
-    
+
     // Vendor search functionality
     $('#vendor_search').on('input', function() {
         const query = $(this).val().trim();
@@ -456,21 +458,21 @@ $(document).ready(function() {
             $('#vendor_dropdown').hide();
         }
     });
-    
+
     // Event delegation for remove buttons
     $(document).on('click', '.remove-item-btn', function() {
         removeOrderItem(this);
     });
-    
+
     // Event delegation for quantity buttons
     $(document).on('click', '.quantity-decrease', function() {
         changeQuantity(this, -1);
     });
-    
+
     $(document).on('click', '.quantity-increase', function() {
         changeQuantity(this, 1);
     });
-    
+
     // Hide dropdown when clicking outside
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.vendor-search-box').length) {
@@ -509,7 +511,7 @@ function searchVendors(query) {
                     </div>
                 `;
             });
-            
+
             $('#vendor_dropdown').html(html).show();
         })
         .fail(function() {
@@ -531,24 +533,24 @@ function selectVendor(id, name, mobile, address) {
 function addOrderItem() {
     const template = document.getElementById('order_item_template');
     const clone = template.content.cloneNode(true);
-    
+
     // Set unique index
     const orderItem = clone.querySelector('.order-item-card');
     orderItem.setAttribute('data-index', orderItemIndex);
-    
+
     // Update input names with correct index
     clone.querySelectorAll('input[name]').forEach(input => {
         const name = input.getAttribute('name');
         input.setAttribute('name', name.replace('[]', `[${orderItemIndex}]`));
     });
-    
+
     document.getElementById('order_items_container').appendChild(clone);
-    
+
     // Add event listeners
     const container = document.querySelector(`[data-index="${orderItemIndex}"]`);
     setupProductSearch(container);
     setupPriceCalculation(container);
-    
+
     orderItemIndex++;
     updateOrderSummary();
 }
@@ -562,7 +564,7 @@ function removeOrderItem(button) {
             orderItem.remove();
             updateOrderSummary();
             updateSubmitButton();
-            
+
             // If no items left, add one
             if (document.querySelectorAll('.order-item-card').length === 0) {
                 addOrderItem();
@@ -578,22 +580,22 @@ function setupProductSearch(container) {
     const searchInput = container.querySelector('.product-search');
     const dropdown = container.querySelector('.product-dropdown');
     let searchTimeout;
-    
+
     searchInput.addEventListener('input', function() {
         const query = this.value.trim().toLowerCase();
-        
+
         // Clear previous timeout
         if (searchTimeout) {
             clearTimeout(searchTimeout);
         }
-        
+
         if (query.length >= 2) {
             // Debounce search to prevent too many calls
             searchTimeout = setTimeout(() => {
-                const filteredProducts = availableProducts.filter(product => 
+                const filteredProducts = availableProducts.filter(product =>
                     product.name.toLowerCase().includes(query)
                 );
-                
+
                 let html = '';
                 filteredProducts.slice(0, 10).forEach(product => { // Limit to 10 results
                     const imageUrl = product.image_url && product.image_url !== '' ? product.image_url : '/assets/images/default-product.png';
@@ -610,10 +612,10 @@ function setupProductSearch(container) {
                         </div>
                     `;
                 });
-                
+
                 dropdown.innerHTML = html;
                 dropdown.style.display = html ? 'block' : 'none';
-                
+
                 // Add click event listeners to options
                 dropdown.querySelectorAll('.product-option').forEach(option => {
                     option.addEventListener('click', function() {
@@ -635,14 +637,14 @@ function selectProduct(productId, productName, element) {
     const productIdInput = container.querySelector('.product-id');
     const sellPriceInput = container.querySelector('.sell-price');
     const stockInfo = container.querySelector('.available-stock-info');
-    
+
     // Set values
     searchInput.value = productName;
     productIdInput.value = productId;
-    
+
     // Hide dropdown
     container.querySelector('.product-dropdown').style.display = 'none';
-    
+
     // Get product details and highest sell price
     $.get('{{ route("orders.getProductDetails") }}', {product_id: productId})
         .done(function(data) {
@@ -662,7 +664,7 @@ function changeQuantity(button, change) {
     let currentValue = parseInt(quantityInput.value) || 1;
     let newValue = Math.max(1, currentValue + change);
     quantityInput.value = newValue;
-    
+
     updateItemTotal(container);
 }
 
@@ -679,10 +681,10 @@ function updateItemTotal(container) {
     const quantity = parseFloat(container.querySelector('.quantity-input').value) || 0;
     const sellPrice = parseFloat(container.querySelector('.sell-price').value) || 0;
     const discount = parseFloat(container.querySelector('.discount-price').value) || 0;
-    
+
     const total = (quantity * sellPrice) - discount;
     container.querySelector('.item-total').value = `৳${total.toFixed(2)}`;
-    
+
     updateOrderSummary();
 }
 
@@ -691,13 +693,13 @@ function updateOrderSummary() {
     let totalQuantity = 0;
     let subtotal = 0;
     let totalDiscount = 0;
-    
+
     document.querySelectorAll('.order-item-card').forEach(container => {
         const quantity = parseFloat(container.querySelector('.quantity-input').value) || 0;
         const sellPrice = parseFloat(container.querySelector('.sell-price').value) || 0;
         const discount = parseFloat(container.querySelector('.discount-price').value) || 0;
         const productId = container.querySelector('.product-id').value;
-        
+
         if (productId && quantity > 0 && sellPrice > 0) {
             totalItems++;
             totalQuantity += quantity;
@@ -705,9 +707,9 @@ function updateOrderSummary() {
             totalDiscount += discount;
         }
     });
-    
+
     const totalAmount = subtotal - totalDiscount;
-    
+
     document.getElementById('total_items').textContent = totalItems;
     document.getElementById('total_quantity').textContent = totalQuantity;
     document.getElementById('subtotal').textContent = `৳${subtotal.toFixed(2)}`;
@@ -718,7 +720,7 @@ function updateOrderSummary() {
 function updateSubmitButton() {
     const vendorSelected = document.getElementById('selected_vendor_id').value;
     const hasValidItems = document.querySelectorAll('.order-item-card .product-id[value!=""]').length > 0;
-    
+
     document.getElementById('submit_order_btn').disabled = !(vendorSelected && hasValidItems);
 }
 
@@ -727,23 +729,16 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     const submitBtn = document.getElementById('submit_order_btn');
     const vendorSelected = document.getElementById('selected_vendor_id').value;
     const orderItems = document.querySelectorAll('.order-item-card');
-    
-    // Validate vendor selection
-    if (!vendorSelected) {
-        e.preventDefault();
-        alert('Please select a vendor');
-        return false;
-    }
-    
+
     // Validate order items
     let hasValidItems = false;
     let validationErrors = [];
-    
+
     orderItems.forEach((item, index) => {
         const productId = item.querySelector('.product-id').value;
         const quantity = parseFloat(item.querySelector('.quantity-input').value) || 0;
         const sellPrice = parseFloat(item.querySelector('.sell-price').value) || 0;
-        
+
         if (productId && quantity > 0 && sellPrice > 0) {
             hasValidItems = true;
         } else if (productId || quantity > 0 || sellPrice > 0) {
@@ -751,23 +746,23 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
             validationErrors.push(`Item ${index + 1}: Please complete all required fields`);
         }
     });
-    
+
     if (!hasValidItems) {
         e.preventDefault();
         alert('Please add at least one valid product to the order');
         return false;
     }
-    
+
     if (validationErrors.length > 0) {
         e.preventDefault();
         alert('Validation errors:\n' + validationErrors.join('\n'));
         return false;
     }
-    
+
     // Disable submit button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Creating Order...';
-    
+
     // Allow form submission to proceed
     return true;
 });

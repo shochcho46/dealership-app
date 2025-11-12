@@ -104,6 +104,7 @@ class StockController extends Controller
                 'stolen_quantity' => $stockData['stolen_quantity'] ?? 0,
                 'transfer_quantity' =>  0,
                 'status' => 1,
+                'warehouse_id' => 1,
             ]);
             }
         // });
@@ -130,7 +131,7 @@ class StockController extends Controller
             return redirect()->route('admin.stockIndex')
                 ->with('error', 'Cannot edit this stock. It has sold quantity (' . $stock->sold_quantity . ') or frozen quantity (' . $stock->froze_quantity . ').');
         }
-        
+
         $products = Product::active()->with(['color', 'unit'])->get();
         return view('product::stock.edit', compact('stock', 'products'));
     }
@@ -145,7 +146,7 @@ class StockController extends Controller
             return redirect()->route('admin.stockIndex')
                 ->with('error', 'Cannot update this stock. It has sold quantity (' . $stock->sold_quantity . ') or frozen quantity (' . $stock->froze_quantity . ').');
         }
-        
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'purchase_price' => 'required|numeric|min:0',
@@ -225,12 +226,12 @@ class StockController extends Controller
     public function searchProducts(Request $request)
     {
         $search = $request->get('q', '');
-        
+
         $products = Product::active()
             ->with(['color', 'unit', 'stocks'])
             ->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%");
-                  
+
             })
             ->limit(100)
             ->get()
@@ -244,7 +245,7 @@ class StockController extends Controller
                     'total_stock' => $product->stocks->sum('remaining_quantity')
                 ];
             });
-        
+
         return response()->json($products);
     }
 }

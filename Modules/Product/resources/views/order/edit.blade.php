@@ -5,78 +5,294 @@
 <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.6.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 
 <style>
-    .order-item-entry {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 15px;
+    /* Mobile-first responsive design */
+    .order-container {
+        padding: 10px;
+    }
+
+    @media (min-width: 768px) {
+        .order-container {
+            padding: 20px;
+        }
+    }
+
+    .vendor-search-box {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .vendor-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .vendor-option {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .vendor-option:hover {
         background-color: #f8f9fa;
     }
-    .order-item-entry .form-control, .order-item-entry .form-select {
-        height: calc(2.25rem + 2px);
+
+    .vendor-option:last-child {
+        border-bottom: none;
     }
-    .total-display {
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #495057;
-        margin-top: 8px;
+
+    .vendor-info {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
     }
-    .select2-container--bootstrap4 .select2-selection {
-        height: calc(2.25rem + 2px);
-        padding: .375rem .75rem;
-        font-size: 1rem;
+
+    .order-item-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #f8f9fa;
+        position: relative;
     }
-    .select2-results__option img,
-    .select2-selection__rendered img {
-        width: 25px;
-        height: 25px;
+
+    @media (max-width: 767px) {
+        .order-item-card {
+            padding: 10px;
+        }
+    }
+
+    .remove-item-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        cursor: pointer;
+         z-index: 100;
+    }
+
+    .product-search-box {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .product-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        max-height: 150px;
+        overflow-y: auto;
+        z-index: 999;
+        display: none;
+    }
+
+    .product-option {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .product-option:hover {
+        background-color: #f8f9fa;
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
         object-fit: cover;
-        border-radius: 4px;
-        margin-right: 6px;
-        vertical-align: middle;
+        border-radius: 5px;
+        border: 1px solid #ddd;
     }
-    .form-label {
+
+    .product-info {
+        flex: 1;
+    }
+
+    .product-name {
         font-weight: 500;
+        color: #333;
     }
-    .available-stock {
-        font-size: 0.85rem;
-        color: #6c757d;
-        font-style: italic;
+
+    .product-details {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
     }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quantity-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .quantity-input {
+        width: 80px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 8px;
+    }
+
+    .form-row {
+        margin-bottom: 15px;
+    }
+
+    .form-row label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .form-row input, .form-row select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
     .order-summary {
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         color: white;
         border-radius: 8px;
         padding: 20px;
-        margin-bottom: 20px;
+        margin: 20px 0;
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
     }
-    .summary-item {
+
+    @media (max-width: 767px) {
+        .order-summary {
+            padding: 15px;
+            margin: 15px -10px 0;
+            border-radius: 0;
+        }
+    }
+
+    .summary-row {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
-    .summary-item:last-child {
+
+    .summary-row:last-child {
         margin-bottom: 0;
-        border-top: 1px solid rgba(255,255,255,0.2);
-        padding-top: 8px;
         font-weight: bold;
-        font-size: 1.1rem;
+        font-size: 18px;
+        border-top: 1px solid rgba(255,255,255,0.3);
+        padding-top: 10px;
+    }
+
+    .add-item-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .submit-order-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px 30px;
+        font-size: 18px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .available-stock-info {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 576px) {
+        .form-row {
+            margin-bottom: 10px;
+        }
+
+        .quantity-controls {
+            gap: 5px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        .quantity-input {
+            width: 60px;
+            padding: 6px;
+        }
     }
 </style>
 @endpush
 
-@section('title', 'Edit Order')
-
 @section('content')
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Edit Order - {{ $order->invoice_id }}</h4>
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+<div class="order-container">
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Edit Order - {{ $order->invoice_id }}</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-end">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">Orders</a></li>
                         <li class="breadcrumb-item active">Edit</li>
                     </ol>
@@ -85,415 +301,546 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title mb-0">Order Information</h4>
+    <div class="app-content">
+        <div class="container-fluid">
+            <form id="orderForm" action="{{ route('orders.update', $order) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <!-- Vendor Selection -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Vendor Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="vendor-search-box">
+                            <label for="vendor_search">Search Vendor by Name or Mobile</label>
+                            <input type="text" id="vendor_search" class="form-control"
+                                   placeholder="Type vendor name or mobile number..."
+                                   autocomplete="off" required
+                                   value="{{ $order->vendor->shop_name ?? '' }}">
+                            <div class="vendor-dropdown" id="vendor_dropdown"></div>
+                        </div>
+
+                        <input type="hidden" name="vendor_id" id="selected_vendor_id" value="{{ $order->vendor_id }}" required>
+                        <div id="selected_vendor_info" class="alert alert-info mt-2">
+                            <strong>Selected Vendor:</strong> <span id="vendor_display_name">{{ $order->vendor->shop_name ?? '' }}</span><br>
+                            <small>Mobile: <span id="vendor_display_mobile">{{ $order->vendor->mobile ?? 'N/A' }}</span> | Address: <span id="vendor_display_address">{{ $order->vendor->full_address ?? 'N/A' }}</span></small>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('orders.update', $order) }}" method="POST" id="orderForm">
-                        @csrf
-                        @method('PUT')
 
-                        <!-- Order Basic Info -->
-                        <div class="row mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label">Invoice ID</label>
-                                <input type="text" class="form-control" value="{{ $order->invoice_id }}" readonly>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Vendor <span class="text-danger">*</span></label>
-                                <select name="vendor_id" class="form-select" required>
-                                    <option value="">Select Vendor</option>
-                                    @foreach($vendors as $vendor)
-                                        <option value="{{ $vendor->id }}" {{ $order->vendor_id == $vendor->id ? 'selected' : '' }}>
-                                            {{ $vendor->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('vendor_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Order Status <span class="text-danger">*</span></label>
-                                <select name="order_status_id" class="form-select" required>
-                                    <option value="">Select Status</option>
-                                    @foreach($orderStatuses as $status)
-                                        <option value="{{ $status->id }}" {{ $order->order_status_id == $status->id ? 'selected' : '' }}>
-                                            {{ $status->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('order_status_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
+                <!-- Order Items -->
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Order Items</h5>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addOrderItem()">
+                            <i class="mdi mdi-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="order_items_container">
+                            <!-- Existing order items will be loaded here -->
                         </div>
 
-                        <!-- Order Summary -->
-                        <div class="order-summary" id="orderSummary">
-                            <h5 class="mb-3">Order Summary</h5>
-                            <div class="summary-item">
-                                <span>Total Items:</span>
-                                <span id="totalItems">{{ $order->total_quantity }}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Subtotal:</span>
-                                <span>৳<span id="subtotal">{{ number_format($order->total_amount + $order->total_discount_amount, 2) }}</span></span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Total Discount:</span>
-                                <span>৳<span id="totalDiscount">{{ number_format($order->total_discount_amount, 2) }}</span></span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Net Total:</span>
-                                <span>৳<span id="netTotal">{{ number_format($order->net_amount, 2) }}</span></span>
-                            </div>
-                        </div>
-
-                        <!-- Order Items Repeater -->
-                        <div id="repeater">
-                            <div class="repeater-heading d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">Order Items</h6>
-                                <button type="button" class="btn btn-success btn-sm repeater-add-btn">
-                                    <i class="mdi mdi-plus me-1"></i>Add Item
-                                </button>
-                            </div>
-
-                            <div class="items" data-group="items">
-                                @foreach($order->orderItems as $index => $item)
-                                    <div class="item-content order-item-entry">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <h6 class="text-dark mb-0 order-item-title">Item #{{ $index + 1 }}</h6>
-                                        </div>
-
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label text-dark">Product <span class="text-danger">*</span></label>
-                                                <select data-name="product_id" class="form-control product-select" required>
-                                                    <option value="">Select Product</option>
-                                                    @foreach($products as $product)
-                                                        <option value="{{ $product->id }}"
-                                                                data-image="{{ $product->product_image_thumb_url ?? asset('images/no-image.png') }}"
-                                                                {{ $item->product_id == $product->id ? 'selected' : '' }}>
-                                                            {{ $product->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="available-stock mt-1"></div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label class="form-label text-dark">Stock Batch</label>
-                                                <select data-name="stock_id" class="form-select stock-select" required>
-                                                    <option value="">Select Stock</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label class="form-label text-dark">Sell Price <span class="text-danger">*</span></label>
-                                                <input type="number" data-name="sell_price" class="form-control sell-price"
-                                                       step="0.01" min="0" value="{{ $item->sell_price }}" required>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label class="form-label text-dark">Quantity <span class="text-danger">*</span></label>
-                                                <input type="number" data-name="quantity" class="form-control quantity"
-                                                       min="1" value="{{ $item->quantity }}" required>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label class="form-label text-dark">Discount</label>
-                                                <input type="number" data-name="discount_price" class="form-control discount-price"
-                                                       step="0.01" min="0" value="{{ $item->discount_price }}">
-                                            </div>
-
-                                            <div class="col-12">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="total-display">Total: ৳<span class="item-total">{{ number_format($item->net_price, 2) }}</span></div>
-                                                    <button type="button" class="btn btn-outline-danger btn-sm remove-btn">
-                                                        <i class="mdi mdi-delete me-1"></i>Remove
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Hidden field to store selected stock_id -->
-                                        <input type="hidden" class="selected-stock-id" value="{{ $item->stock_id }}">
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <div class="text-end mt-4">
-                            <a href="{{ route('orders.show', $order) }}" class="btn btn-secondary me-2">
-                                <i class="mdi mdi-arrow-left me-1"></i>Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="mdi mdi-content-save me-1"></i>Update Order
-                            </button>
-                        </div>
-                    </form>
+                        <button type="button" class="add-item-btn" onclick="addOrderItem()">
+                            <i class="mdi mdi-plus"></i> Add Another Product
+                        </button>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Order Summary (Sticky Footer on Mobile) -->
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Total Items:</span>
+                        <span id="total_items">{{ $order->total_quantity ?? 0 }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total Quantity:</span>
+                        <span id="total_quantity">{{ $order->total_quantity ?? 0 }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">৳{{ number_format(($order->total_amount ?? 0) + ($order->total_discount_amount ?? 0), 2) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount:</span>
+                        <span id="total_discount">৳{{ number_format($order->total_discount_amount ?? 0, 2) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total Amount:</span>
+                        <span id="total_amount">৳{{ number_format($order->total_amount ?? 0, 2) }}</span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                {{-- <div class="text-center mb-4 mt-2">
+                    <a href="{{ route('orders.show', $order) }}" class="btn btn-secondary me-2">
+                        <i class="mdi mdi-arrow-left me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="submit-order-btn" id="submit_order_btn">
+                        <i class="mdi mdi-content-save"></i> Update Order
+                    </button>
+                </div> --}}
+
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-4 mt-2">
+                    <a href="{{ route('orders.show', $order) }}" class="btn btn-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="submit_order_btn">
+                        <i class="mdi mdi-content-save"></i> Update Order
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
+
+<!-- Order Item Template -->
+<template id="order_item_template">
+    <div class="mb-3 order-item-card" data-index="">
+        <button type="button" class="remove-item-btn" title="Remove Item">
+            ×
+        </button>
+
+        <div class="mt-3 product-search-box">
+            <label>Search Product</label>
+            <input type="text" class="form-control product-search" placeholder="Type product name..." autocomplete="off">
+            <div class="product-dropdown"></div>
+        </div>
+
+        <input type="hidden" name="items[][product_id]" class="product-id" required>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-row">
+                    <label>Sell Price (per unit)</label>
+                    <input type="number" name="items[][sell_price]" class="form-control sell-price" step="0.01" min="0" required readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-row">
+                    <label>Quantity</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="quantity-btn quantity-decrease">-</button>
+                        <input type="number" name="items[][quantity]" class="quantity-input" value="1" min="1" required>
+                        <button type="button" class="quantity-btn quantity-increase">+</button>
+                    </div>
+                    <div class="available-stock-info"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-row">
+                    <label>Discount Amount</label>
+                    <input type="number" name="items[][discount_price]" class="form-control discount-price" step="0.01" min="0" value="0">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-row">
+                    <label>Item Total</label>
+                    <input type="text" class="form-control item-total" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="error-message" style="display: none;"></div>
+    </div>
+</template>
 @endsection
 
 @push('custome-js')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{ asset('js/repeater.js') }}"></script>
-
 <script>
-$(document).ready(function () {
-    // Initialize repeater
-    $("#repeater").createRepeater({
-        showFirstItemToDefault: true,
-        ready: function () {
-            updateRepeater();
-            // Load existing product stocks
-            loadExistingStocks();
-        }
-    });
+let orderItemIndex = 0;
+let availableProducts = [];
+let existingOrderItems = @json($order->orderItems);
 
-    function updateRepeater() {
-        $("#repeater .items").each(function(index){
-            // Assign proper name attributes for submission
-            $(this).find("[data-name]").each(function(){
-                let field = $(this).data("name");
-                $(this).attr("name", `items[${index}][${field}]`);
-            });
+$(document).ready(function() {
+    // Load products
+    loadProducts();
 
-            // Initialize Select2 for product select if not already initialized
-            let $productSelect = $(this).find(".product-select");
-            if (!$productSelect.hasClass("select2-hidden-accessible")) {
-                $productSelect.select2({
-                    theme: "bootstrap4",
-                    placeholder: "Search product...",
-                    allowClear: false,
-                    templateResult: formatProductOption,
-                    templateSelection: formatProductSelection,
-                    escapeMarkup: function(m) { return m; }
-                });
-            }
-        });
+    // Load existing order items
+    loadExistingOrderItems();
 
-        // Update row titles
-        $("#repeater .items").each(function(i){
-            $(this).find(".order-item-title").text("Item #" + (i+1));
-        });
-
-        // Show/hide remove buttons
-        $("#repeater .items").each(function(i){
-            $(this).find(".remove-btn").toggle($("#repeater .items").length > 1);
-        });
-    }
-
-    function loadExistingStocks() {
-        $("#repeater .items").each(function() {
-            let $row = $(this);
-            let productId = $row.find(".product-select").val();
-            let selectedStockId = $row.find(".selected-stock-id").val();
-
-            if (productId) {
-                loadProductStocks($row, productId, selectedStockId);
-            }
-        });
-    }
-
-    function loadProductStocks($row, productId, selectedStockId = null) {
-        let $stockSelect = $row.find(".stock-select");
-        let $availableStock = $row.find(".available-stock");
-
-        $.get('{{ route("orders.getProductDetails") }}', {product_id: productId})
-            .done(function(data) {
-                $availableStock.text(`Available: ${data.available_quantity} units`);
-
-                // Populate stock options
-                $stockSelect.html('<option value="">Select Stock</option>');
-                data.stocks.forEach(function(stock) {
-                    let selected = selectedStockId == stock.id ? 'selected' : '';
-                    $stockSelect.append(`<option value="${stock.id}" data-price="${stock.sell_price}" data-available="${stock.available_quantity}" ${selected}>
-                        Batch: ${stock.batch_id} (৳${stock.sell_price}) - ${stock.available_quantity} available
-                    </option>`);
-                });
-
-                // If no stock was preselected, auto-select highest price stock
-                if (!selectedStockId && data.stocks.length > 0) {
-                    let highestPriceStock = data.stocks.reduce((prev, current) =>
-                        (prev.sell_price > current.sell_price) ? prev : current
-                    );
-                    $stockSelect.val(highestPriceStock.id);
-                }
-
-                $stockSelect.trigger('change');
-            })
-            .fail(function() {
-                alert('Error loading product details');
-            });
-    }
-
-    function formatProductOption(option) {
-        if (!option.id) return option.text;
-        let img = $(option.element).data("image") || '';
-        return `<span><img src="${img}"> ${option.text}</span>`;
-    }
-
-    function formatProductSelection(option) {
-        if (!option.id) return option.text;
-        let img = $(option.element).data("image") || '';
-        return `<span><img src="${img}"> ${option.text}</span>`;
-    }
-
-    // Product selection change
-    $(document).on("change", ".product-select", function(){
-        let $row = $(this).closest(".order-item-entry");
-        let productId = $(this).val();
-
-        if (productId) {
-            loadProductStocks($row, productId);
+    // Vendor search functionality
+    $('#vendor_search').on('input', function() {
+        const query = $(this).val().trim();
+        if (query.length >= 2) {
+            searchVendors(query);
         } else {
-            $row.find(".stock-select").html('<option value="">Select Stock</option>');
-            $row.find(".available-stock").text('');
+            $('#vendor_dropdown').hide();
         }
     });
 
-    // Stock selection change
-    $(document).on("change", ".stock-select", function(){
-        let $row = $(this).closest(".order-item-entry");
-        let $sellPrice = $row.find(".sell-price");
-        let $quantity = $row.find(".quantity");
-        let selectedOption = $(this).find('option:selected');
+    // Event delegation for remove buttons
+    $(document).on('click', '.remove-item-btn', function() {
+        removeOrderItem(this);
+    });
 
-        if (selectedOption.val()) {
-            let price = selectedOption.data('price');
-            let available = selectedOption.data('available');
+    // Event delegation for quantity buttons
+    $(document).on('click', '.quantity-decrease', function() {
+        changeQuantity(this, -1);
+    });
 
-            // Update price only if it's not manually set
-            if (!$sellPrice.data('manual-price')) {
-                $sellPrice.val(price);
-            }
+    $(document).on('click', '.quantity-increase', function() {
+        changeQuantity(this, 1);
+    });
 
-            $quantity.attr('max', available);
-
-            // Update quantity if it exceeds available
-            if (parseInt($quantity.val()) > available) {
-                $quantity.val(available);
-            }
-        } else {
-            $quantity.removeAttr('max');
+    // Hide dropdown when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.vendor-search-box').length) {
+            $('#vendor_dropdown').hide();
         }
+        if (!$(e.target).closest('.product-search-box').length) {
+            $('.product-dropdown').hide();
+        }
+    });
+});
 
-        calculateItemTotal($row);
+function loadProducts() {
+    $.get('{{ route("orders.getProductDetails") }}', {product_id: 'all'})
+        .done(function(data) {
+            availableProducts = data.products || [];
+            console.log('Products loaded:', availableProducts.length);
+        })
+        .fail(function(xhr, status, error) {
+            console.error('Failed to load products:', error);
+            availableProducts = [];
+        });
+}
+
+function loadExistingOrderItems() {
+    // Load existing order items
+    existingOrderItems.forEach(function(item, index) {
+        addOrderItem(item);
     });
 
-    // Mark price as manually set when edited
-    $(document).on("input", ".sell-price", function(){
-        $(this).data('manual-price', true);
-        let $row = $(this).closest(".order-item-entry");
-        calculateItemTotal($row);
-    });
-
-    // Calculate item total
-    function calculateItemTotal($row) {
-        let sellPrice = parseFloat($row.find(".sell-price").val()) || 0;
-        let quantity = parseInt($row.find(".quantity").val()) || 0;
-        let discount = parseFloat($row.find(".discount-price").val()) || 0;
-
-        let total = (sellPrice * quantity) - discount;
-        $row.find(".item-total").text(total.toFixed(2));
-
-        updateOrderSummary();
+    // If no existing items, add one empty item
+    if (existingOrderItems.length === 0) {
+        addOrderItem();
     }
 
-    // Update order summary
-    function updateOrderSummary() {
-        let totalItems = 0;
-        let subtotal = 0;
-        let totalDiscount = 0;
-
-        $("#repeater .items").each(function() {
-            let quantity = parseInt($(this).find(".quantity").val()) || 0;
-            let sellPrice = parseFloat($(this).find(".sell-price").val()) || 0;
-            let discount = parseFloat($(this).find(".discount-price").val()) || 0;
-
-            totalItems += quantity;
-            subtotal += (sellPrice * quantity);
-            totalDiscount += discount;
-        });
-
-        let netTotal = subtotal - totalDiscount;
-
-        $("#totalItems").text(totalItems);
-        $("#subtotal").text(subtotal.toFixed(2));
-        $("#totalDiscount").text(totalDiscount.toFixed(2));
-        $("#netTotal").text(netTotal.toFixed(2));
-    }
-
-    // Calculate total on input change
-    $(document).on("input", ".quantity, .discount-price", function(){
-        let $row = $(this).closest(".order-item-entry");
-        calculateItemTotal($row);
-    });
-
-    // Add/Remove row
-    $(document).on("click", ".repeater-add-btn, .remove-btn", function(){
-        setTimeout(function(){
-            updateRepeater();
-            updateOrderSummary();
-        }, 100);
-    });
-
-    // Form validation
-    $("#orderForm").on("submit", function(e) {
-        let hasItems = false;
-
-        $("#repeater .items").each(function() {
-            let productId = $(this).find(".product-select").val();
-            let stockId = $(this).find(".stock-select").val();
-            let quantity = $(this).find(".quantity").val();
-
-            if (productId && stockId && quantity) {
-                hasItems = true;
-            }
-        });
-
-        if (!hasItems) {
-            e.preventDefault();
-            alert('Please add at least one valid order item.');
-            return false;
-        }
-
-        // Validate stock availability
-        let isValid = true;
-        $("#repeater .items").each(function() {
-            let $quantity = $(this).find(".quantity");
-            let max = parseInt($quantity.attr('max'));
-            let val = parseInt($quantity.val());
-
-            if (max && val > max) {
-                isValid = false;
-                $quantity.addClass('is-invalid');
-            } else {
-                $quantity.removeClass('is-invalid');
-            }
-        });
-
-        if (!isValid) {
-            e.preventDefault();
-            alert('Please check quantity limits for all items.');
-            return false;
-        }
-    });
-
-    // Initial calls
-    updateRepeater();
+    // Initial update to make sure everything is calculated correctly
     updateOrderSummary();
+    updateSubmitButton();
+}
+
+function searchVendors(query) {
+    $.get('{{ route("orders.searchVendors") }}', {query: query})
+        .done(function(vendors) {
+            let html = '';
+            vendors.forEach(function(vendor) {
+                html += `
+                    <div class="vendor-option" onclick="selectVendor(${vendor.id}, '${vendor.shop_name}', '${vendor.mobile}', '${vendor.full_address}')">
+                        <strong>${vendor.shop_name || 'N/A'}</strong>
+                        <div class="vendor-info">
+                            Mobile: ${vendor.mobile || 'N/A'} | Contact: ${vendor.contact_person || 'N/A'}<br>
+                            Address: ${vendor.full_address || 'N/A'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            $('#vendor_dropdown').html(html).show();
+        })
+        .fail(function() {
+            $('#vendor_dropdown').html('<div class="vendor-option">Error loading vendors</div>').show();
+        });
+}
+
+function selectVendor(id, name, mobile, address) {
+    $('#selected_vendor_id').val(id);
+    $('#vendor_search').val(name);
+    $('#vendor_display_name').text(name);
+    $('#vendor_display_mobile').text(mobile || 'N/A');
+    $('#vendor_display_address').text(address || 'N/A');
+    $('#selected_vendor_info').show();
+    $('#vendor_dropdown').hide();
+    updateSubmitButton();
+}
+
+function addOrderItem(existingItem = null) {
+    const template = document.getElementById('order_item_template');
+    const clone = template.content.cloneNode(true);
+
+    // Set unique index
+    const orderItem = clone.querySelector('.order-item-card');
+    orderItem.setAttribute('data-index', orderItemIndex);
+
+    // Update input names with correct index
+    clone.querySelectorAll('input[name]').forEach(input => {
+        const name = input.getAttribute('name');
+        input.setAttribute('name', name.replace('[]', `[${orderItemIndex}]`));
+    });
+
+    // If existing item data provided, populate fields
+    if (existingItem) {
+        // Set product search field
+        const productSearch = clone.querySelector('.product-search');
+        productSearch.value = existingItem.product ? existingItem.product.name : '';
+
+        // Set hidden product ID
+        const productIdInput = clone.querySelector('.product-id');
+        productIdInput.value = existingItem.product_id;
+
+        // Set sell price
+        const sellPriceInput = clone.querySelector('.sell-price');
+        sellPriceInput.value = existingItem.sell_price;
+        sellPriceInput.removeAttribute('readonly'); // Allow editing for existing items
+
+        // Set quantity
+        const quantityInput = clone.querySelector('.quantity-input');
+        quantityInput.value = existingItem.quantity;
+
+        // Set discount
+        const discountInput = clone.querySelector('.discount-price');
+        discountInput.value = existingItem.discount_price || 0;
+
+        // Calculate and display item total
+        const itemTotal = clone.querySelector('.item-total');
+        const total = (existingItem.sell_price * existingItem.quantity) - (existingItem.discount_price || 0);
+        itemTotal.value = `৳${total.toFixed(2)}`;
+    }
+
+    document.getElementById('order_items_container').appendChild(clone);
+
+    // Add event listeners
+    const container = document.querySelector(`[data-index="${orderItemIndex}"]`);
+    setupProductSearch(container);
+    setupPriceCalculation(container);
+
+    // If existing item, load product details for stock info
+    if (existingItem) {
+        loadProductDetailsForExisting(container, existingItem.product_id);
+    }
+
+    orderItemIndex++;
+    updateOrderSummary();
+}
+
+function loadProductDetailsForExisting(container, productId) {
+    $.get('{{ route("orders.getProductDetails") }}', {product_id: productId})
+        .done(function(data) {
+            const stockInfo = container.querySelector('.available-stock-info');
+            stockInfo.innerHTML = `Available: ${data.available_quantity} units`;
+        })
+        .fail(function() {
+            const stockInfo = container.querySelector('.available-stock-info');
+            stockInfo.innerHTML = 'Error loading stock info';
+        });
+}
+
+function removeOrderItem(button) {
+    console.log('Remove button clicked'); // Debug log
+    try {
+        const orderItem = button.closest('.order-item-card');
+        console.log('Found order item:', orderItem); // Debug log
+        if (orderItem) {
+            orderItem.remove();
+            updateOrderSummary();
+            updateSubmitButton();
+
+            // If no items left, add one
+            if (document.querySelectorAll('.order-item-card').length === 0) {
+                addOrderItem();
+            }
+            console.log('Order item removed successfully'); // Debug log
+        }
+    } catch (error) {
+        console.error('Error removing order item:', error);
+    }
+}
+
+function setupProductSearch(container) {
+    const searchInput = container.querySelector('.product-search');
+    const dropdown = container.querySelector('.product-dropdown');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+
+        // Clear previous timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+
+        if (query.length >= 2) {
+            // Debounce search to prevent too many calls
+            searchTimeout = setTimeout(() => {
+                const filteredProducts = availableProducts.filter(product =>
+                    product.name.toLowerCase().includes(query)
+                );
+
+                let html = '';
+                filteredProducts.slice(0, 10).forEach(product => { // Limit to 10 results
+                    const imageUrl = product.image_url && product.image_url !== '' ? product.image_url : '/assets/images/default-product.png';
+                    const productName = product.name.replace(/'/g, "&apos;");
+                    html += `
+                        <div class="product-option" data-product-id="${product.id}" data-product-name="${productName}">
+                            <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='/assets/images/default-product.png'">
+                            <div class="product-info">
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-details">
+                                     Stock: ${product.available_quantity || 0}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                dropdown.innerHTML = html;
+                dropdown.style.display = html ? 'block' : 'none';
+
+                // Add click event listeners to options
+                dropdown.querySelectorAll('.product-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const productId = this.dataset.productId;
+                        const productName = this.dataset.productName;
+                        selectProduct(productId, productName, this);
+                    });
+                });
+            }, 300); // 300ms delay
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+}
+
+function selectProduct(productId, productName, element) {
+    const container = element.closest('.order-item-card');
+    const searchInput = container.querySelector('.product-search');
+    const productIdInput = container.querySelector('.product-id');
+    const sellPriceInput = container.querySelector('.sell-price');
+    const stockInfo = container.querySelector('.available-stock-info');
+
+    // Set values
+    searchInput.value = productName;
+    productIdInput.value = productId;
+
+    // Hide dropdown
+    container.querySelector('.product-dropdown').style.display = 'none';
+
+    // Get product details and highest sell price
+    $.get('{{ route("orders.getProductDetails") }}', {product_id: productId})
+        .done(function(data) {
+            sellPriceInput.value = data.highest_sell_price || 0;
+            sellPriceInput.removeAttribute('readonly'); // Allow editing
+            stockInfo.innerHTML = `Available: ${data.available_quantity} units`;
+            updateItemTotal(container);
+            updateSubmitButton();
+        })
+        .fail(function() {
+            stockInfo.innerHTML = 'Error loading stock info';
+        });
+}
+
+function changeQuantity(button, change) {
+    const container = button.closest('.order-item-card');
+    const quantityInput = container.querySelector('.quantity-input');
+    let currentValue = parseInt(quantityInput.value) || 1;
+    let newValue = Math.max(1, currentValue + change);
+    quantityInput.value = newValue;
+
+    updateItemTotal(container);
+}
+
+function setupPriceCalculation(container) {
+    const inputs = container.querySelectorAll('.quantity-input, .sell-price, .discount-price');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            updateItemTotal(container);
+        });
+    });
+}
+
+function updateItemTotal(container) {
+    const quantity = parseFloat(container.querySelector('.quantity-input').value) || 0;
+    const sellPrice = parseFloat(container.querySelector('.sell-price').value) || 0;
+    const discount = parseFloat(container.querySelector('.discount-price').value) || 0;
+
+    const total = (quantity * sellPrice) - discount;
+    container.querySelector('.item-total').value = `৳${total.toFixed(2)}`;
+
+    updateOrderSummary();
+}
+
+function updateOrderSummary() {
+    let totalItems = 0;
+    let totalQuantity = 0;
+    let subtotal = 0;
+    let totalDiscount = 0;
+
+    document.querySelectorAll('.order-item-card').forEach(container => {
+        const quantity = parseFloat(container.querySelector('.quantity-input').value) || 0;
+        const sellPrice = parseFloat(container.querySelector('.sell-price').value) || 0;
+        const discount = parseFloat(container.querySelector('.discount-price').value) || 0;
+        const productId = container.querySelector('.product-id').value;
+
+        if (productId && quantity > 0 && sellPrice > 0) {
+            totalItems++;
+            totalQuantity += quantity;
+            subtotal += quantity * sellPrice;
+            totalDiscount += discount;
+        }
+    });
+
+    const totalAmount = subtotal - totalDiscount;
+
+    document.getElementById('total_items').textContent = totalItems;
+    document.getElementById('total_quantity').textContent = totalQuantity;
+    document.getElementById('subtotal').textContent = `৳${subtotal.toFixed(2)}`;
+    document.getElementById('total_discount').textContent = `৳${totalDiscount.toFixed(2)}`;
+    document.getElementById('total_amount').textContent = `৳${totalAmount.toFixed(2)}`;
+}
+
+function updateSubmitButton() {
+    const vendorSelected = document.getElementById('selected_vendor_id').value;
+    const hasValidItems = document.querySelectorAll('.order-item-card .product-id[value!=""]').length > 0;
+
+    document.getElementById('submit_order_btn').disabled = !(vendorSelected && hasValidItems);
+}
+
+// Form submission
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit_order_btn');
+    const vendorSelected = document.getElementById('selected_vendor_id').value;
+    const orderItems = document.querySelectorAll('.order-item-card');
+
+    // Validate order items
+    let hasValidItems = false;
+    let validationErrors = [];
+
+    orderItems.forEach((item, index) => {
+        const productId = item.querySelector('.product-id').value;
+        const quantity = parseFloat(item.querySelector('.quantity-input').value) || 0;
+        const sellPrice = parseFloat(item.querySelector('.sell-price').value) || 0;
+
+        if (productId && quantity > 0 && sellPrice > 0) {
+            hasValidItems = true;
+        } else if (productId || quantity > 0 || sellPrice > 0) {
+            // Partially filled item
+            validationErrors.push(`Item ${index + 1}: Please complete all required fields`);
+        }
+    });
+
+    if (!hasValidItems) {
+        e.preventDefault();
+        alert('Please add at least one valid product to the order');
+        return false;
+    }
+
+    if (validationErrors.length > 0) {
+        e.preventDefault();
+        alert('Validation errors:\n' + validationErrors.join('\n'));
+        return false;
+    }
+
+    // Disable submit button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Updating Order...';
+
+    // Allow form submission to proceed
+    return true;
 });
 </script>
 @endpush

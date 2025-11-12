@@ -55,7 +55,7 @@ class Order extends Model
      */
     public function generateInvoiceId()
     {
-        $datePart = now()->format('d-m-y'); 
+        $datePart = now()->format('d-m-y');
         $randomDigits = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $lastId = static::max('id') ?? 0;
         $nextId = $lastId + 1;
@@ -120,7 +120,7 @@ class Order extends Model
      */
     public function getNetAmountAttribute()
     {
-        return $this->total_amount - $this->total_discount_amount;
+        return $this->total_amount ;
     }
 
     /**
@@ -128,9 +128,12 @@ class Order extends Model
      */
     public function getTotalProfitAttribute()
     {
+
         return $this->orderItems->sum(function ($item) {
-            return ($item->sell_price - $item->purchase_price) * $item->quantity;
+        return $item->orderItemStocks->sum(function ($stock) {
+            return ($stock->actual_profit ?? 0) - ($stock->discount_amount ?? 0);
         });
+    });
     }
 
     /**
@@ -197,8 +200,13 @@ class Order extends Model
      */
     public function canBeCancelled()
     {
-        return $this->orderStatus &&
-               !in_array(strtolower($this->orderStatus->name), ['completed', 'delivered', 'cancelled']);
+        // return $this->orderStatus &&
+        //        !in_array(strtolower($this->orderStatus->name), ['delivered', 'shipped', 'cancelled']);
+
+         $statusName = strtolower(optional($this->orderStatus)->name);
+
+        return $this->payment_status == 0
+            && !in_array($statusName, ['delivered', 'shipped', 'cancelled']);
     }
 
     /**
@@ -210,18 +218,20 @@ class Order extends Model
             return false;
         }
 
-        // Restore stock quantities
+        // Restore stock quantities from order item stocks
         foreach ($this->orderItems as $item) {
-            $stock = Stock::find($item->stock_id);
-            if ($stock) {
-                // Reduce transfer quantity to restore availability
-                $stock->transfer_quantity = max(0, $stock->transfer_quantity - $item->quantity);
-                $stock->save();
+            foreach ($item->orderItemStocks as $orderItemStock) {
+                $stock = $orderItemStock->stock;
+                if ($stock) {
+                    // Reduce frozen quantity to restore availability
+                    $stock->froze_quantity = max(0, $stock->froze_quantity - $orderItemStock->quantity);
+                    $stock->save();
+                }
             }
         }
 
         // Update order status to cancelled
-        $cancelledStatus = OrderStatus::where('name', 'Cancelled')->first();
+        $cancelledStatus = OrderStatus::where('name', 'cancelled')->first();
         if ($cancelledStatus) {
             $this->order_status_id = $cancelledStatus->id;
             $this->save();

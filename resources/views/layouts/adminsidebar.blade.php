@@ -136,8 +136,8 @@
                 </li>
 
                 <!-- Financial Section -->
-                <li class="nav-item {{ request()->is('admin/payment-collection/*') || request()->is('admin/invoice/*') || request()->is('admin/payment-method/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/invoice/*') || request()->is('admin/payment-method/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/payment-collection/*') || request()->is('admin/invoice/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/invoice/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-finance"></i>
                         <p>
                             Financial
@@ -161,6 +161,18 @@
                             <a href="{{ route('admin.paymentMethodIndex') }}" class="nav-link {{ request()->is('admin/payment-method/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-credit-card"></i>
                                 <p>Payment Methods</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.expenseHeadIndex') }}" class="nav-link {{ request()->is('admin/expense-head/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-format-list-text"></i>
+                                <p>Expense Heads</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.expenseListIndex') }}" class="nav-link {{ request()->is('admin/expense-list/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-currency-usd"></i>
+                                <p>Expense Lists</p>
                             </a>
                         </li>
                     </ul>

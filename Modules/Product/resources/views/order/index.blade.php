@@ -12,27 +12,27 @@
         margin-bottom: 20px;
         display: none;
     }
-    
+
     .bulk-actions.show {
         display: block;
     }
-    
+
     .order-checkbox {
         transform: scale(1.2);
         margin-right: 10px;
     }
-    
+
     .status-badge {
         font-size: 0.8rem;
         padding: 0.25rem 0.5rem;
     }
-    
+
     .table-responsive {
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    
+
     .summary-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -40,27 +40,27 @@
         padding: 20px;
         margin-bottom: 20px;
     }
-    
+
     .summary-card .number {
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 5px;
     }
-    
+
     .summary-card .label {
         font-size: 0.9rem;
         opacity: 0.9;
     }
-    
+
     @media (max-width: 768px) {
         .table-responsive {
             font-size: 0.85rem;
         }
-        
+
         .bulk-actions {
             padding: 10px;
         }
-        
+
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -122,7 +122,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Invoice Search</label>
-                        <input type="text" name="invoice_search" class="form-control" 
+                        <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
                     </div>
                     <div class="col-md-2">
@@ -130,7 +130,7 @@
                         <select name="status_filter" class="form-select">
                             <option value="">All Status</option>
                             @foreach($orderStatuses as $status)
-                                <option value="{{ $status->id }}" 
+                                <option value="{{ $status->id }}"
                                     {{ request('status_filter') == $status->id ? 'selected' : '' }}>
                                     {{ $status->name }}
                                 </option>
@@ -142,7 +142,7 @@
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
                             @foreach($vendors as $vendor)
-                                <option value="{{ $vendor->id }}" 
+                                <option value="{{ $vendor->id }}"
                                     {{ request('vendor_filter') == $vendor->id ? 'selected' : '' }}>
                                     {{ $vendor->shop_name }}
                                 </option>
@@ -166,8 +166,8 @@
                         <a href="{{ route('orders.index') }}" class="btn btn-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
                         </a>
-                        <a href="{{ route('orders.create') }}" class="btn btn-success float-end">
-                            <i class="mdi mdi-plus"></i> Create New Order
+                        <a href="{{ route('orders.create') }}" class="btn btn-outline-success float-end mt-2">
+                            <i class="mdi mdi-plus"></i> Create Order
                         </a>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped">
-                    <thead class="table-dark">
+                    <thead class="table-light">
                         <tr>
                             <th>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
@@ -224,7 +224,7 @@
                         @forelse($orders as $order)
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="form-check-input order-checkbox" 
+                                    <input type="checkbox" class="form-check-input order-checkbox"
                                            value="{{ $order->id }}" onchange="updateBulkSelection()">
                                 </td>
                                 <td>
@@ -270,16 +270,16 @@
                                             </a>
                                         @endif
                                         @if(in_array($order->order_status_id, [4, 5])) <!-- Shipped or Delivered -->
-                                            <button type="button" class="btn btn-outline-success" title="Generate Invoice" 
+                                            <button type="button" class="btn btn-outline-primary" title="Generate Invoice"
                                                     onclick="generateInvoice({{ $order->id }})">
-                                                <i class="mdi mdi-file-pdf"></i>
+                                                <i class="mdi mdi-invoice"></i>
                                             </button>
                                         @endif
                                         @if($order->canBeCancelled())
-                                            <button type="button" class="btn btn-outline-danger" title="Cancel" 
-                                                    onclick="cancelOrder({{ $order->id }})">
-                                                <i class="mdi mdi-close"></i>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-url="{{ route('orders.cancel', $order->id) }}">
+                                                        <span class="mdi mdi-cancel"></span>
                                             </button>
+
                                         @endif
                                     </div>
                                 </td>
@@ -292,10 +292,11 @@
                                 </td>
                             </tr>
                         @endforelse
+                        @include('components.delete')
                     </tbody>
                 </table>
             </div>
-            
+
             @if($orders->hasPages())
                 <div class="mt-3">
                     {{ $orders->links() }}
@@ -316,19 +317,19 @@ function updateBulkSelection() {
     document.querySelectorAll('.order-checkbox:checked').forEach(checkbox => {
         selectedOrders.push(checkbox.value);
     });
-    
+
     document.getElementById('selectedCount').textContent = selectedOrders.length;
-    
+
     if (selectedOrders.length > 0) {
         document.getElementById('bulkActions').classList.add('show');
     } else {
         document.getElementById('bulkActions').classList.remove('show');
     }
-    
+
     // Update select all checkbox
     const totalCheckboxes = document.querySelectorAll('.order-checkbox').length;
     const selectAllCheckbox = document.getElementById('selectAll');
-    
+
     if (selectedOrders.length === 0) {
         selectAllCheckbox.indeterminate = false;
         selectAllCheckbox.checked = false;
@@ -358,27 +359,27 @@ function clearSelection() {
 
 function updateBulkStatus() {
     const statusId = document.getElementById('bulkStatusSelect').value;
-    
+
     if (!statusId) {
         alert('Please select a status');
         return;
     }
-    
+
     if (selectedOrders.length === 0) {
         alert('Please select orders to update');
         return;
     }
-    
-    if (!confirm(`Are you sure you want to update ${selectedOrders.length} order(s) status?`)) {
-        return;
-    }
-    
+
+    // if (!confirm(`Are you sure you want to update ${selectedOrders.length} order(s) status?`)) {
+    //     return;
+    // }
+
     // Show loading
     const button = event.target;
     const originalText = button.innerHTML;
     button.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Updating...';
     button.disabled = true;
-    
+
     fetch('{{ route("orders.bulkUpdateStatus") }}', {
         method: 'POST',
         headers: {
@@ -393,8 +394,11 @@ function updateBulkStatus() {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            alert(data.message);
-            location.reload();
+            // alert(data.message);
+             toastr.success(data.message, '', { timeOut: 1500 });
+                setTimeout(() => {
+                    location.reload();
+                }, 1600);
         } else {
             alert(data.error || 'An error occurred');
         }
@@ -413,23 +417,23 @@ function cancelOrder(orderId) {
     if (!confirm('Are you sure you want to cancel this order?')) {
         return;
     }
-    
+
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = `/admin/order/${orderId}/cancel`;
-    
+
     const csrfToken = document.createElement('input');
     csrfToken.type = 'hidden';
     csrfToken.name = '_token';
     csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+
     form.appendChild(csrfToken);
     document.body.appendChild(form);
     form.submit();
 }
 
 function generateInvoice(orderId) {
-    window.open(`/admin/order/${orderId}/invoice`, '_blank');
+    window.open(`/admin/invoice/${orderId}/generate`, '_blank');
 }
 
 // Initialize

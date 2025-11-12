@@ -13,6 +13,8 @@ use Modules\Product\Http\Controllers\PaymentMethodController;
 use Modules\Product\Http\Controllers\PaymentCollectionController;
 use Modules\Product\Http\Controllers\InvoiceController;
 use Modules\Product\Http\Controllers\DamageReturnLostController;
+use Modules\Product\Http\Controllers\ExpenseHeadController;
+use Modules\Product\Http\Controllers\ExpenseListController;
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -102,7 +104,7 @@ Route::prefix('admin')->group(function () {
             Route::delete('payment-method/{paymentMethod}/delete', 'destroy')->name('admin.paymentMethodDestroy');
         });
 
-        
+
 
         // Invoice routes
         Route::controller(InvoiceController::class)->group(function () {
@@ -131,11 +133,30 @@ Route::prefix('admin')->group(function () {
             Route::get('damage-return-lost/create', 'create')->name('damage-return-lost.create');
             Route::post('damage-return-lost/store', 'store')->name('damage-return-lost.store');
             Route::get('damage-return-lost/{damageReturnLost}', 'show')->name('damage-return-lost.show');
-            Route::get('damage-return-lost/{damageReturnLost}/edit', 'edit')->name('damage-return-lost.edit');
-            Route::put('damage-return-lost/{damageReturnLost}', 'update')->name('damage-return-lost.update');
             Route::delete('damage-return-lost/{damageReturnLost}', 'destroy')->name('damage-return-lost.destroy');
             Route::get('damage-return-lost-search/orders', 'searchOrders')->name('damage-return-lost.searchOrders');
             Route::get('damage-return-lost-search/order-items', 'getOrderItems')->name('damage-return-lost.getOrderItems');
+            Route::get('damage-return-lost/test', 'test')->name('damage-return-lost.test');
+        });
+
+        // Expense Head routes
+        Route::controller(ExpenseHeadController::class)->group(function () {
+            Route::get('expense-head/index', 'index')->name('admin.expenseHeadIndex');
+            Route::get('expense-head/create', 'create')->name('admin.expenseHeadCreate');
+            Route::post('expense-head/store', 'store')->name('admin.expenseHeadStore');
+            Route::get('expense-head/{expenseHead}/edit', 'edit')->name('admin.expenseHeadEdit');
+            Route::put('expense-head/{expenseHead}/update', 'update')->name('admin.expenseHeadUpdate');
+            Route::delete('expense-head/{expenseHead}/delete', 'destroy')->name('admin.expenseHeadDestroy');
+        });
+
+        // Expense List routes
+        Route::controller(ExpenseListController::class)->group(function () {
+            Route::get('expense-list/index', 'index')->name('admin.expenseListIndex');
+            Route::get('expense-list/create', 'create')->name('admin.expenseListCreate');
+            Route::post('expense-list/store', 'store')->name('admin.expenseListStore');
+            Route::get('expense-list/{expenseList}/edit', 'edit')->name('admin.expenseListEdit');
+            Route::put('expense-list/{expenseList}/update', 'update')->name('admin.expenseListUpdate');
+            Route::delete('expense-list/{expenseList}/delete', 'destroy')->name('admin.expenseListDestroy');
         });
 
         // Order routes
@@ -146,7 +167,7 @@ Route::prefix('admin')->group(function () {
             Route::get('order/{order}/show', 'show')->name('orders.show');
             Route::get('order/{order}/edit', 'edit')->name('orders.edit');
             Route::put('order/{order}/update', 'update')->name('orders.update');
-            Route::post('order/{order}/cancel', 'cancel')->name('orders.cancel');
+            Route::delete('order/{order}/cancel', 'cancel')->name('orders.cancel');
             Route::get('order/cancelled', 'cancelled')->name('orders.cancelled');
 
             // AJAX routes for product and stock details
