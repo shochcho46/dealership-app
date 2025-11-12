@@ -220,7 +220,7 @@ class DamageReturnLostController extends Controller
             $order->save();
 
             // Update vendor account (add back the amount)
-            $vendorAccount = \Modules\Product\Models\VendorAccount::where('order_id', $order->id)
+            $vendorAccount = VendorAccount::where('order_id', $order->id)
                                                                   ->where('type', 1)
                                                                   ->first();
 
@@ -349,6 +349,7 @@ class DamageReturnLostController extends Controller
                 switch ($type) {
                     case 'damage':
                         $stock->damage_quantity += $quantityToProcess;
+                        $stock->sold_quantity = max(0, $stock->sold_quantity - $quantityToProcess);
                         break;
                     case 'return':
                         // For returns, decrease sold_quantity as requested
@@ -356,6 +357,7 @@ class DamageReturnLostController extends Controller
                         break;
                     case 'lost':
                         $stock->stolen_quantity += $quantityToProcess; // Using stolen_quantity for lost items
+                        $stock->sold_quantity = max(0, $stock->sold_quantity - $quantityToProcess);
                         break;
                 }
                 $stock->save();
@@ -504,6 +506,7 @@ class DamageReturnLostController extends Controller
                 switch ($type) {
                     case 'damage':
                         $stock->damage_quantity = max(0, $stock->damage_quantity - $quantityToReverse);
+                        $stock->sold_quantity += $quantityToReverse;
                         break;
                     case 'return':
                         // For returns, increase sold_quantity back
@@ -511,6 +514,7 @@ class DamageReturnLostController extends Controller
                         break;
                     case 'lost':
                         $stock->stolen_quantity = max(0, $stock->stolen_quantity - $quantityToReverse);
+                        $stock->sold_quantity += $quantityToReverse;
                         break;
                 }
 
