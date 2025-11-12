@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 06, 2025 at 03:47 PM
+-- Generation Time: Nov 12, 2025 at 09:19 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -397,6 +397,40 @@ CREATE TABLE `education_types` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `expense_heads`
+--
+
+CREATE TABLE `expense_heads` (
+  `id` bigint UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `max_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense_lists`
+--
+
+CREATE TABLE `expense_lists` (
+  `id` bigint UNSIGNED NOT NULL,
+  `expense_head_id` bigint UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `amount` decimal(15,2) NOT NULL,
+  `expense_date` date NOT NULL,
+  `reference_no` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `failed_jobs`
 --
 
@@ -665,7 +699,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (50, '2025_10_22_100000_add_created_by_and_deposite_by_to_vendor_accounts_table', 13),
 (51, '2025_10_22_100001_add_paid_amount_to_orders_table', 14),
 (52, '2025_10_25_150752_add_new_column_to_damage_return_losts_table', 15),
-(53, '2025_10_25_185243_add_reason_to_damage_return_losts_table', 16);
+(53, '2025_10_25_185243_add_reason_to_damage_return_losts_table', 16),
+(54, '2025_11_11_200358_create_expense_heads_table', 17),
+(55, '2025_11_11_200430_create_expense_lists_table', 17);
 
 -- --------------------------------------------------------
 
@@ -799,7 +835,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `invoice_id`, `admin_id`, `total_amount`, `paid_amount`, `total_quantity`, `total_discount_amount`, `total_return_quantity`, `order_status_id`, `payment_status`, `total_damage_quantity`, `total_lost_quantity`, `vendor_id`, `created_at`, `updated_at`) VALUES
-(1, 'SSE-25-10-25-3830-1', 1, 132.00, 0.00, 15, 2.00, 0, 5, 0, 0, 0, 2, '2025-10-25 15:38:35', '2025-11-01 19:54:43');
+(1, 'SSE-25-10-25-3830-1', 1, 132.00, 0.00, 15, 2.00, 0, 5, 0, 0, 0, 2, '2025-10-25 15:38:35', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -829,7 +865,7 @@ CREATE TABLE `order_items` (
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `purchase_price`, `sell_price`, `total_price`, `discount_price`, `return_quantity`, `damage_quantity`, `lost_quantity`, `created_at`, `updated_at`) VALUES
 (3, 1, 2, 7, 8.71, 10.00, 68.00, 2.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
-(4, 1, 1, 8, 6.63, 8.00, 64.00, 0.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-01 19:54:43');
+(4, 1, 1, 8, 6.63, 8.00, 64.00, 0.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -861,7 +897,7 @@ CREATE TABLE `order_item_stocks` (
 INSERT INTO `order_item_stocks` (`id`, `orderitem_id`, `stock_id`, `quantity`, `purchase_price`, `sell_price`, `total_price`, `discount_amount`, `actual_profit`, `return_quantity`, `damage_quantity`, `lost_quantity`, `created_at`, `updated_at`) VALUES
 (5, 3, 2, 5, 9.00, 10.00, 50.00, 1.43, 5.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
 (6, 3, 1, 2, 8.00, 10.00, 20.00, 0.57, 4.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06'),
-(7, 4, 3, 5, 7.00, 8.00, 40.00, 0.00, 5.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-01 19:54:43'),
+(7, 4, 3, 5, 7.00, 8.00, 40.00, 0.00, 5.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37'),
 (8, 4, 4, 3, 6.00, 8.00, 24.00, 0.00, 6.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06');
 
 -- --------------------------------------------------------
@@ -1059,9 +1095,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('qEtKixjZ0dJXa55cXsAiBQHR5yn2EMeBTg6oaHJV', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiS1UwSlY1OXBDUmxudXZmMnlFeHZ1UHIyWlZFeW1zUTd1dDYzSzNRVSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0MDoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL29yZGVyL2NyZWF0ZSI7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjUyOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGF5bWVudC1jb2xsZWN0aW9uL2luZGV4IjtzOjU6InJvdXRlIjtzOjI1OiJwYXltZW50LWNvbGxlY3Rpb25zLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MjoibG9naW5fYWRtaW5fNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1761512859),
-('vFpvHEa4mNLItqe1VpVJBw2f9Zlq6LGZyL4Y1xZv', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZ0JRNDdkMG5OQWNNRk1TejBLTEJ6QzVERmlPbXV6bzJQWVRZZ1QzdSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9pbnZvaWNlLzEvcHJldmlldyI7czo1OiJyb3V0ZSI7czoxNjoiaW52b2ljZXMucHJldmlldyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTI6ImxvZ2luX2FkbWluXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1762051147),
-('yL6PE8SG0B0iopF5XHkt5GETeJga9nLnPiGK1Wlz', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQ0FjSWlJY245Z2F3NENPNWVkQ1FjRTFScEtrUDBzY0FRRkJGRGdhbiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYW1hZ2UtcmV0dXJuLWxvc3QvaW5kZXgiO3M6NToicm91dGUiO3M6MjQ6ImRhbWFnZS1yZXR1cm4tbG9zdC5pbmRleCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTI6ImxvZ2luX2FkbWluXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1761516878);
+('KoH35XQqfdX8UPq3v5VluS6JQqNplEWxL7hUfrau', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoib01VbVEyTWdDbmZ5SmFUNWlQRjhSc0NhMFdOUFd1OXVjeGxrOUdIcCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi92ZW5kb3IvaW5kZXgiO3M6NToicm91dGUiO3M6MTc6ImFkbWluLnZlbmRvckluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MjoibG9naW5fYWRtaW5fNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1762890852);
 
 -- --------------------------------------------------------
 
@@ -1095,7 +1129,7 @@ CREATE TABLE `stocks` (
 INSERT INTO `stocks` (`id`, `product_id`, `warehouse_id`, `batch_id`, `purchase_price`, `quantity`, `total_price`, `sell_price`, `damage_quantity`, `sold_quantity`, `stolen_quantity`, `transfer_quantity`, `froze_quantity`, `status`, `created_at`, `updated_at`) VALUES
 (1, 2, 1, 'B-20251025213413', 8.00, 6, 48.00, 9.00, 1, 2, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34'),
 (2, 2, 1, 'B-20251025213413', 9.00, 5, 45.00, 10.00, 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-26 16:14:38'),
-(3, 1, 1, 'B-20251025213413', 7.00, 5, 35.00, 8.00, 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-11-01 19:54:43'),
+(3, 1, 1, 'B-20251025213413', 7.00, 5, 35.00, 8.00, 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-11-11 13:49:37'),
 (4, 1, 1, 'B-20251025213413', 6.00, 5, 30.00, 7.00, 0, 3, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34');
 
 -- --------------------------------------------------------
@@ -1243,7 +1277,7 @@ CREATE TABLE `vendor_accounts` (
 --
 
 INSERT INTO `vendor_accounts` (`id`, `vendor_id`, `order_id`, `payment_method_id`, `amount`, `type`, `note`, `collection_date`, `created_by`, `deposite_by`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, NULL, 132.00, 1, 'Product order - SSE-25-10-25-3830-1 | return adjustment: -৳10.00 on 2025-10-26 21:09:19 | return record deleted: +৳10.00 on 2025-10-26 21:14:31 | return adjustment: -৳8.00 on 2025-10-26 21:35:34 | return adjustment: -৳10.00 on 2025-10-26 21:36:55 | return record deleted: +৳8.00 on 2025-10-26 22:14:22 | return record deleted: +৳10.00 on 2025-10-26 22:14:38 | lost adjustment: -৳16.00 on 2025-11-02 01:42:55 | lost record deleted: +৳16.00 on 2025-11-02 01:46:50 | return adjustment: -৳16.00 on 2025-11-02 01:47:48 | return record deleted: +৳16.00 on 2025-11-02 01:54:43', NULL, 1, 1, '2025-10-25 16:37:34', '2025-11-01 19:54:43');
+(1, 2, 1, NULL, 132.00, 1, 'Product order - SSE-25-10-25-3830-1 | return adjustment: -৳10.00 on 2025-10-26 21:09:19 | return record deleted: +৳10.00 on 2025-10-26 21:14:31 | return adjustment: -৳8.00 on 2025-10-26 21:35:34 | return adjustment: -৳10.00 on 2025-10-26 21:36:55 | return record deleted: +৳8.00 on 2025-10-26 22:14:22 | return record deleted: +৳10.00 on 2025-10-26 22:14:38 | lost adjustment: -৳16.00 on 2025-11-02 01:42:55 | lost record deleted: +৳16.00 on 2025-11-02 01:46:50 | return adjustment: -৳16.00 on 2025-11-02 01:47:48 | return record deleted: +৳16.00 on 2025-11-02 01:54:43 | damage adjustment: -৳16.00 on 2025-11-11 19:39:14 | damage record deleted: +৳16.00 on 2025-11-11 19:41:55 | damage adjustment: -৳8.00 on 2025-11-11 19:49:17 | damage record deleted: +৳8.00 on 2025-11-11 19:49:37', NULL, 1, 1, '2025-10-25 16:37:34', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -1319,6 +1353,20 @@ ALTER TABLE `damage_return_losts`
 --
 ALTER TABLE `education_types`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `expense_heads`
+--
+ALTER TABLE `expense_heads`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `expense_heads_title_unique` (`title`);
+
+--
+-- Indexes for table `expense_lists`
+--
+ALTER TABLE `expense_lists`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `expense_lists_expense_head_id_foreign` (`expense_head_id`);
 
 --
 -- Indexes for table `failed_jobs`
@@ -1587,12 +1635,24 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `damage_return_losts`
 --
 ALTER TABLE `damage_return_losts`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `education_types`
 --
 ALTER TABLE `education_types`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `expense_heads`
+--
+ALTER TABLE `expense_heads`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `expense_lists`
+--
+ALTER TABLE `expense_lists`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -1623,7 +1683,7 @@ ALTER TABLE `media`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `oauth_clients`
@@ -1756,6 +1816,12 @@ ALTER TABLE `damage_return_losts`
   ADD CONSTRAINT `damage_return_losts_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `damage_return_losts_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `damage_return_losts_stock_id_foreign` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `expense_lists`
+--
+ALTER TABLE `expense_lists`
+  ADD CONSTRAINT `expense_lists_expense_head_id_foreign` FOREIGN KEY (`expense_head_id`) REFERENCES `expense_heads` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `model_has_permissions`
