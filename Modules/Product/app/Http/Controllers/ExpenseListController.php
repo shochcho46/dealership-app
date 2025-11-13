@@ -14,8 +14,10 @@ class ExpenseListController extends Controller
      */
     public function index()
     {
+        $expenseHeads = ExpenseHead::active()->get();
         $expenseLists = ExpenseList::with('expenseHead')->latest()->get();
-        return view('product::expense-list.index', compact('expenseLists'));
+
+        return view('product::expense-list.index', compact('expenseLists', 'expenseHeads'));
     }
 
     /**
@@ -54,13 +56,21 @@ class ExpenseListController extends Controller
         ]);
 
         try {
-            // Check if amount exceeds max_amount
+            // Check if amount exceeds max_amount for current month
             $expenseHead = ExpenseHead::find($request->expense_head_id);
-            $totalExpenses = $expenseHead->expenseLists()->sum('amount');
-            $newTotal = $totalExpenses + $request->amount;
+            $expenseDateObj = \Carbon\Carbon::parse($request->expense_date);
+
+            // Get total expenses for the month of the expense_date being added
+            $totalExpensesForMonth = $expenseHead->expenseLists()
+                ->whereYear('expense_date', $expenseDateObj->year)
+                ->whereMonth('expense_date', $expenseDateObj->month)
+                ->sum('amount');
+
+            $newTotal = $totalExpensesForMonth + $request->amount;
+            $remainingAmount = $expenseHead->max_amount - $totalExpensesForMonth;
 
             if ($newTotal > $expenseHead->max_amount) {
-                return back()->with('error', 'Amount exceeds the maximum limit for this expense head. Remaining: ৳' . number_format($expenseHead->max_amount - $totalExpenses, 2))->withInput();
+                return back()->with('error', 'Amount exceeds the maximum limit for this expense head for ' . $expenseDateObj->format('F Y') . '. Remaining: ৳' . number_format($remainingAmount, 2))->withInput();
             }
 
             ExpenseList::create([
@@ -115,13 +125,22 @@ class ExpenseListController extends Controller
         ]);
 
         try {
-            // Check if amount exceeds max_amount
+            // Check if amount exceeds max_amount for current month
             $expenseHead = ExpenseHead::find($request->expense_head_id);
-            $totalExpenses = $expenseHead->expenseLists()->where('id', '!=', $expenseList->id)->sum('amount');
-            $newTotal = $totalExpenses + $request->amount;
+            $expenseDateObj = \Carbon\Carbon::parse($request->expense_date);
+
+            // Get total expenses for the month of the expense_date being updated, excluding current record
+            $totalExpensesForMonth = $expenseHead->expenseLists()
+                ->where('id', '!=', $expenseList->id)
+                ->whereYear('expense_date', $expenseDateObj->year)
+                ->whereMonth('expense_date', $expenseDateObj->month)
+                ->sum('amount');
+
+            $newTotal = $totalExpensesForMonth + $request->amount;
+            $remainingAmount = $expenseHead->max_amount - $totalExpensesForMonth;
 
             if ($newTotal > $expenseHead->max_amount) {
-                return back()->with('error', 'Amount exceeds the maximum limit for this expense head. Remaining: ৳' . number_format($expenseHead->max_amount - $totalExpenses, 2))->withInput();
+                return back()->with('error', 'Amount exceeds the maximum limit for this expense head for ' . $expenseDateObj->format('F Y') . '. Remaining: ৳' . number_format($remainingAmount, 2))->withInput();
             }
 
             $expenseList->update([

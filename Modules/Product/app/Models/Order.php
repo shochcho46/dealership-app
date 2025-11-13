@@ -13,6 +13,7 @@ class Order extends Model
     protected $fillable = [
         'invoice_id',
         'admin_id',
+        'place_by',
         'total_amount',
         'paid_amount',
         'total_quantity',
@@ -69,6 +70,14 @@ class Order extends Model
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    /**
+     * Relationship with Admin who placed the order
+     */
+    public function placeBy()
+    {
+        return $this->belongsTo(Admin::class, 'place_by');
     }
 
     /**

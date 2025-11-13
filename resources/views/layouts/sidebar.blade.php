@@ -7,10 +7,10 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                
+
                 <!-- Inventory Management -->
                 <li class="nav-header">INVENTORY MANAGEMENT</li>
-                
+
                 <!-- Products Module -->
                 <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-box-seam"></i>
                         <p>

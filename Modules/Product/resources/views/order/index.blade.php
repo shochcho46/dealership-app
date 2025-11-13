@@ -120,7 +120,7 @@
         <div class="card-body">
             <form method="GET" action="{{ route('orders.index') }}">
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Invoice Search</label>
                         <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
@@ -137,7 +137,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Vendor Filter</label>
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
@@ -149,6 +149,20 @@
                             @endforeach
                         </select>
                     </div>
+
+                     <div class="col-md-2">
+                        <label class="form-label">Place By Filter</label>
+                        <select name="place_by_filter" class="form-select">
+                            <option value="">All Place By</option>
+                            @foreach($placeBys as $placeBy)
+                                <option value="{{ $placeBy->id }}"
+                                    {{ request('place_by_filter') == $placeBy->id ? 'selected' : '' }}>
+                                    {{ $placeBy->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="col-md-2">
                         <label class="form-label">Date From</label>
                         <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
@@ -212,6 +226,7 @@
                             </th>
                             <th>Invoice ID</th>
                             <th>Vendor</th>
+                            <th>Place By</th>
                             <th>Status</th>
                             <th>Payment Status</th>
                             <th>Items</th>
@@ -234,6 +249,11 @@
                                 <td>
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order->vendor->mobile ?? 'N/A' }}</small>
+                                </td>
+
+                                <td>
+                                    <strong>{{ $order->placeBy->name ?? 'N/A' }}</strong>
+                                    <br><small class="text-muted">{{ $order?->placeBy?->phone ?? 'N/A' }}</small>
                                 </td>
                                 <td>
                                     <span class="badge {{ $order->status_badge_class }} status-badge">

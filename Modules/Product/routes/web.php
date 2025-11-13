@@ -15,6 +15,9 @@ use Modules\Product\Http\Controllers\InvoiceController;
 use Modules\Product\Http\Controllers\DamageReturnLostController;
 use Modules\Product\Http\Controllers\ExpenseHeadController;
 use Modules\Product\Http\Controllers\ExpenseListController;
+use Modules\Product\Http\Controllers\CompanyController;
+use Modules\Product\Http\Controllers\BrandController;
+use Modules\Product\Http\Controllers\ReportController;
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -28,6 +31,26 @@ Route::prefix('admin')->group(function () {
             Route::get('color/{color}/edit', 'edit')->name('admin.colorEdit');
             Route::put('color/{color}/update', 'update')->name('admin.colorUpdate');
             Route::delete('color/{color}/delete', 'destroy')->name('admin.colorDestroy');
+        });
+
+        // Company routes
+        Route::controller(CompanyController::class)->group(function () {
+            Route::get('company/index', 'index')->name('admin.companyIndex');
+            Route::get('company/create', 'create')->name('admin.companyCreate');
+            Route::post('company/store', 'store')->name('admin.companyStore');
+            Route::get('company/{company}/edit', 'edit')->name('admin.companyEdit');
+            Route::put('company/{company}/update', 'update')->name('admin.companyUpdate');
+            Route::delete('company/{company}/delete', 'destroy')->name('admin.companyDestroy');
+        });
+
+        // Brand routes
+        Route::controller(BrandController::class)->group(function () {
+            Route::get('brand/index', 'index')->name('admin.brandIndex');
+            Route::get('brand/create', 'create')->name('admin.brandCreate');
+            Route::post('brand/store', 'store')->name('admin.brandStore');
+            Route::get('brand/{brand}/edit', 'edit')->name('admin.brandEdit');
+            Route::put('brand/{brand}/update', 'update')->name('admin.brandUpdate');
+            Route::delete('brand/{brand}/delete', 'destroy')->name('admin.brandDestroy');
         });
 
         // Unit routes
@@ -157,6 +180,13 @@ Route::prefix('admin')->group(function () {
             Route::get('expense-list/{expenseList}/edit', 'edit')->name('admin.expenseListEdit');
             Route::put('expense-list/{expenseList}/update', 'update')->name('admin.expenseListUpdate');
             Route::delete('expense-list/{expenseList}/delete', 'destroy')->name('admin.expenseListDestroy');
+        });
+
+        // Report routes
+        Route::controller(ReportController::class)->group(function () {
+            Route::get('report/stock-overview', 'stockOverview')->name('admin.reportStockOverview');
+            Route::get('report/order-report', 'orderReport')->name('admin.reportOrderReport');
+            Route::get('report/profitable-product', 'profitableProduct')->name('admin.reportProfitableProduct');
         });
 
         // Order routes
