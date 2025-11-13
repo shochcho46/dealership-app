@@ -4,9 +4,13 @@ namespace Modules\Product\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\Color;
 use Modules\Product\Models\Unit;
+use Modules\Product\Models\Company;
+use Modules\Product\Models\Brand;
+use Modules\Product\Models\Tag;
 
 class ProductController extends Controller
 {
@@ -15,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['color', 'unit'])->latest()->get();
+        $products = Product::with(['color', 'unit', 'company'])->latest()->get();
         return view('product::product.index', compact('products'));
     }
 
@@ -26,7 +30,10 @@ class ProductController extends Controller
     {
         $colors = Color::active()->get();
         $units = Unit::active()->get();
-        return view('product::product.create', compact('colors', 'units'));
+        $companies = Company::active()->get();
+        $brands = Brand::active()->get();
+        $tags = Tag::latest()->get();
+        return view('product::product.create', compact('colors', 'units', 'companies', 'brands', 'tags'));
     }
 
     /**
@@ -38,20 +45,28 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'color_id' => 'nullable|exists:colors,id',
+            'company_id' => 'nullable|exists:companies,id',
             'measurement_unit_name' => 'nullable|string|max:255',
             'measurement_unit_number' => 'nullable|string|max:255',
             'package_unit_name' => 'nullable|string|max:255',
             'package_unit_quantity' => 'nullable|string|max:255',
             'unit_id' => 'required|exists:units,id',
+            'discount_type' => 'nullable|in:0,1',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
             'status' => 'required|boolean',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'product_other_images' => 'nullable|array|max:6',
-            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB each
+            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'brands' => 'nullable|array',
+            'brands.*' => 'exists:brands,id',
+            'tags' => 'nullable|string',
         ], [
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
             'unit_id.exists' => 'Selected unit is invalid.',
             'color_id.exists' => 'Selected color is invalid.',
+            'company_id.exists' => 'Selected company is invalid.',
             'product_image.image' => 'Product image must be an image file.',
             'product_image.max' => 'Product image must not be larger than 10MB.',
             'product_other_images.max' => 'You can upload maximum 6 other images.',
@@ -63,13 +78,27 @@ class ProductController extends Controller
             $product = Product::create([
                 'name' => $request->name,
                 'color_id' => $request->color_id,
+                'company_id' => $request->company_id,
                 'measurement_unit_name' => $request->measurement_unit_name,
                 'measurement_unit_number' => $request->measurement_unit_number,
                 'package_unit_name' => $request->package_unit_name,
                 'package_unit_quantity' => $request->package_unit_quantity,
                 'unit_id' => $request->unit_id,
+                'discount_type' => $request->discount_type,
+                'discount_amount' => $request->discount_amount,
+                'description' => $request->description,
                 'status' => $request->status
             ]);
+
+            // Handle brands
+            if ($request->has('brands') && !empty($request->brands)) {
+                $product->brands()->attach($request->brands);
+            }
+
+            // Handle tags
+            if ($request->has('tags') && !empty($request->tags)) {
+                $this->attachTags($product, $request->tags);
+            }
 
             // Handle thumbnail image upload
             if ($request->hasFile('product_image')) {
@@ -97,7 +126,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $otherImages = $product->getMedia('product_other_image');
-        $product->load(['color', 'unit']);
+        $product->load(['color', 'unit', 'company', 'brands', 'tags']);
         return view('product::product.show', compact('product', 'otherImages'));
     }
 
@@ -106,10 +135,14 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-
         $colors = Color::active()->get();
         $units = Unit::active()->get();
-        return view('product::product.edit', compact('product', 'colors', 'units'));
+        $companies = Company::active()->get();
+        $brands = Brand::active()->get();
+        $tags = Tag::latest()->get();
+        $selectedBrands = $product->brands()->pluck('brand_id')->toArray();
+        $selectedTags = $product->tags()->pluck('tag_id')->toArray();
+        return view('product::product.edit', compact('product', 'colors', 'units', 'companies', 'brands', 'tags', 'selectedBrands', 'selectedTags'));
     }
 
     /**
@@ -121,20 +154,28 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'color_id' => 'nullable|exists:colors,id',
+            'company_id' => 'nullable|exists:companies,id',
             'measurement_unit_name' => 'nullable|string|max:255',
             'measurement_unit_number' => 'nullable|string|max:255',
             'package_unit_name' => 'nullable|string|max:255',
             'package_unit_quantity' => 'nullable|string|max:255',
             'unit_id' => 'required|exists:units,id',
+            'discount_type' => 'nullable|in:0,1',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
             'status' => 'required|boolean',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'product_other_images' => 'nullable|array|max:6',
-            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB each
+            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'brands' => 'nullable|array',
+            'brands.*' => 'exists:brands,id',
+            'tags' => 'nullable|string',
         ], [
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
             'unit_id.exists' => 'Selected unit is invalid.',
             'color_id.exists' => 'Selected color is invalid.',
+            'company_id.exists' => 'Selected company is invalid.',
             'product_image.image' => 'Product image must be an image file.',
             'product_image.max' => 'Product image must not be larger than 10MB.',
             'product_other_images.max' => 'You can upload maximum 6 other images.',
@@ -146,30 +187,41 @@ class ProductController extends Controller
             $product->update([
                 'name' => $request->name,
                 'color_id' => $request->color_id,
+                'company_id' => $request->company_id,
                 'measurement_unit_name' => $request->measurement_unit_name,
                 'measurement_unit_number' => $request->measurement_unit_number,
                 'package_unit_name' => $request->package_unit_name,
                 'package_unit_quantity' => $request->package_unit_quantity,
                 'unit_id' => $request->unit_id,
+                'discount_type' => $request->discount_type,
+                'discount_amount' => $request->discount_amount,
+                'description' => $request->description,
                 'status' => $request->status
             ]);
 
+            // Handle brands
+            if ($request->has('brands')) {
+                $product->brands()->sync($request->brands ?? []);
+            }
+
+            // Handle tags
+            if ($request->has('tags')) {
+                $product->tags()->detach();
+                if (!empty($request->tags)) {
+                    $this->attachTags($product, $request->tags);
+                }
+            }
+
             // Handle thumbnail image upload
             if ($request->hasFile('product_image')) {
-                // Clear existing thumbnail
                 $product->clearMediaCollection('product_image');
-
-                // Add new thumbnail
                 $product->addMediaFromRequest('product_image')
                     ->toMediaCollection('product_image');
             }
 
             // Handle other images upload
             if ($request->hasFile('product_other_images')) {
-                // Clear existing other images
                 $product->clearMediaCollection('product_other_image');
-
-                // Add new other images
                 foreach ($request->file('product_other_images') as $file) {
                     $product->addMedia($file)
                         ->toMediaCollection('product_other_image');
@@ -192,10 +244,45 @@ class ProductController extends Controller
             $product->clearMediaCollection('product_image');
             $product->clearMediaCollection('product_other_image');
 
+            // Detach relationships
+            $product->brands()->detach();
+            $product->tags()->detach();
+
             $product->delete();
             return redirect()->route('admin.productIndex')->with('success', 'Product deleted successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete product. Please try again.');
         }
     }
+
+    /**
+     * Attach tags to product - auto-create if not exists
+     */
+    private function attachTags(Product $product, $tagString)
+    {
+        if (empty($tagString)) {
+            return;
+        }
+
+        // Split tags by comma
+        $tagNames = array_map('trim', explode(',', $tagString));
+        $tagIds = [];
+
+        foreach ($tagNames as $tagName) {
+            if (!empty($tagName)) {
+                // Create or get tag
+                $tag = Tag::firstOrCreate(
+                    ['name' => $tagName],
+                    ['slug' => Str::slug($tagName)]
+                );
+                $tagIds[] = $tag->id;
+            }
+        }
+
+        // Attach tags to product
+        if (!empty($tagIds)) {
+            $product->tags()->attach($tagIds);
+        }
+    }
 }
+

@@ -16,7 +16,25 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item {{ request()->is('admin/role/permission/*') ? 'menu-open' : '' }}"> <a href="#" class="nav-link {{ request()->is('admin/role/permission/*') ? 'active' : '' }}">  <span class="nav-icon mdi mdi-home"></span>
+                <li class="nav-item {{ request()->is('admin/user/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/user/*') ? 'active' : '' }}">
+                        <span class="nav-icon mdi mdi-account-multiple"></span>
+                        <p>
+                            User Management
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.adminUserIndex') }}" class="nav-link {{ request()->is('admin/user/index') || request()->is('admin/user/*/edit') || request()->is('admin/user/create') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-account-tie"></i>
+                                <p>Admin Users</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item {{ request()->is('admin/role/permission/*') ? 'menu-open' : '' }}"> <a href="#" class="nav-link {{ request()->is('admin/role/permission/*') ? 'active' : '' }}">  <span class="nav-icon mdi mdi-shield-lock"></span>
                         <p>
                            Role & Permission
                             <i class="nav-arrow bi bi-chevron-right"></i>
@@ -25,15 +43,15 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item"> <a href="{{ route('admin.roleIndex') }}" class="nav-link {{ request()->is('admin/role/permission/role/*') ? 'active' : '' }}"> <i
-                                    class="mdi mdi-account-group"></i>
+                                    class="nav-icon mdi mdi-sort-variant-lock"></i>
                                 <p>Role List</p>
                             </a> </li>
                         <li class="nav-item"> <a href="{{ route('admin.permissionIndex') }}" class="nav-link {{ request()->is('admin/role/permission/permission/*') ? 'active' : '' }}"> <i
-                                    class="mdi mdi-axis-lock"></i>
+                                    class="nav-icon mdi mdi-axis-lock"></i>
                                 <p>Permission List</p>
                             </a> </li>
                     </ul>
-                </li> --}}
+                </li>
 
 
 
@@ -41,8 +59,8 @@
                 <li class="nav-header">INVENTORY MANAGEMENT</li>
 
                 <!-- Products Section -->
-                <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || request()->is('admin/company*') || request()->is('admin/brand*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || request()->is('admin/company*') || request()->is('admin/brand*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-package-variant-closed"></i>
                         <p>
                             Products
@@ -50,6 +68,18 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.companyIndex') }}" class="nav-link {{ request()->is('admin/company/*') ? 'active' : '' }}">
+                             <i class="nav-icon mdi mdi-domain"></i>
+                                <p>Companies</p>
+                            </a> </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.brandIndex') }}" class="nav-link {{ request()->is('admin/brand/*') ? 'active' : '' }}">
+                             <i class="nav-icon mdi mdi-watermark"></i>
+                                <p>Brands</p>
+                        </a> </li>
+
                         <li class="nav-item">
                             <a href="{{ route('admin.productIndex') }}" class="nav-link {{ request()->is('admin/product/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-package"></i>

@@ -1,0 +1,148 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="app-content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 class="mb-0">Create New Admin User</h3>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.adminUserIndex') }}">Admin Users</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Add New Admin User</h3>
+                    </div>
+                    <div class="card-body">
+                        @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading">Validation Error!</h4>
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('admin.adminUserStore') }}" method="POST">
+                            @csrf
+
+                            <div class="row">
+                                <!-- Name Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                           id="name" name="name" placeholder="Enter name"
+                                           value="{{ old('name') }}" required>
+                                    @error('name')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Email Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                           id="email" name="email" placeholder="Enter email"
+                                           value="{{ old('email') }}" required>
+                                    @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Phone Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                           id="phone" name="phone" placeholder="Enter phone"
+                                           value="{{ old('phone') }}">
+                                    @error('phone')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                           id="password" name="password" placeholder="Min 8 chars"
+                                           required>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirm Password Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="password_confirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control"
+                                           id="password_confirmation" name="password_confirmation"
+                                           placeholder="Confirm password" required>
+                                </div>
+
+                                <!-- Role Selection -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('role') is-invalid @enderror"
+                                            id="role" name="role" required>
+                                        <option value="">Select role</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
+                                                {{ $role->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('role')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Status Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label class="form-label">Status</label>
+                                    <div class="form-check pt-2">
+                                        <input class="form-check-input" type="checkbox" id="status" name="status"
+                                               value="1" {{ old('status') ? 'checked' : 'checked' }}>
+                                        <label class="form-check-label" for="status">
+                                            Active
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="mdi mdi-check"></span> Create Admin
+                                    </button>
+                                    <a href="{{ route('admin.adminUserIndex') }}" class="btn btn-secondary">
+                                        <span class="mdi mdi-close"></span> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection

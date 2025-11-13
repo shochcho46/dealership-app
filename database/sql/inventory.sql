@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 6.0.0-dev+20250811.7569edf1cc
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 12, 2025 at 09:19 PM
--- Server version: 8.4.3
--- PHP Version: 8.3.16
+-- Generation Time: Nov 13, 2025 at 11:34 AM
+-- Server version: 8.0.30
+-- PHP Version: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,7 +47,59 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `phone`, `status`, `email_verified_at`, `mobile_verified_at`, `otp`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Super Admin', 'admin@gmail.com', '01740303508', 1, '2024-12-31 08:16:04', '2024-12-31 08:16:04', '522189', '$2y$12$iMnM1aMcTHHaKFdCjjXJGuPQeBBYEq1NKAAOm7a8F1D4OZCru6gZ2', NULL, NULL, '2025-01-09 04:22:57');
+(1, 'Super Admin', 'admin@gmail.com', '01740303508', 1, '2024-12-31 08:16:04', '2024-12-31 08:16:04', '522189', '$2y$12$iMnM1aMcTHHaKFdCjjXJGuPQeBBYEq1NKAAOm7a8F1D4OZCru6gZ2', NULL, '2025-11-13 09:44:54', '2025-11-13 03:45:37'),
+(2, 'new user edit', 'n@n.com', '01740303507', 1, NULL, NULL, NULL, '$2y$12$6NpVWMdu2oZQouh1/viTpOAWXAbGrxibbTVnahXuWfiZqABuK27fW', NULL, '2025-11-13 04:09:57', '2025-11-13 04:15:05'),
+(3, 'sr one', 'sr@gmail.com', '01666666666', 1, NULL, NULL, NULL, '$2y$12$mh3lMFJXbYmzTTTy2hZHmuhYoyxzc/Pb2Fygn/uREQuo04IhtynuK', NULL, '2025-11-13 04:20:09', '2025-11-13 04:20:09'),
+(4, 'sr two', 'sr2@gmail.com', '01666666661', 1, NULL, NULL, NULL, '$2y$12$K/nIXB61LjMnyi9vGb7X5ueZJeVbs6rIIdsWO9OZrzZdXg9RbDT.y', NULL, '2025-11-13 04:20:48', '2025-11-13 04:20:48'),
+(5, 'dsr one', 'dsr@gmail.com', '01666666662', 1, NULL, NULL, NULL, '$2y$12$ccxBhDczYywnap3jce01h.EVWcAxCysIXaR8np/tQka/84wa6Uvlq', NULL, '2025-11-13 04:21:35', '2025-11-13 04:21:35'),
+(6, 'dsr two', 'dsr2@gmail.com', '01666666663', 1, NULL, NULL, NULL, '$2y$12$38xT6OzE9crfR5mHF7E4UOnMvqBiNd6SV1JQNb1xg3UPzm2bs0FNW', NULL, '2025-11-13 04:22:12', '2025-11-13 04:22:12'),
+(7, 'admin one', 'a@a.com', '01666666664', 1, NULL, NULL, NULL, '$2y$12$0PeBGKFHcInwRv3ipS1wzeZXNF/70ayZ7Sy3Y4gWy3wtycihQ2jTK', NULL, '2025-11-13 04:22:51', '2025-11-13 04:22:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brands`
+--
+
+CREATE TABLE `brands` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `company_id` bigint UNSIGNED NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `brands`
+--
+
+INSERT INTO `brands` (`id`, `name`, `company_id`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Kelly Rodriguez', 1, 'Accusamus voluptas e', 1, '2025-11-13 05:03:13', '2025-11-13 05:03:13'),
+(2, 'Seth Ryan', 1, 'Dolor autem eum itaq', 1, '2025-11-13 05:03:33', '2025-11-13 05:03:33'),
+(3, 'Felix Talley', 2, 'Dolor labore suscipi', 1, '2025-11-13 05:03:42', '2025-11-13 05:03:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brand_product`
+--
+
+CREATE TABLE `brand_product` (
+  `id` bigint UNSIGNED NOT NULL,
+  `brand_id` bigint UNSIGNED NOT NULL,
+  `product_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `brand_product`
+--
+
+INSERT INTO `brand_product` (`id`, `brand_id`, `product_id`, `created_at`, `updated_at`) VALUES
+(1, 2, 5, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -97,6 +149,36 @@ INSERT INTO `colors` (`id`, `name`, `code`, `status`, `created_at`, `updated_at`
 (2, 'Blue', '#1a53ff', 1, '2025-10-11 05:25:46', '2025-10-11 05:25:46'),
 (3, 'white', '#ebebeb', 1, '2025-10-17 15:54:42', '2025-10-17 15:54:42'),
 (4, 'Red', '#ff0000', 1, '2025-10-17 15:55:35', '2025-10-17 15:55:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `companies`
+--
+
+CREATE TABLE `companies` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `postal_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `website` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `companies`
+--
+
+INSERT INTO `companies` (`id`, `name`, `email`, `phone`, `address`, `city`, `state`, `postal_code`, `country`, `website`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Forbes Jacobson LLC', 'xotuxom@mailinator.com', '+1 (743) 137-2341', 'Ipsa rem vel culpa', 'Consequuntur officia', 'Rem deserunt eligend', 'Eveniet assumenda e', 'Eius voluptatem qua', 'https://www.hunibyduto.org', 1, '2025-11-13 05:02:56', '2025-11-13 05:02:56'),
+(2, 'Schroeder and Duffy LLC', 'zyjiriweca@mailinator.com', '+1 (724) 939-8548', 'Adipisci vel recusan', 'Ut magni quaerat inv', 'Velit dolore laboru', 'Aut inventore eligen', 'Sed sit esse blandi', 'https://www.jimokyxamumijoh.in', 1, '2025-11-13 05:03:24', '2025-11-13 05:03:24');
 
 -- --------------------------------------------------------
 
@@ -376,7 +458,7 @@ CREATE TABLE `damage_return_losts` (
   `status` tinyint NOT NULL COMMENT '1=damage, 2=lost',
   `purchase_price` decimal(10,2) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
-  `reason` text COLLATE utf8mb4_unicode_ci,
+  `reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -402,12 +484,22 @@ CREATE TABLE `education_types` (
 
 CREATE TABLE `expense_heads` (
   `id` bigint UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `max_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `expense_heads`
+--
+
+INSERT INTO `expense_heads` (`id`, `title`, `status`, `max_amount`, `created_at`, `updated_at`) VALUES
+(1, 'Labor', 1, '4000.00', '2025-11-13 00:14:46', '2025-11-13 00:19:59'),
+(2, 'Additional Trip Cost', 1, '5000.00', '2025-11-13 00:20:18', '2025-11-13 00:20:18'),
+(3, 'Warehouse', 1, '4000.00', '2025-11-13 00:20:50', '2025-11-13 00:20:50'),
+(4, 'Salary Cost', 1, '45000.00', '2025-11-13 00:21:12', '2025-11-13 00:21:12');
 
 -- --------------------------------------------------------
 
@@ -418,15 +510,24 @@ CREATE TABLE `expense_heads` (
 CREATE TABLE `expense_lists` (
   `id` bigint UNSIGNED NOT NULL,
   `expense_head_id` bigint UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `amount` decimal(15,2) NOT NULL,
   `expense_date` date NOT NULL,
-  `reference_no` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reference_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `expense_lists`
+--
+
+INSERT INTO `expense_lists` (`id`, `expense_head_id`, `title`, `description`, `amount`, `expense_date`, `reference_no`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Jibon Pani', 'this is description', '100.00', '2025-11-13', '22332', 1, '2025-11-13 00:23:05', '2025-11-13 00:23:05'),
+(2, 2, 'round trip', 'This is description', '4500.00', '2025-11-11', NULL, 1, '2025-11-13 01:09:51', '2025-11-13 01:09:51'),
+(3, 3, 'rent', NULL, '4000.00', '2025-11-13', NULL, 1, '2025-11-13 01:42:19', '2025-11-13 01:42:19');
 
 -- --------------------------------------------------------
 
@@ -701,7 +802,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (52, '2025_10_25_150752_add_new_column_to_damage_return_losts_table', 15),
 (53, '2025_10_25_185243_add_reason_to_damage_return_losts_table', 16),
 (54, '2025_11_11_200358_create_expense_heads_table', 17),
-(55, '2025_11_11_200430_create_expense_lists_table', 17);
+(55, '2025_11_11_200430_create_expense_lists_table', 17),
+(56, '2025_11_13_000001_create_companies_table', 18),
+(57, '2025_11_13_000002_create_brands_table', 18),
+(58, '2025_11_13_000003_create_tags_table', 18),
+(59, '2025_11_13_000004_create_pivot_tables', 18),
+(60, '2025_11_13_000005_add_company_and_discount_to_products_table', 18);
 
 -- --------------------------------------------------------
 
@@ -726,6 +832,19 @@ CREATE TABLE `model_has_roles` (
   `model_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `model_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `model_has_roles`
+--
+
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
+(1, 'App\\Models\\Admin', 1),
+(2, 'App\\Models\\Admin', 2),
+(4, 'App\\Models\\Admin', 3),
+(4, 'App\\Models\\Admin', 4),
+(5, 'App\\Models\\Admin', 5),
+(5, 'App\\Models\\Admin', 6),
+(6, 'App\\Models\\Admin', 7);
 
 -- --------------------------------------------------------
 
@@ -835,7 +954,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `invoice_id`, `admin_id`, `total_amount`, `paid_amount`, `total_quantity`, `total_discount_amount`, `total_return_quantity`, `order_status_id`, `payment_status`, `total_damage_quantity`, `total_lost_quantity`, `vendor_id`, `created_at`, `updated_at`) VALUES
-(1, 'SSE-25-10-25-3830-1', 1, 132.00, 0.00, 15, 2.00, 0, 5, 0, 0, 0, 2, '2025-10-25 15:38:35', '2025-11-11 13:49:37');
+(1, 'SSE-25-10-25-3830-1', 1, '132.00', '0.00', 15, '2.00', 0, 5, 0, 0, 0, 2, '2025-10-25 15:38:35', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -864,8 +983,8 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `purchase_price`, `sell_price`, `total_price`, `discount_price`, `return_quantity`, `damage_quantity`, `lost_quantity`, `created_at`, `updated_at`) VALUES
-(3, 1, 2, 7, 8.71, 10.00, 68.00, 2.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
-(4, 1, 1, 8, 6.63, 8.00, 64.00, 0.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37');
+(3, 1, 2, 7, '8.71', '10.00', '68.00', '2.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
+(4, 1, 1, 8, '6.63', '8.00', '64.00', '0.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -895,10 +1014,10 @@ CREATE TABLE `order_item_stocks` (
 --
 
 INSERT INTO `order_item_stocks` (`id`, `orderitem_id`, `stock_id`, `quantity`, `purchase_price`, `sell_price`, `total_price`, `discount_amount`, `actual_profit`, `return_quantity`, `damage_quantity`, `lost_quantity`, `created_at`, `updated_at`) VALUES
-(5, 3, 2, 5, 9.00, 10.00, 50.00, 1.43, 5.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
-(6, 3, 1, 2, 8.00, 10.00, 20.00, 0.57, 4.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06'),
-(7, 4, 3, 5, 7.00, 8.00, 40.00, 0.00, 5.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37'),
-(8, 4, 4, 3, 6.00, 8.00, 24.00, 0.00, 6.00, 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06');
+(5, 3, 2, 5, '9.00', '10.00', '50.00', '1.43', '5.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-10-26 16:14:38'),
+(6, 3, 1, 2, '8.00', '10.00', '20.00', '0.57', '4.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06'),
+(7, 4, 3, 5, '7.00', '8.00', '40.00', '0.00', '5.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-11-11 13:49:37'),
+(8, 4, 4, 3, '6.00', '8.00', '24.00', '0.00', '6.00', 0, 0, 0, '2025-10-25 15:41:06', '2025-10-25 15:41:06');
 
 -- --------------------------------------------------------
 
@@ -975,6 +1094,15 @@ CREATE TABLE `permissions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `permissions`
+--
+
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'usermanage', 'admin', '2025-11-13 04:16:44', '2025-11-13 04:16:44'),
+(2, 'rolemanage', 'admin', '2025-11-13 04:16:58', '2025-11-13 04:16:58'),
+(3, 'productmanage', 'admin', '2025-11-13 04:17:16', '2025-11-13 04:17:16');
+
 -- --------------------------------------------------------
 
 --
@@ -1004,10 +1132,14 @@ CREATE TABLE `products` (
   `id` bigint UNSIGNED NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `color_id` bigint UNSIGNED DEFAULT NULL,
+  `company_id` bigint UNSIGNED DEFAULT NULL,
   `measurement_unit_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `measurement_unit_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `package_unit_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `package_unit_quantity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `discount_type` tinyint DEFAULT NULL COMMENT '0 = fixed, 1 = percent',
+  `discount_amount` double DEFAULT '0',
+  `description` text COLLATE utf8mb4_unicode_ci,
   `unit_id` bigint UNSIGNED NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -1018,11 +1150,34 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `color_id`, `measurement_unit_name`, `measurement_unit_number`, `package_unit_name`, `package_unit_quantity`, `unit_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'WATER-EASY-500-ML', 3, 'ml', '500', 'case', '24', 4, 1, '2025-10-11 06:43:23', '2025-10-17 16:01:55'),
-(2, 'WATER-JIBON-500-ML', 4, 'ml', '500', 'Case', '12', 4, 1, '2025-10-11 12:24:32', '2025-10-17 16:00:57'),
-(3, 'WATER-JIBON-1-L', 4, 'Liter', '1', 'Case', '12', 4, 1, '2025-10-17 06:01:54', '2025-10-17 16:00:08'),
-(4, 'WATER-JIBON-2-L', 4, 'Liter', '2', 'Case', '6', 4, 1, '2025-10-17 06:02:44', '2025-10-17 16:00:00');
+INSERT INTO `products` (`id`, `name`, `color_id`, `company_id`, `measurement_unit_name`, `measurement_unit_number`, `package_unit_name`, `package_unit_quantity`, `discount_type`, `discount_amount`, `description`, `unit_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'WATER-EASY-500-ML', 3, NULL, 'ml', '500', 'case', '24', NULL, 0, NULL, 4, 1, '2025-10-11 06:43:23', '2025-10-17 16:01:55'),
+(2, 'WATER-JIBON-500-ML', 4, NULL, 'ml', '500', 'Case', '12', NULL, 0, NULL, 4, 1, '2025-10-11 12:24:32', '2025-10-17 16:00:57'),
+(3, 'WATER-JIBON-1-L', 4, NULL, 'Liter', '1', 'Case', '12', NULL, 0, NULL, 4, 1, '2025-10-17 06:01:54', '2025-10-17 16:00:08'),
+(4, 'WATER-JIBON-2-L', 4, NULL, 'Liter', '2', 'Case', '6', NULL, 0, NULL, 4, 1, '2025-10-17 06:02:44', '2025-10-17 16:00:00'),
+(5, 'Jessamine Curtis', 2, 1, 'Luke English', '1', 'Chiquita Lowe', '693', 1, 1, 'Officia et ut conseq', 5, 1, '2025-11-13 05:04:57', '2025-11-13 05:04:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_tag`
+--
+
+CREATE TABLE `product_tag` (
+  `id` bigint UNSIGNED NOT NULL,
+  `product_id` bigint UNSIGNED NOT NULL,
+  `tag_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `product_tag`
+--
+
+INSERT INTO `product_tag` (`id`, `product_id`, `tag_id`, `created_at`, `updated_at`) VALUES
+(1, 5, 1, NULL, NULL),
+(2, 5, 2, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1064,6 +1219,18 @@ CREATE TABLE `roles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'SuperAdmin', 'admin', '2025-11-13 01:44:45', '2025-11-13 01:44:45'),
+(2, 'subadmin', 'admin', '2025-11-13 01:45:09', '2025-11-13 01:45:09'),
+(3, 'director', 'admin', '2025-11-13 01:45:21', '2025-11-13 01:45:43'),
+(4, 'sr', 'admin', '2025-11-13 01:45:53', '2025-11-13 01:45:53'),
+(5, 'dsr', 'admin', '2025-11-13 01:46:00', '2025-11-13 01:46:00'),
+(6, 'admin', 'admin', '2025-11-13 01:47:53', '2025-11-13 01:47:53');
+
 -- --------------------------------------------------------
 
 --
@@ -1074,6 +1241,14 @@ CREATE TABLE `role_has_permissions` (
   `permission_id` bigint UNSIGNED NOT NULL,
   `role_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `role_has_permissions`
+--
+
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+(1, 6),
+(2, 6);
 
 -- --------------------------------------------------------
 
@@ -1095,7 +1270,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('KoH35XQqfdX8UPq3v5VluS6JQqNplEWxL7hUfrau', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoib01VbVEyTWdDbmZ5SmFUNWlQRjhSc0NhMFdOUFd1OXVjeGxrOUdIcCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi92ZW5kb3IvaW5kZXgiO3M6NToicm91dGUiO3M6MTc6ImFkbWluLnZlbmRvckluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MjoibG9naW5fYWRtaW5fNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1762890852);
+('JdQJt4z5niRc6ThCfDuuuNDLxyVMHZxN32SlGcEA', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiT3VJb091bllsZXAwNTNuZjc4MzRQUnNnRnIzdjFRVHRTZ2NOWUNuSSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9wcm9kdWN0LzUvZWRpdCI7czo1OiJyb3V0ZSI7czoxNzoiYWRtaW4ucHJvZHVjdEVkaXQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUyOiJsb2dpbl9hZG1pbl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1763033563);
 
 -- --------------------------------------------------------
 
@@ -1127,10 +1302,32 @@ CREATE TABLE `stocks` (
 --
 
 INSERT INTO `stocks` (`id`, `product_id`, `warehouse_id`, `batch_id`, `purchase_price`, `quantity`, `total_price`, `sell_price`, `damage_quantity`, `sold_quantity`, `stolen_quantity`, `transfer_quantity`, `froze_quantity`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 'B-20251025213413', 8.00, 6, 48.00, 9.00, 1, 2, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34'),
-(2, 2, 1, 'B-20251025213413', 9.00, 5, 45.00, 10.00, 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-26 16:14:38'),
-(3, 1, 1, 'B-20251025213413', 7.00, 5, 35.00, 8.00, 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-11-11 13:49:37'),
-(4, 1, 1, 'B-20251025213413', 6.00, 5, 30.00, 7.00, 0, 3, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34');
+(1, 2, 1, 'B-20251025213413', '8.00', 6, '48.00', '9.00', 1, 2, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34'),
+(2, 2, 1, 'B-20251025213413', '9.00', 5, '45.00', '10.00', 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-26 16:14:38'),
+(3, 1, 1, 'B-20251025213413', '7.00', 5, '35.00', '8.00', 0, 5, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-11-11 13:49:37'),
+(4, 1, 1, 'B-20251025213413', '6.00', 5, '30.00', '7.00', 0, 3, 0, 0, 0, 1, '2025-10-25 15:34:13', '2025-10-25 16:37:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags`
+--
+
+CREATE TABLE `tags` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tags`
+--
+
+INSERT INTO `tags` (`id`, `name`, `slug`, `created_at`, `updated_at`) VALUES
+(1, 'goo', 'goo', '2025-11-13 05:04:57', '2025-11-13 05:04:57'),
+(2, 'awesome greate', 'awesome-greate', '2025-11-13 05:04:57', '2025-11-13 05:04:57');
 
 -- --------------------------------------------------------
 
@@ -1248,7 +1445,7 @@ CREATE TABLE `vendors` (
 
 INSERT INTO `vendors` (`id`, `uuid`, `email`, `mobile`, `shop_name`, `contact_person`, `country_id`, `full_address`, `lat`, `long`, `status`, `created_at`, `updated_at`) VALUES
 (2, 'ef3ec731-aae2-11f0-9e2d-b00cd1288582', 'rakibrahman.bd@gmail.com', '01740303507', 'turash', 'tursh', 18, 'test', NULL, NULL, 1, '2025-10-11 06:35:32', '2025-10-11 06:35:32'),
-(5, '0e8fd8cd-4b91-44d2-a908-c0b971650a3c', 'joxofeqypa@mailinator.com', '01740303673', 'shakib', 'Labore occaecat elig', 18, 'Eos occaecat aspern', 78.00000000, 40.00000000, 1, '2025-10-16 17:07:33', '2025-10-25 15:06:13'),
+(5, '0e8fd8cd-4b91-44d2-a908-c0b971650a3c', 'joxofeqypa@mailinator.com', '01740303673', 'shakib', 'Labore occaecat elig', 18, 'Eos occaecat aspern', '78.00000000', '40.00000000', 1, '2025-10-16 17:07:33', '2025-10-25 15:06:13'),
 (6, 'b1a414d5-2605-4729-9b77-927b5b84794a', NULL, '01740505676', 'rumon', NULL, 18, 'Et esse sapiente ut', NULL, NULL, 1, '2025-10-17 05:49:04', '2025-10-25 15:06:04');
 
 -- --------------------------------------------------------
@@ -1277,7 +1474,7 @@ CREATE TABLE `vendor_accounts` (
 --
 
 INSERT INTO `vendor_accounts` (`id`, `vendor_id`, `order_id`, `payment_method_id`, `amount`, `type`, `note`, `collection_date`, `created_by`, `deposite_by`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, NULL, 132.00, 1, 'Product order - SSE-25-10-25-3830-1 | return adjustment: -৳10.00 on 2025-10-26 21:09:19 | return record deleted: +৳10.00 on 2025-10-26 21:14:31 | return adjustment: -৳8.00 on 2025-10-26 21:35:34 | return adjustment: -৳10.00 on 2025-10-26 21:36:55 | return record deleted: +৳8.00 on 2025-10-26 22:14:22 | return record deleted: +৳10.00 on 2025-10-26 22:14:38 | lost adjustment: -৳16.00 on 2025-11-02 01:42:55 | lost record deleted: +৳16.00 on 2025-11-02 01:46:50 | return adjustment: -৳16.00 on 2025-11-02 01:47:48 | return record deleted: +৳16.00 on 2025-11-02 01:54:43 | damage adjustment: -৳16.00 on 2025-11-11 19:39:14 | damage record deleted: +৳16.00 on 2025-11-11 19:41:55 | damage adjustment: -৳8.00 on 2025-11-11 19:49:17 | damage record deleted: +৳8.00 on 2025-11-11 19:49:37', NULL, 1, 1, '2025-10-25 16:37:34', '2025-11-11 13:49:37');
+(1, 2, 1, NULL, '132.00', 1, 'Product order - SSE-25-10-25-3830-1 | return adjustment: -৳10.00 on 2025-10-26 21:09:19 | return record deleted: +৳10.00 on 2025-10-26 21:14:31 | return adjustment: -৳8.00 on 2025-10-26 21:35:34 | return adjustment: -৳10.00 on 2025-10-26 21:36:55 | return record deleted: +৳8.00 on 2025-10-26 22:14:22 | return record deleted: +৳10.00 on 2025-10-26 22:14:38 | lost adjustment: -৳16.00 on 2025-11-02 01:42:55 | lost record deleted: +৳16.00 on 2025-11-02 01:46:50 | return adjustment: -৳16.00 on 2025-11-02 01:47:48 | return record deleted: +৳16.00 on 2025-11-02 01:54:43 | damage adjustment: -৳16.00 on 2025-11-11 19:39:14 | damage record deleted: +৳16.00 on 2025-11-11 19:41:55 | damage adjustment: -৳8.00 on 2025-11-11 19:49:17 | damage record deleted: +৳8.00 on 2025-11-11 19:49:37', NULL, 1, 1, '2025-10-25 16:37:34', '2025-11-11 13:49:37');
 
 -- --------------------------------------------------------
 
@@ -1316,6 +1513,21 @@ ALTER TABLE `admins`
   ADD UNIQUE KEY `admins_phone_unique` (`phone`);
 
 --
+-- Indexes for table `brands`
+--
+ALTER TABLE `brands`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `brands_company_id_foreign` (`company_id`);
+
+--
+-- Indexes for table `brand_product`
+--
+ALTER TABLE `brand_product`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `brand_product_brand_id_product_id_unique` (`brand_id`,`product_id`),
+  ADD KEY `brand_product_product_id_foreign` (`product_id`);
+
+--
 -- Indexes for table `cache`
 --
 ALTER TABLE `cache`
@@ -1331,6 +1543,12 @@ ALTER TABLE `cache_locks`
 -- Indexes for table `colors`
 --
 ALTER TABLE `colors`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `companies`
+--
+ALTER TABLE `companies`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1520,6 +1738,14 @@ ALTER TABLE `products`
   ADD KEY `products_unit_id_foreign` (`unit_id`);
 
 --
+-- Indexes for table `product_tag`
+--
+ALTER TABLE `product_tag`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `product_tag_product_id_tag_id_unique` (`product_id`,`tag_id`),
+  ADD KEY `product_tag_tag_id_foreign` (`tag_id`);
+
+--
 -- Indexes for table `professions`
 --
 ALTER TABLE `professions`
@@ -1560,6 +1786,14 @@ ALTER TABLE `stocks`
   ADD PRIMARY KEY (`id`),
   ADD KEY `stocks_product_id_foreign` (`product_id`),
   ADD KEY `stocks_warehouse_id_foreign` (`warehouse_id`);
+
+--
+-- Indexes for table `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tags_name_unique` (`name`),
+  ADD UNIQUE KEY `tags_slug_unique` (`slug`);
 
 --
 -- Indexes for table `units`
@@ -1617,6 +1851,18 @@ ALTER TABLE `warehouses`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `brands`
+--
+ALTER TABLE `brands`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `brand_product`
+--
+ALTER TABLE `brand_product`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
@@ -1624,6 +1870,12 @@ ALTER TABLE `admins`
 --
 ALTER TABLE `colors`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `companies`
+--
+ALTER TABLE `companies`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `countries`
@@ -1647,13 +1899,13 @@ ALTER TABLE `education_types`
 -- AUTO_INCREMENT for table `expense_heads`
 --
 ALTER TABLE `expense_heads`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `expense_lists`
 --
 ALTER TABLE `expense_lists`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1683,7 +1935,7 @@ ALTER TABLE `media`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `oauth_clients`
@@ -1731,7 +1983,7 @@ ALTER TABLE `payment_methods`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1743,7 +1995,13 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `product_tag`
+--
+ALTER TABLE `product_tag`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `professions`
@@ -1761,13 +2019,19 @@ ALTER TABLE `religions`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `stocks`
 --
 ALTER TABLE `stocks`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `units`
@@ -1810,6 +2074,19 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- Constraints for table `brands`
+--
+ALTER TABLE `brands`
+  ADD CONSTRAINT `brands_company_id_foreign` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `brand_product`
+--
+ALTER TABLE `brand_product`
+  ADD CONSTRAINT `brand_product_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `brand_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `damage_return_losts`
 --
 ALTER TABLE `damage_return_losts`
@@ -1835,6 +2112,13 @@ ALTER TABLE `model_has_permissions`
 ALTER TABLE `order_item_stocks`
   ADD CONSTRAINT `order_item_stocks_orderitem_id_foreign` FOREIGN KEY (`orderitem_id`) REFERENCES `order_items` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_item_stocks_stock_id_foreign` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `product_tag`
+--
+ALTER TABLE `product_tag`
+  ADD CONSTRAINT `product_tag_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `product_tag_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `stocks`

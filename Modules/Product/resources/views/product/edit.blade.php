@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @push('custome-css')
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Tagify CSS -->
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css">
+<!-- CKEditor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/ckeditor5@latest/dist/ckeditor5.css" rel="stylesheet" type="text/css">
+
 <style>
     .image-preview {
         width: 120px;
@@ -12,7 +19,6 @@
     }
     .color-preview {
         width: 30px;
-
         border: 2px solid #dee2e6;
         display: inline-block;
         vertical-align: middle;
@@ -29,6 +35,43 @@
         flex-wrap: wrap;
         gap: 10px;
         margin-top: 10px;
+    }
+
+    /* Tagify Styling */
+    .tagify {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.375rem;
+        min-height: 38px;
+    }
+
+    .tagify__tag {
+        background-color: #0d6efd;
+        color: white;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.25rem;
+        margin: 0.25rem;
+    }
+
+    .tagify__tag__removeBtn {
+        opacity: 1;
+        color: white;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        border-radius: 0.375rem;
+        min-height: 38px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* CKEditor Styling */
+    .ck-editor__editable {
+        min-height: 200px;
     }
 </style>
 @endpush
@@ -113,7 +156,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="color_id" class="form-label">Color</label>
                                         <div class="input-group">
@@ -134,7 +177,23 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="company_id" class="form-label">Company</label>
+                                        <select class="form-select @error('company_id') is-invalid @enderror" id="company_id" name="company_id">
+                                            <option value="">Select Company</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{ $company->id }}" {{ old('company_id', $product->company_id) == $company->id ? 'selected' : '' }}>
+                                                    {{ $company->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('company_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                         <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
@@ -145,6 +204,27 @@
                                         @error('status')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="brands" class="form-label">Brands (Select Multiple)</label>
+                                        <select class="form-select brands-select @error('brands') is-invalid @enderror" id="brands" name="brands[]" multiple style="width: 100%;">
+                                            @foreach($brands as $brand)
+                                                <option value="{{ $brand->id }}" {{ in_array($brand->id, old('brands', $product->brands->pluck('id')->toArray())) ? 'selected' : '' }}>
+                                                    {{ $brand->name }} ({{ $brand->company->name ?? 'N/A' }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('brands')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                                     </div>
                                 </div>
                             </div>
@@ -193,6 +273,57 @@
                                                id="package_unit_quantity" name="package_unit_quantity" placeholder="e.g., 12, 24, 100"
                                                value="{{ old('package_unit_quantity', $product->package_unit_quantity) }}">
                                         @error('package_unit_quantity')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_type" class="form-label">Discount Type</label>
+                                        <select class="form-select @error('discount_type') is-invalid @enderror" id="discount_type" name="discount_type">
+                                            <option value="">Select Discount Type</option>
+                                            <option value="0" {{ old('discount_type', $product->discount_type) == '0' ? 'selected' : '' }}>Fixed</option>
+                                            <option value="1" {{ old('discount_type', $product->discount_type) == '1' ? 'selected' : '' }}>Percent (%)</option>
+                                        </select>
+                                        @error('discount_type')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_amount" class="form-label">Discount Amount</label>
+                                        <input type="number" step="0.01" class="form-control @error('discount_amount') is-invalid @enderror"
+                                               id="discount_amount" name="discount_amount" placeholder="0.00"
+                                               value="{{ old('discount_amount', $product->discount_amount ?? '0') }}">
+                                        @error('discount_amount')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="tags-input" class="form-label">Tags</label>
+                                        <input type="text" id="tags-input" name="tags" class="form-control @error('tags') is-invalid @enderror"
+                                               placeholder="Type tags and press space"
+                                               value="{{ old('tags', $product->tags->pluck('name')->implode(', ')) }}" />
+                                        <small class="form-text text-muted">Press space to add tags, will auto-create if new</small>
+                                        @error('tags')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror">{{ old('description', $product->description ?? '') }}</textarea>
+                                        @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -260,9 +391,16 @@
 @endsection
 
 @push('custome-js')
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- Tagify JS -->
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<!-- CKEditor JS -->
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5@latest/dist/ckeditor5.umd.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Color selection preview
+        // ===== Color Selection Preview =====
         const colorSelect = document.getElementById('color_id');
         const colorPreview = document.getElementById('selectedColorPreview');
 
@@ -277,7 +415,88 @@
             }
         });
 
-        // Thumbnail preview
+        // ===== Select2 for Brands =====
+        $('.brands-select').select2({
+            placeholder: 'Select brands...',
+            allowClear: true,
+            width: '100%'
+        });
+
+        // ===== Tagify for Tags =====
+        const tagsInput = document.getElementById('tags-input');
+        const tagify = new Tagify(tagsInput, {
+            delimiter: ' ,',  // Space or comma as delimiter
+            maxTags: 20,
+            whitelist: [],
+            dropdown: {
+                maxItems: 20,
+                classname: "tags-look",
+                enabled: 0,
+                closeOnSelect: false
+            },
+            templates: {
+                tag: function(tagData) {
+                    return `<tag title='${tagData.value}' contenteditable='false' spellcheck='false' class='tagify__tag' data-value='${tagData.value}'>
+                        <x title='remove tag' class='tagify__tag__removeBtn'></x>
+                        <span class='tagify__tag-text'>${tagData.value}</span>
+                    </tag>`;
+                },
+                dropdownItem: function(item) {
+                    return `<div class='tagify__dropdown__item' data-value='${item.value}'>${item.value}</div>`;
+                }
+            }
+        });
+
+        // Format tags on form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // Tagify automatically updates the input value
+            const tagsValue = tagify.value.map(tag => tag.value).join(',');
+            if (tagsValue) {
+                tagsInput.value = tagsValue;
+            }
+        });
+
+        // ===== CKEditor 5 for Description =====
+        const { ClassicEditor, Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Link, List, BlockQuote, Heading, HtmlComment } = window.CKEDITOR;
+
+        ClassicEditor
+            .create(document.getElementById('description'), {
+                plugins: [
+                    Essentials,
+                    Paragraph,
+                    Bold,
+                    Italic,
+                    Underline,
+                    Strikethrough,
+                    Link,
+                    List,
+                    BlockQuote,
+                    Heading,
+                    HtmlComment
+                ],
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'link', 'blockQuote', 'numberedList', 'bulletedList', '|',
+                    'undo', 'redo'
+                ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                }
+            })
+            .then(editor => {
+                window.editorInstance = editor;
+            })
+            .catch(error => {
+                console.error('CKEditor initialization error:', error);
+            });
+
+        // ===== Thumbnail Preview =====
         const thumbnailInput = document.getElementById('product_image');
         const thumbnailPreview = document.getElementById('thumbnailPreview');
 
@@ -295,7 +514,7 @@
             }
         });
 
-        // Other images preview
+        // ===== Other Images Preview =====
         const otherImagesInput = document.getElementById('product_other_images');
         const otherImagesPreview = document.getElementById('otherImagesPreview');
 
