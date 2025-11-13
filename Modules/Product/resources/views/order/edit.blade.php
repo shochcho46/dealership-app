@@ -327,6 +327,21 @@
                             <strong>Selected Vendor:</strong> <span id="vendor_display_name">{{ $order->vendor->shop_name ?? '' }}</span><br>
                             <small>Mobile: <span id="vendor_display_mobile">{{ $order->vendor->mobile ?? 'N/A' }}</span> | Address: <span id="vendor_display_address">{{ $order->vendor->full_address ?? 'N/A' }}</span></small>
                         </div>
+
+                        <div class="mt-3">
+                            <label for="place_by">Order Placed By <span class="text-danger">*</span></label>
+                            <select name="place_by" id="place_by" class="form-control @error('place_by') is-invalid @enderror" required>
+                                <option value="">Select Admin</option>
+                                @foreach($admins as $admin)
+                                    <option value="{{ $admin->id }}" {{ old('place_by', $order->place_by) == $admin->id ? 'selected' : '' }}>
+                                        {{ $admin->name }} ({{ $admin->roles_string }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('place_by')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
@@ -334,9 +349,9 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order Items</h5>
-                        <button type="button" class="btn btn-sm btn-success" onclick="addOrderItem()">
+                        {{-- <button type="button" class="btn btn-sm btn-success" onclick="addOrderItem()">
                             <i class="mdi mdi-plus"></i> Add Item
-                        </button>
+                        </button> --}}
                     </div>
                     <div class="card-body">
                         <div id="order_items_container">

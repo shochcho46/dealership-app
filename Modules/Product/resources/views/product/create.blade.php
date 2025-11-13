@@ -5,8 +5,8 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <!-- Tagify CSS -->
 <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css">
-<!-- CKEditor CSS -->
-<link href="https://cdn.jsdelivr.net/npm/ckeditor5@latest/dist/ckeditor5.css" rel="stylesheet" type="text/css">
+<!-- Quill CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
 
 <style>
     .image-preview {
@@ -36,8 +36,8 @@
         background-color: white;
         border: 1px solid #dee2e6;
         border-radius: 0.375rem;
-        padding: 0.375rem;
-        min-height: 38px;
+        /* padding: 0.375rem;
+        min-height: 38px; */
     }
 
     .tagify__tag {
@@ -63,9 +63,19 @@
         box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
     }
 
-    /* CKEditor Styling */
-    .ck-editor__editable {
+    /* Quill Editor Styling */
+    #description-editor {
         min-height: 200px;
+        background-color: white;
+    }
+    .ql-toolbar {
+        background-color: #f8f9fa;
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0.375rem;
+    }
+    .ql-container {
+        border-bottom-left-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
     }
 </style>
 @endpush
@@ -199,7 +209,7 @@
                                 </div>
                             </div>
 
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="brands" class="form-label">Brands (Select Multiple)</label>
@@ -215,7 +225,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -267,7 +277,7 @@
                                 </div>
                             </div>
 
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="discount_type" class="form-label">Discount Type</label>
@@ -296,27 +306,28 @@
                                     <div class="mb-3">
                                         <label for="tags-input" class="form-label">Tags</label>
                                         <input type="text" id="tags-input" name="tags" class="form-control @error('tags') is-invalid @enderror"
-                                               placeholder="Type tags and press space"
+                                               placeholder="Type tags and press space or comma"
                                                value="{{ old('tags') }}" />
-                                        <small class="form-text text-muted">Press space to add tags, will auto-create if new</small>
+                                        <small class="form-text text-muted">Press space or comma to add tags</small>
                                         @error('tags')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
-                                        <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+                                        <div id="description-editor" class="@error('description') is-invalid @enderror"></div>
+                                        <input type="hidden" id="description" name="description" value="{{ old('description') }}">
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -368,8 +379,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- Tagify JS -->
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
-<!-- CKEditor JS -->
-<script src="https://cdn.jsdelivr.net/npm/ckeditor5@latest/dist/ckeditor5.umd.js"></script>
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -398,7 +409,7 @@
         // ===== Tagify for Tags =====
         const tagsInput = document.getElementById('tags-input');
         const tagify = new Tagify(tagsInput, {
-            delimiter: ' ,',  // Space or comma as delimiter
+            delimiters: ',| ',  // Both comma and space as delimiters
             maxTags: 20,
             whitelist: [],
             dropdown: {
@@ -427,47 +438,31 @@
             if (tagsValue) {
                 tagsInput.value = tagsValue;
             }
+            // Update hidden input with Quill content
+            document.getElementById('description').value = quill.root.innerHTML;
         });
 
-        // ===== CKEditor 5 for Description =====
-        const { ClassicEditor, Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Link, List, BlockQuote, Heading, HtmlComment } = window.CKEDITOR;
-
-        ClassicEditor
-            .create(document.getElementById('description'), {
-                plugins: [
-                    Essentials,
-                    Paragraph,
-                    Bold,
-                    Italic,
-                    Underline,
-                    Strikethrough,
-                    Link,
-                    List,
-                    BlockQuote,
-                    Heading,
-                    HtmlComment
-                ],
+        // ===== Quill Editor for Description =====
+        const quill = new Quill('#description-editor', {
+            theme: 'snow',
+            modules: {
                 toolbar: [
-                    'heading', '|',
-                    'bold', 'italic', 'underline', 'strikethrough', '|',
-                    'link', 'blockQuote', 'numberedList', 'bulletedList', '|',
-                    'undo', 'redo'
-                ],
-                heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                    ]
-                }
-            })
-            .then(editor => {
-                window.editorInstance = editor;
-            })
-            .catch(error => {
-                console.error('CKEditor initialization error:', error);
-            });
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Enter product description...'
+        });
+
+        // Set initial content if exists
+        const initialContent = document.getElementById('description').value;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
 
         // ===== Thumbnail Preview =====
         const thumbnailInput = document.getElementById('product_image');

@@ -47,6 +47,9 @@ class OrderController extends Controller
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
+        if ($request->filled('place_by_filter')) {
+            $query->where('place_by', $request->place_by_filter);
+        }
 
         $orders = $query->orderBy('created_at', 'desc')->paginate(15);
 
@@ -57,8 +60,10 @@ class OrderController extends Controller
         $completedOrders = Order::whereIn('order_status_id', [4, 5])->count(); // Shipped/Delivered
 
         // Get all order statuses and vendors for filters
-        $orderStatuses = OrderStatus::orderBy('name')->get();
+        $orderStatuses = OrderStatus::orderBy('id')->get();
         $vendors = Vendor::orderBy('shop_name')->get();
+
+        $placeBys = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
 
         return view('product::order.index', compact(
             'orders',
@@ -67,7 +72,8 @@ class OrderController extends Controller
             'pendingOrders',
             'completedOrders',
             'orderStatuses',
-            'vendors'
+            'vendors',
+            'placeBys'
         ));
     }
 
@@ -83,7 +89,10 @@ class OrderController extends Controller
         $vendors = Vendor::active()->get();
         $orderStatuses = OrderStatus::active()->get();
 
-        return view('product::order.create', compact('products', 'vendors', 'orderStatuses'));
+        // Get admins with roles: admin, subadmin, dsr, sr
+        $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
+
+        return view('product::order.create', compact('products', 'vendors', 'orderStatuses', 'admins'));
     }
 
     /**
@@ -93,6 +102,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
+            'place_by' => 'required|exists:admins,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -113,6 +123,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'admin_id' => Auth::guard('admin')->id(),
                 'vendor_id' => $request->vendor_id,
+                'place_by' => $request->place_by,
                 'order_status_id' => $confirmedStatus->id,
                 'payment_status' => 0, // Unpaid
                 'total_amount' => 0,
@@ -250,7 +261,10 @@ class OrderController extends Controller
         $vendors = Vendor::active()->get();
         $orderStatuses = OrderStatus::active()->get();
 
-        return view('product::order.edit', compact('order', 'products', 'vendors', 'orderStatuses'));
+        // Get admins with roles: admin, subadmin, dsr, sr
+        $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
+
+        return view('product::order.edit', compact('order', 'products', 'vendors', 'orderStatuses', 'admins'));
     }
 
     /**
@@ -265,6 +279,7 @@ class OrderController extends Controller
 
         $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
+            'place_by' => 'required|exists:admins,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -324,6 +339,7 @@ class OrderController extends Controller
             // Update order totals
             $order->update([
                 'vendor_id' => $request->vendor_id,
+                'place_by' => $request->place_by,
                 'total_amount' => $totalAmount,
                 'total_quantity' => $totalQuantity,
                 'total_discount_amount' => $totalDiscount,
@@ -395,6 +411,9 @@ class OrderController extends Controller
         try {
             if ($request->product_id === 'all') {
                 $products = Product::active()
+                    ->whereHas('stocks', function ($query) {
+                        $query->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + COALESCE(froze_quantity, 0))');
+                    })
                     ->with('stocks')
                     ->get(['id', 'name'])
                     ->map(function ($product) {

@@ -17,6 +17,7 @@ use Modules\Product\Http\Controllers\ExpenseHeadController;
 use Modules\Product\Http\Controllers\ExpenseListController;
 use Modules\Product\Http\Controllers\CompanyController;
 use Modules\Product\Http\Controllers\BrandController;
+use Modules\Product\Http\Controllers\ReportController;
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -179,6 +180,13 @@ Route::prefix('admin')->group(function () {
             Route::get('expense-list/{expenseList}/edit', 'edit')->name('admin.expenseListEdit');
             Route::put('expense-list/{expenseList}/update', 'update')->name('admin.expenseListUpdate');
             Route::delete('expense-list/{expenseList}/delete', 'destroy')->name('admin.expenseListDestroy');
+        });
+
+        // Report routes
+        Route::controller(ReportController::class)->group(function () {
+            Route::get('report/stock-overview', 'stockOverview')->name('admin.reportStockOverview');
+            Route::get('report/order-report', 'orderReport')->name('admin.reportOrderReport');
+            Route::get('report/profitable-product', 'profitableProduct')->name('admin.reportProfitableProduct');
         });
 
         // Order routes

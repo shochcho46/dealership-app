@@ -89,7 +89,7 @@
                     <div class="card-body">
                         <form action="{{ route('payment-collections.store') }}" method="POST" id="paymentCollectionForm" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <div class="row">
                                 <!-- Vendor Selection -->
                                 <div class="col-md-6">
@@ -114,7 +114,7 @@
                                                 <option value="{{ $method->id }}">
                                                     {{ $method->name }}
                                                     @if($method->account_name)
-                                                        - {{ $method->account_name }}
+                                                        {{ $method->account_name }}
                                                     @endif
                                                 </option>
                                             @endforeach
@@ -185,7 +185,7 @@
                                             <option value="">Select Admin</option>
                                             @foreach($admins as $admin)
                                                 <option value="{{ $admin->id }}" {{ old('deposite_by') == $admin->id ? 'selected' : '' }}>
-                                                    {{ $admin->name }} - {{ $admin->email }}
+                                                    {{ $admin->name }} - <small> ({{ $admin?->getRoleNames()[0] }})</small>
                                                 </option>
                                             @endforeach
                                         </select>

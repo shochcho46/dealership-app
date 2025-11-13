@@ -55,6 +55,11 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Color::class);
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     /**
      * Relationship with Unit
      */
