@@ -204,6 +204,7 @@
         <form method="POST" action="{{ route('damage-return-lost.store') }}" enctype="multipart/form-data" id="reportForm">
             @csrf
             <input type="hidden" name="order_id" value="{{ $order->id }}">
+            <input type="hidden" name="vendor_id" value="{{ $order->vendor_id }}">
             <input type="hidden" name="order_item_id" id="selectedOrderItemId">
             <input type="hidden" name="stock_id" id="selectedStockId">
 

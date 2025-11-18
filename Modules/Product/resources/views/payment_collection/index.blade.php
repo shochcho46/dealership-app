@@ -202,9 +202,13 @@
                         </tbody>
                     </table>
                 </div>
+                @if($collections->hasPages())
+                    <div class="mt-3">
+                        {{ $collections->links() }}
+                    </div>
+                @endif
 
                 <!-- Pagination -->
-                {{ $collections->links() }}
             </div>
         </div>
         @include('components.delete')

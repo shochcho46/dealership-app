@@ -143,4 +143,35 @@ class OrderItem extends Model
                 return 'bg-info';
         }
     }
+
+    public function getTotalPurchaseAttribute()
+    {
+        return $this->orderItemStocks->sum(function ($itemStock) {
+             $returnTotal = $itemStock->return_quantity;
+            return $itemStock->purchase_price * ($itemStock->quantity - $returnTotal);
+        });
+    }
+
+    public function getTotalSellAttribute()
+    {
+        return $this->orderItemStocks->sum(function ($itemStock) {
+            $returnTotal = $itemStock->return_quantity;
+            return $itemStock->sell_price * ($itemStock->quantity - $returnTotal);
+        });
+    }
+
+    public function getItemTotalProfitAttribute()
+    {
+        return $this->orderItemStocks->sum(function ($itemStock) {
+            $actualProfit = $itemStock->actual_profit - $itemStock->discount_amount;
+            $deductibleAmount = ($itemStock->damage_quantity + $itemStock->lost_quantity) * $itemStock->purchase_price;
+            $returnTotal = $itemStock->return_quantity;
+            $totalQuantity = $itemStock->quantity;
+            $perPieceProfit = $actualProfit / $totalQuantity;
+            $adjustedProfit = $actualProfit - (($perPieceProfit * $returnTotal) + $deductibleAmount);
+            return $adjustedProfit;
+        });
+    }
+
+
 }

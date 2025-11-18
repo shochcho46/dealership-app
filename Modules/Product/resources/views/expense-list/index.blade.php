@@ -226,6 +226,11 @@
                                 @endif
                             </table>
                         </div>
+                        @if($expenseLists->hasPages())
+                            <div class="mt-3">
+                                {{ $expenseLists->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -147,6 +147,11 @@
                                 </tbody>
                             </table>
                         </div>
+                        @if($products->hasPages())
+                            <div class="mt-3">
+                                {{ $products->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

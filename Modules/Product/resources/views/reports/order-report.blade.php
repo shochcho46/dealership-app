@@ -102,12 +102,13 @@
                             <thead class="">
                                 <tr>
                                     <th>SL</th>
-                                    <th>Order #</th>
+                                    <th>invoice</th>
                                     <th>Date</th>
                                     <th>Vendor</th>
                                     <th>Product</th>
                                     <th>Order By</th>
-                                    <th>Qty</th>
+                                    <th>Quantity</th>
+
                                     <th>Purchase Price</th>
                                     <th>Total Purchase</th>
                                     <th>Sell Price</th>
@@ -118,19 +119,6 @@
                             </thead>
                             <tbody>
                                 @forelse($orderItems as $key => $item)
-                                    @php
-                                        $itemPurchasePrice = 0;
-                                        $itemTotalPurchase = 0;
-                                        $itemProfit = 0;
-
-                                        foreach ($item->orderItemStocks as $orderItemStock) {
-                                            $itemPurchasePrice += $orderItemStock->purchase_price;
-                                            $itemTotalPurchase += ($orderItemStock->quantity * $orderItemStock->purchase_price);
-                                            $itemProfit += ($orderItemStock->actual_profit - $orderItemStock->discount_amount);
-                                        }
-
-                                        $avgPurchasePrice = $item->orderItemStocks->count() > 0 ? $itemPurchasePrice / $item->orderItemStocks->count() : 0;
-                                    @endphp
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>
@@ -142,13 +130,29 @@
                                         <td>{{ $item->order->vendor->shop_name ?? 'N/A' }}</td>
                                         <td>{{ $item->product->name }}</td>
                                         <td>{{ $item->order->placeBy->name ?? 'N/A' }}</td>
-                                        <td class="text-end">{{ number_format($item->quantity, 0) }}</td>
-                                        <td class="text-end">৳{{ number_format($avgPurchasePrice, 2) }}</td>
-                                        <td class="text-end">৳{{ number_format($itemTotalPurchase, 2) }}</td>
-                                        <td class="text-end">৳{{ number_format($item->price, 2) }}</td>
-                                        <td class="text-end">৳{{ number_format($item->total_price, 2) }}</td>
+                                        <td class="">
+                                           Total: {{ number_format($item->quantity, 0) }}
+
+                                            <span>Dam: {{ number_format($item->damage_quantity, 0) }}</span><br>
+                                            <span>Ret: {{ number_format($item->return_quantity, 0) }}</span><br>
+                                            <span>Lost: {{ number_format($item->lost_quantity, 0) }}</span><br>
+
+                                            <span><b>Actual sell: {{ number_format($item->quantity - $item->return_quantity, 0) }}</b></span>
+
+                                        </td>
+
+                                        {{-- <td class="text-end">৳{{ number_format($avgPurchasePrice, 2) }}</td> --}}
+                                        <td class="text-end">৳{{ number_format($item->purchase_price, 2) }}</td>
+                                        <td class="text-end">
+                                            ৳{{ number_format($item->total_purchase, 2) }}
+                                        </td>
+                                         <td class="text-end">৳{{ number_format($item->sell_price, 2) }}</td>
+                                        <td class="text-end">
+                                            ৳{{ number_format($item->total_sell, 2) }}
+                                        </td>
+                                        {{-- <td class="text-end">৳{{ number_format($item->total_price, 2) }}</td> --}}
                                         <td class="text-end">৳{{ number_format($item->discount_price, 2) }}</td>
-                                        <td class="text-end">৳{{ number_format($itemProfit, 2) }}</td>
+                                        <td class="text-end">৳{{ number_format($item->item_total_profit, 2) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -157,19 +161,41 @@
                                 @endforelse
                             </tbody>
                             <tfoot class="table-secondary">
+
+                                <tr>
+                                    <th colspan="6" class="text-end">Current Page Total:</th>
+                                    <th class="text-end">{{ number_format($currentQuantityPage, 0) }}</th>
+
+                                    <th colspan="1"></th>
+                                    <th class="text-end">৳{{ number_format($currentPurchasePage, 2) }}</th>
+                                    <th colspan="1"></th>
+                                    <th class="text-end">৳{{ number_format($currentSellPricePage, 2) }}</th>
+
+                                    <th class="text-end">৳{{ number_format($currentDiscountPage, 2) }}</th>
+                                    <th class="text-end">৳{{ number_format($currentProfitPage, 2) }}</th>
+                                </tr>
+
                                 <tr>
                                     <th colspan="6" class="text-end">Total:</th>
-                                    <th class="text-end">{{ number_format($totals['quantity'], 0) }}</th>
+                                    <th class="text-end">{{ number_format($totalQuantity, 0) }}</th>
+
                                     <th colspan="1"></th>
-                                    <th class="text-end">৳{{ number_format($totals['purchase_price'], 2) }}</th>
+                                    <th class="text-end">৳{{ number_format($totalPurchase, 2) }}</th>
                                     <th colspan="1"></th>
-                                    <th class="text-end">৳{{ number_format($totals['sell_amount'], 2) }}</th>
-                                    <th class="text-end">৳{{ number_format($totals['discount'], 2) }}</th>
-                                    <th class="text-end">৳{{ number_format($totals['profit'], 2) }}</th>
+                                    <th class="text-end">৳{{ number_format($totalSellPrice, 2) }}</th>
+
+                                    <th class="text-end">৳{{ number_format($totalDiscount, 2) }}</th>
+                                    <th class="text-end">৳{{ number_format($totalProfit, 2) }}</th>
                                 </tr>
+
                             </tfoot>
                         </table>
                     </div>
+                    @if($orderItems->hasPages())
+                        <div class="mt-3">
+                            {{ $orderItems->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

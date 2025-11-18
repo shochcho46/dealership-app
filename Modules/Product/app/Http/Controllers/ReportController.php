@@ -18,17 +18,26 @@ class ReportController extends Controller
     /**
      * Stock Overview Report
      */
-    public function stockOverview()
+    public function stockOverview(Request $request)
     {
-        $products = Product::with(['stocks'])->get()->map(function ($product) {
+        $productName = Product::orderBy('name')->get();
+        $query = Product::with(['stocks']);
+
+        if ($request->filled('product_id')) {
+            $query->where('id', $request->product_id);
+        }
+
+        $products = $query->get()->map(function ($product) {
             $totalPurchaseQty = 0;
             $totalPurchaseAmount = 0;
             $totalSoldQty = 0;
             $totalSoldAmount = 0;
             $availableQty = 0;
             $availableAmount = 0;
+            $damageLostQty = 0;
 
             foreach ($product->stocks as $stock) {
+
                 // Total Purchase
                 $totalPurchaseQty += $stock->quantity;
                 $totalPurchaseAmount += ($stock->quantity * $stock->purchase_price);
@@ -37,10 +46,18 @@ class ReportController extends Controller
                 $totalSoldQty += $stock->sold_quantity;
                 $totalSoldAmount += ($stock->sold_quantity * $stock->sell_price);
 
+                // Total Damage + Lost
+                $damageLostQty += $stock->damage_quantity + $stock->stolen_quantity;
+
                 // Available
-                $available = $stock->quantity - $stock->sold_quantity - $stock->damage_quantity - $stock->stolen_quantity - $stock->froze_quantity;
+                $available = $stock->quantity
+                    - $stock->sold_quantity
+                    - $stock->damage_quantity
+                    - $stock->stolen_quantity
+                    - $stock->froze_quantity;
+
                 $availableQty += $available;
-                $availableAmount += ($available * $stock->sell_price);
+                $availableAmount += ($available * $stock->purchase_price);
             }
 
             return [
@@ -53,10 +70,11 @@ class ReportController extends Controller
                 'total_sold_amount' => $totalSoldAmount,
                 'available_qty' => $availableQty,
                 'available_amount' => $availableAmount,
+                'total_damage_lost_qty' => $damageLostQty,
             ];
         });
 
-        return view('product::reports.stock-overview', compact('products'));
+        return view('product::reports.stock-overview', compact('products', 'productName'));
     }
 
     /**
@@ -64,6 +82,7 @@ class ReportController extends Controller
      */
     public function orderReport(Request $request)
     {
+        $limit = $request->limit ?? 50;
         $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'orderItemStocks.stock']);
 
         // Filter by date range
@@ -98,30 +117,30 @@ class ReportController extends Controller
             });
         }
 
-        $orderItems = $query->orderBy('id', 'desc')->get();
+        $fullQuery = clone $query;
 
-        // Calculate totals
-        $totals = [
-            'quantity' => $orderItems->sum('quantity'),
-            'purchase_price' => 0,
-            'sell_amount' => $orderItems->sum('total_price'),
-            'discount' => $orderItems->sum('discount_price'),
-            'profit' => 0,
-        ];
+        $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
 
-        foreach ($orderItems as $item) {
-            foreach ($item->orderItemStocks as $orderItemStock) {
-                $totals['purchase_price'] += ($orderItemStock->quantity * $orderItemStock->purchase_price);
-                $totals['profit'] += $orderItemStock->actual_profit - $orderItemStock->discount_amount;
-            }
-        }
+
+        $totalQuantity = $fullQuery->get()->sum('quantity') - $fullQuery->get()->sum('return_quantity');
+        $totalPurchase = $fullQuery->get()->sum('total_purchase');
+        $totalSellPrice = $fullQuery->get()->sum('total_sell');
+        $totalDiscount = $fullQuery->get()->sum('discount_price');
+        $totalProfit = $fullQuery->get()->sum('item_total_profit');
+
+
+        $currentQuantityPage = $orderItems->getCollection()->sum('quantity') - $orderItems->getCollection()->sum('return_quantity');
+        $currentPurchasePage = $orderItems->getCollection()->sum('total_purchase');
+        $currentSellPricePage = $orderItems->getCollection()->sum('total_sell');
+        $currentDiscountPage = $orderItems->getCollection()->sum('discount_price');
+        $currentProfitPage = $orderItems->getCollection()->sum('item_total_profit');
 
         // Get filter data
         $vendors = Vendor::orderBy('shop_name')->get();
         $products = Product::orderBy('name')->get();
         $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
 
-        return view('product::reports.order-report', compact('orderItems', 'totals', 'vendors', 'products', 'admins'));
+        return view('product::reports.order-report', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage'));
     }
 
     /**
@@ -152,11 +171,11 @@ class ReportController extends Controller
 
                 // Only count sold items (shipped or delivered)
                 if (in_array($orderItem->order->order_status_id, [4, 5])) {
-                    $totalSoldQty += $orderItem->quantity;
-                    $totalRevenue += $orderItem->total_price;
+                    $totalSoldQty += ($orderItem->quantity - $orderItem->return_quantity);
+                    $totalRevenue += $orderItem->sell_price * ($orderItem->quantity - $orderItem->return_quantity);
 
                     foreach ($orderItem->orderItemStocks as $orderItemStock) {
-                        $totalCost += ($orderItemStock->quantity * $orderItemStock->purchase_price);
+                        $totalCost += ($orderItemStock->quantity - $orderItemStock->return_quantity) * $orderItemStock->purchase_price;
                         $totalProfit += ($orderItemStock->actual_profit - $orderItemStock->discount_amount);
                     }
                 }
