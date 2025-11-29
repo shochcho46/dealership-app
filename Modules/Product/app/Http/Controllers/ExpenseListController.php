@@ -14,8 +14,10 @@ class ExpenseListController extends Controller
      */
     public function index()
     {
+        $limit = request()->get('limit', 30);
         $expenseHeads = ExpenseHead::active()->get();
-        $expenseLists = ExpenseList::with('expenseHead')->latest()->get();
+
+        $expenseLists = ExpenseList::with('expenseHead')->latest()->paginate($limit);
 
         return view('product::expense-list.index', compact('expenseLists', 'expenseHeads'));
     }

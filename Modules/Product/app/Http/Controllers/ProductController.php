@@ -19,7 +19,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['color', 'unit', 'company'])->latest()->get();
+        $limit = request()->get('limit', 30);
+        $products = Product::with(['color', 'unit', 'company'])->latest()->paginate($limit);
         return view('product::product.index', compact('products'));
     }
 

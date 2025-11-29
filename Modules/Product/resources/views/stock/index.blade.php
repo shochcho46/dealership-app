@@ -157,7 +157,7 @@
                                         <th>Sell Price</th>
                                         <th>Total Value</th>
                                         <th>Status</th>
-                                        <th>Created</th>
+                                        <th>Date Detail</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -231,9 +231,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <span class="text-muted">{{ $stock->created_at->format('M d, Y') }}</span>
-                                                <br><small class="text-muted">{{ $stock->created_at->format('h:i A') }}</small>
+                                                Manufactured:<span class="text-muted">{{ $stock?->manufacture_date ? $stock->manufacture_date->format('M d, Y') : 'Na' }}</span>
+                                                <br> Expire:<small class="text-muted">{{ $stock?->expire_date ? $stock->expire_date->format('M d, Y') : 'Na' }}</small>
+
                                             </td>
+
                                             <td>
                                                 <div class="d-flex gap-1">
                                                     <a href="{{ route('admin.stockShow', $stock) }}"

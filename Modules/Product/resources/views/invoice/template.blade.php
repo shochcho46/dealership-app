@@ -646,7 +646,7 @@
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                        <strong> New Balance Due: </strong>৳
                         {{-- <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong> --}}
-                        <strong class="price">{{ number_format($vendorTotalDue - $vendorPaidAmount, 2) }}</strong>
+                        <strong class="price">{{ number_format($vendorTotalDue, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -682,7 +682,7 @@
                                 <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
                                 <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
                                 <td class="text-right">৳ <span class="price">{{ number_format($item->discount_price, 2) }}</span></td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * $item->quantity - $item->discount_price, 2) }}</span></td>
+                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity  + $item->lost_quantity  + $item->return_quantity )) - $item->discount_price, 2) }}</span></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -693,8 +693,8 @@
                 <div class="totals-left">
                     <div class="payment-info">
                         <div class="section-title">Payment Information</div>
-                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 30 days' }}</div>
-                        <div><strong>Due Date:</strong> {{ $order->created_at->addDays(30)->format('d M Y') }}</div>
+                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 5 days' }}</div>
+                        <div><strong>Due Date:</strong> {{ $order->created_at->addDays(5)->format('d M Y') }}</div>
                         @if ($order->payment_status > 0)
                             <div style="margin-top:4px;">
                                 <strong>Payment Status:</strong>
@@ -711,7 +711,7 @@
                         <tr>
                             <td class="total-label">Subtotal:</td>
                             <td class="text-right">
-                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * $i->quantity;}),2) }}</span>
+                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return ($i->sell_price * $i->quantity)-(($i->damage_quantity + $i->lost_quantity + $i->return_quantity)*$i->sell_price);}),2) }}</span>
                             </td>
                         </tr>
                         <tr>
@@ -792,7 +792,7 @@
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                         <strong> New Balance Due: </strong> ৳
-                        <strong>{{ number_format($vendorTotalDue - $vendorPaidAmount, 2) }}</strong>
+                        <strong>{{ number_format($vendorTotalDue, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -822,15 +822,13 @@
                                     <br><small>{{ \Illuminate\Support\Str::limit($item->product->description, 60) }}</small>
                                 @endif
                             </td>
-                            <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
-                            <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
-                            <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
-                            <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($item->discount_amount, 2) }}</span></td>
-                            <td class="text-right">৳
-                                <span class="price"> {{ number_format($item->sell_price * $item->quantity - $item->discount_amount, 2) }}</span>
-                            </td>
+                             <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
+                                <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
+                                <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
+                                <td class="text-right">৳ <span class="price">{{ number_format($item->discount_price, 2) }}</span></td>
+                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity  + $item->lost_quantity  + $item->return_quantity )) - $item->discount_price, 2) }}</span></td>
                         </tr>
                     @endforeach
                 </tbody>
