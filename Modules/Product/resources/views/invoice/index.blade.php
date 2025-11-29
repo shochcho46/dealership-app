@@ -11,18 +11,18 @@
         padding: 20px;
         margin-bottom: 20px;
     }
-    
+
     .invoice-card .number {
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 5px;
     }
-    
+
     .invoice-card .label {
         font-size: 0.9rem;
         opacity: 0.9;
     }
-    
+
     .bulk-actions {
         background: #f8f9fa;
         border: 1px solid #dee2e6;
@@ -31,26 +31,26 @@
         margin-bottom: 20px;
         display: none;
     }
-    
+
     .bulk-actions.show {
         display: block;
     }
-    
+
     .invoice-checkbox {
         transform: scale(1.2);
         margin-right: 10px;
     }
-    
+
     .status-badge {
         font-size: 0.8rem;
         padding: 0.25rem 0.5rem;
     }
-    
+
     @media (max-width: 768px) {
         .invoice-card .number {
             font-size: 1.5rem;
         }
-        
+
         .table-responsive {
             font-size: 0.85rem;
         }
@@ -110,7 +110,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Invoice Search</label>
-                        <input type="text" name="invoice_search" class="form-control" 
+                        <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
                     </div>
                     <div class="col-md-3">
@@ -118,7 +118,7 @@
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
                             @foreach($vendors as $vendor)
-                                <option value="{{ $vendor->id }}" 
+                                <option value="{{ $vendor->id }}"
                                     {{ request('vendor_filter') == $vendor->id ? 'selected' : '' }}>
                                     {{ $vendor->shop_name }}
                                 </option>
@@ -180,7 +180,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped">
-                    <thead class="table-dark">
+                    <thead class="table">
                         <tr>
                             <th>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
@@ -199,7 +199,7 @@
                         @forelse($orders as $order)
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="form-check-input invoice-checkbox" 
+                                    <input type="checkbox" class="form-check-input invoice-checkbox"
                                            value="{{ $order->id }}" onchange="updateBulkSelection()">
                                 </td>
                                 <td>
@@ -236,17 +236,17 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('invoices.preview', $order) }}" class="btn btn-outline-info" 
+                                        <a href="{{ route('invoices.preview', $order) }}" class="btn btn-outline-info"
                                            title="Preview Invoice" target="_blank">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
-                                        <a href="{{ route('invoices.generate', $order) }}" class="btn btn-outline-primary" 
+                                        <a href="{{ route('invoices.generate', $order) }}" class="btn btn-outline-primary"
                                            title="Download PDF">
                                             <i class="mdi mdi-invoice"></i>
                                         </a>
-                                        
+
                                         @if($order->payment_status < 2)
-                                            <a href="{{ route('payment-collections.create', ['vendor_id' => $order->vendor_id]) }}" 
+                                            <a href="{{ route('payment-collections.create', ['vendor_id' => $order->vendor_id]) }}"
                                                class="btn btn-outline-success" title="Collect Payment">
                                                 <i class="mdi mdi-cash"></i>
                                             </a>
@@ -266,7 +266,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             @if($orders->hasPages())
                 <div class="mt-3">
                     {{ $orders->links() }}
@@ -287,19 +287,19 @@ function updateBulkSelection() {
     document.querySelectorAll('.invoice-checkbox:checked').forEach(checkbox => {
         selectedInvoices.push(checkbox.value);
     });
-    
+
     document.getElementById('selectedCount').textContent = selectedInvoices.length;
-    
+
     if (selectedInvoices.length > 0) {
         document.getElementById('bulkActions').classList.add('show');
     } else {
         document.getElementById('bulkActions').classList.remove('show');
     }
-    
+
     // Update select all checkbox
     const totalCheckboxes = document.querySelectorAll('.invoice-checkbox').length;
     const selectAllCheckbox = document.getElementById('selectAll');
-    
+
     if (selectedInvoices.length === 0) {
         selectAllCheckbox.indeterminate = false;
         selectAllCheckbox.checked = false;
@@ -332,28 +332,28 @@ function downloadBulkInvoices() {
         alert('Please select invoices to download');
         return;
     }
-    
+
     if (!confirm(`Are you sure you want to download ${selectedInvoices.length} invoice(s) as a ZIP file?`)) {
         return;
     }
-    
+
     // Show loading
     const button = event.target;
     const originalText = button.innerHTML;
     button.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Preparing...';
     button.disabled = true;
-    
+
     // Create form and submit
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '{{ route("invoices.bulk") }}';
-    
+
     const csrfToken = document.createElement('input');
     csrfToken.type = 'hidden';
     csrfToken.name = '_token';
     csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     form.appendChild(csrfToken);
-    
+
     selectedInvoices.forEach(invoiceId => {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -361,10 +361,10 @@ function downloadBulkInvoices() {
         input.value = invoiceId;
         form.appendChild(input);
     });
-    
+
     document.body.appendChild(form);
     form.submit();
-    
+
     // Reset button after a delay
     setTimeout(() => {
         button.innerHTML = originalText;

@@ -15,6 +15,16 @@ use Modules\Product\Http\Controllers\InvoiceController;
 use Modules\Product\Http\Controllers\DamageReturnLostController;
 use Modules\Product\Http\Controllers\ExpenseHeadController;
 use Modules\Product\Http\Controllers\ExpenseListController;
+use Modules\Product\Http\Controllers\CompanyController;
+use Modules\Product\Http\Controllers\BrandController;
+use Modules\Product\Http\Controllers\ReportController;
+use Modules\Product\Http\Controllers\InvestorController;
+use Modules\Product\Http\Controllers\AssetController;
+use Modules\Product\Http\Controllers\ProfitDistributeController;
+use Modules\Product\Http\Controllers\ProfitDisbursementController;
+use Modules\Product\Http\Controllers\BankController;
+use Modules\Product\Http\Controllers\BankAccountDetailController;
+use Modules\Product\Http\Controllers\FinancialReportController;
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -28,6 +38,26 @@ Route::prefix('admin')->group(function () {
             Route::get('color/{color}/edit', 'edit')->name('admin.colorEdit');
             Route::put('color/{color}/update', 'update')->name('admin.colorUpdate');
             Route::delete('color/{color}/delete', 'destroy')->name('admin.colorDestroy');
+        });
+
+        // Company routes
+        Route::controller(CompanyController::class)->group(function () {
+            Route::get('company/index', 'index')->name('admin.companyIndex');
+            Route::get('company/create', 'create')->name('admin.companyCreate');
+            Route::post('company/store', 'store')->name('admin.companyStore');
+            Route::get('company/{company}/edit', 'edit')->name('admin.companyEdit');
+            Route::put('company/{company}/update', 'update')->name('admin.companyUpdate');
+            Route::delete('company/{company}/delete', 'destroy')->name('admin.companyDestroy');
+        });
+
+        // Brand routes
+        Route::controller(BrandController::class)->group(function () {
+            Route::get('brand/index', 'index')->name('admin.brandIndex');
+            Route::get('brand/create', 'create')->name('admin.brandCreate');
+            Route::post('brand/store', 'store')->name('admin.brandStore');
+            Route::get('brand/{brand}/edit', 'edit')->name('admin.brandEdit');
+            Route::put('brand/{brand}/update', 'update')->name('admin.brandUpdate');
+            Route::delete('brand/{brand}/delete', 'destroy')->name('admin.brandDestroy');
         });
 
         // Unit routes
@@ -159,6 +189,63 @@ Route::prefix('admin')->group(function () {
             Route::delete('expense-list/{expenseList}/delete', 'destroy')->name('admin.expenseListDestroy');
         });
 
+        // Investor routes
+        Route::controller(InvestorController::class)->group(function () {
+            Route::get('investor/index', 'index')->name('admin.investorIndex');
+            Route::get('investor/create', 'create')->name('admin.investorCreate');
+            Route::post('investor/store', 'store')->name('admin.investorStore');
+            Route::get('investor/{investor}/edit', 'edit')->name('admin.investorEdit');
+            Route::put('investor/{investor}/update', 'update')->name('admin.investorUpdate');
+            Route::put('investor/{investor}/status-update', 'updateStatus')->name('admin.investorStatusUpdate');
+            Route::delete('investor/{investor}/delete', 'destroy')->name('admin.investorDestroy');
+            Route::post('investor/{investor}/investment/store', 'storeInvestment')->name('admin.investorInvestmentStore');
+            Route::delete('investment/{investment}/delete', 'destroyInvestment')->name('admin.investorInvestmentDestroy');
+            Route::get('investor/{investor}/investments', 'showInvestments')->name('admin.investorInvestments');
+        });
+
+        // Asset routes
+        Route::controller(AssetController::class)->group(function () {
+            Route::get('asset/index', 'index')->name('admin.assetIndex');
+            Route::get('asset/create', 'create')->name('admin.assetCreate');
+            Route::post('asset/store', 'store')->name('admin.assetStore');
+            Route::get('asset/{asset}/edit', 'edit')->name('admin.assetEdit');
+            Route::put('asset/{asset}/update', 'update')->name('admin.assetUpdate');
+            Route::delete('asset/{asset}/delete', 'destroy')->name('admin.assetDestroy');
+        });
+
+        // Profit Distribute routes
+        Route::controller(ProfitDistributeController::class)->group(function () {
+            Route::get('profit-distribute/index', 'index')->name('admin.profitDistributeIndex');
+            Route::get('profit-distribute/create', 'create')->name('admin.profitDistributeCreate');
+            Route::post('profit-distribute/store', 'store')->name('admin.profitDistributeStore');
+            Route::get('profit-distribute/{profitDistribute}/edit', 'edit')->name('admin.profitDistributeEdit');
+            Route::put('profit-distribute/{profitDistribute}/update', 'update')->name('admin.profitDistributeUpdate');
+            Route::delete('profit-distribute/{profitDistribute}/delete', 'destroy')->name('admin.profitDistributeDestroy');
+            Route::get('profit-distribute/{profitDistribute}/details', 'showDetails')->name('admin.profitDistributeDetails');
+            Route::post('profit-distribute/{profitDistribute}/detail/store', 'storeDetail')->name('admin.profitDistributeDetailStore');
+            Route::delete('profit-distribute-detail/{detail}/delete', 'destroyDetail')->name('admin.profitDistributeDetailDestroy');
+        });
+
+        // Profit Disbursement routes
+        Route::controller(ProfitDisbursementController::class)->group(function () {
+            Route::get('profit-disbursement/index', 'index')->name('admin.profitDisbursementIndex');
+            Route::get('profit-disbursement/create', 'create')->name('admin.profitDisbursementCreate');
+            Route::post('profit-disbursement/store', 'store')->name('admin.profitDisbursementStore');
+            Route::get('profit-disbursement/{profitDisbursement}/edit', 'edit')->name('admin.profitDisbursementEdit');
+            Route::put('profit-disbursement/{profitDisbursement}/update', 'update')->name('admin.profitDisbursementUpdate');
+            Route::delete('profit-disbursement/{profitDisbursement}/delete', 'destroy')->name('admin.profitDisbursementDestroy');
+        });
+
+        // Report routes
+        Route::controller(ReportController::class)->group(function () {
+            Route::get('report/stock-overview', 'stockOverview')->name('admin.reportStockOverview');
+            Route::get('report/order-report', 'orderReport')->name('admin.reportOrderReport');
+            Route::get('report/collection', 'collectionReport')->name('admin.reportCollection');
+            Route::get('report/sell-summary', 'sellSummary')->name('admin.reportSellSummary');
+            Route::get('report/due-orders-list', 'dueOrdersList')->name('admin.reportDueOrdersList');
+            Route::get('report/profitable-product', 'profitableProduct')->name('admin.reportProfitableProduct');
+        });
+
         // Order routes
         Route::controller(OrderController::class)->group(function () {
             Route::get('order/index', 'index')->name('orders.index');
@@ -175,6 +262,38 @@ Route::prefix('admin')->group(function () {
             Route::get('order/get-stock-details', 'getStockDetails')->name('orders.getStockDetails');
             Route::get('order/search-vendors', 'searchVendors')->name('orders.searchVendors');
             Route::post('order/bulk-update-status', 'bulkUpdateStatus')->name('orders.bulkUpdateStatus');
+        });
+
+        // Bank routes
+        Route::controller(BankController::class)->group(function () {
+            Route::get('bank/index', 'index')->name('admin.bankIndex');
+            Route::get('bank/create', 'create')->name('admin.bankCreate');
+            Route::post('bank/store', 'store')->name('admin.bankStore');
+            Route::get('bank/{bank}/edit', 'edit')->name('admin.bankEdit');
+            Route::put('bank/{bank}/update', 'update')->name('admin.bankUpdate');
+            Route::delete('bank/{bank}/delete', 'destroy')->name('admin.bankDestroy');
+            Route::get('bank/{bank}/transactions', 'transactions')->name('admin.bankTransactions');
+        });
+
+        // Bank Account Detail routes
+        Route::controller(BankAccountDetailController::class)->group(function () {
+            Route::get('bank-transaction/index', 'index')->name('admin.bankAccountDetailIndex');
+            Route::get('bank-transaction/create', 'create')->name('admin.bankAccountDetailCreate');
+            Route::post('bank-transaction/store', 'store')->name('admin.bankAccountDetailStore');
+            Route::get('bank-transaction/{bankAccountDetail}/edit', 'edit')->name('admin.bankAccountDetailEdit');
+            Route::put('bank-transaction/{bankAccountDetail}/update', 'update')->name('admin.bankAccountDetailUpdate');
+            Route::delete('bank-transaction/{bankAccountDetail}/delete', 'destroy')->name('admin.bankAccountDetailDestroy');
+        });
+
+        // Financial Report routes
+        Route::controller(FinancialReportController::class)->group(function () {
+            Route::get('financial-report/index', 'index')->name('admin.financialReportIndex');
+            Route::get('financial-report/create', 'create')->name('admin.financialReportCreate');
+            Route::post('financial-report/store', 'store')->name('admin.financialReportStore');
+            Route::get('financial-report/{financialReport}/show', 'show')->name('admin.financialReportShow');
+            Route::get('financial-report/{financialReport}/edit', 'edit')->name('admin.financialReportEdit');
+            Route::put('financial-report/{financialReport}/update', 'update')->name('admin.financialReportUpdate');
+            Route::delete('financial-report/{financialReport}/delete', 'destroy')->name('admin.financialReportDestroy');
         });
 
     });

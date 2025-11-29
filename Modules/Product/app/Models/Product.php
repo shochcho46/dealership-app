@@ -15,11 +15,15 @@ class Product extends Model implements HasMedia
     protected $fillable = [
         'name',
         'color_id',
+        'company_id',
         'measurement_unit_name',
         'measurement_unit_number',
         'package_unit_name',
         'package_unit_quantity',
         'unit_id',
+        'discount_type',
+        'discount_amount',
+        'description',
         'status'
     ];
 
@@ -51,12 +55,41 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Color::class);
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     /**
      * Relationship with Unit
      */
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * Relationship with Company
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Relationship with Brand (BelongsToMany)
+     */
+    public function brands()
+    {
+        return $this->belongsToMany(Brand::class, 'brand_product', 'product_id', 'brand_id');
+    }
+
+    /**
+     * Relationship with Tag (BelongsToMany)
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'product_tag', 'product_id', 'tag_id');
     }
 
     /**

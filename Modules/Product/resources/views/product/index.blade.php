@@ -76,6 +76,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Company</th>
                                         <th>Image</th>
                                         <th>Product Name</th>
                                         <th>Color</th>
@@ -90,6 +91,7 @@
                                     @forelse($products as $product)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $product?->company?->name ?? 'N/A' }}</td>
                                             <td>
                                                 <img src="{{ $product->product_image_thumb_url }}" alt="Product Image" class="product-image">
                                             </td>
@@ -147,6 +149,11 @@
                                 </tbody>
                             </table>
                         </div>
+                        @if($products->hasPages())
+                            <div class="mt-3">
+                                {{ $products->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

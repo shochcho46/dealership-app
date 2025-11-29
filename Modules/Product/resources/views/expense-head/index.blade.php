@@ -108,6 +108,11 @@
                                 </tbody>
                             </table>
                         </div>
+                        @if($expenseHeads->hasPages())
+                            <div class="mt-3">
+                                {{ $expenseHeads->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

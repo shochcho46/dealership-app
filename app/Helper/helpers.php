@@ -125,4 +125,19 @@ if (! function_exists('validationMobileNumber')) {
         $fullPath = storage_path('app/public/' . $tempPath);
         return  $fullPath;
     }
+
+
+    if (!function_exists('bd_number_format')) {
+    function bd_number_format($num) {
+        if ($num >= 10000000) {         // 1 Crore
+            return round($num / 10000000, 2) . 'C';
+        } elseif ($num >= 100000) {     // 1 Lakh
+            return round($num / 100000, 2) . 'L';
+        } elseif ($num >= 1000) {       // 1 Thousand
+            return round($num / 1000, 2) . 'K';
+        } else {
+            return number_format($num, 2);
+        }
+    }
+}
 }

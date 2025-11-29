@@ -312,16 +312,34 @@
                         <h5 class="mb-0">Vendor Information</h5>
                     </div>
                     <div class="card-body">
-                        <div class="vendor-search-box">
-                            <label for="vendor_search">Search Vendor by Name or Mobile</label>
-                            <input type="text" id="vendor_search" class="form-control" placeholder="Type vendor name or mobile number..." autocomplete="off" required>
-                            <div class="vendor-dropdown" id="vendor_dropdown"></div>
-                        </div>
+                        <div class="row">
+                            <div class="vendor-search-box">
+                                <label for="vendor_search">Search Vendor by Name or Mobile</label>
+                                <input type="text" id="vendor_search" class="form-control" placeholder="Type vendor name or mobile number..." autocomplete="off" required>
+                                <div class="vendor-dropdown" id="vendor_dropdown"></div>
+                            </div>
 
-                        <input type="hidden" name="vendor_id" id="selected_vendor_id" required>
-                        <div id="selected_vendor_info" style="display: none;" class="alert alert-info mt-2">
-                            <strong>Selected Vendor:</strong> <span id="vendor_display_name"></span><br>
-                            <small>Mobile: <span id="vendor_display_mobile"></span> | Address: <span id="vendor_display_address"></span></small>
+                            <input type="hidden" name="vendor_id" id="selected_vendor_id" required>
+                            <div id="selected_vendor_info" style="display: none;" class="alert alert-info mt-2">
+                                <strong>Selected Vendor:</strong> <span id="vendor_display_name"></span><br>
+                                <small>Mobile: <span id="vendor_display_mobile"></span> | Address: <span id="vendor_display_address"></span></small>
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="place_by">Order Placed By <span class="text-danger">*</span></label>
+                                <select name="place_by" id="place_by" class="form-control @error('place_by') is-invalid @enderror" required>
+                                    <option value="">Select Admin</option>
+                                    @foreach($admins as $admin)
+                                        <option value="{{ $admin->id }}" {{ old('place_by', Auth::guard('admin')->id()) == $admin->id ? 'selected' : '' }}>
+                                            {{ $admin->name }} ({{ $admin->roles_string }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('place_by')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -330,9 +348,9 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order Items</h5>
-                        <button type="button" class="btn btn-sm btn-success" onclick="addOrderItem()">
+                        {{-- <button type="button" class="btn btn-sm btn-success" onclick="addOrderItem()">
                             <i class="mdi mdi-plus"></i> Add Item
-                        </button>
+                        </button> --}}
                     </div>
                     <div class="card-body">
                         <div id="order_items_container">

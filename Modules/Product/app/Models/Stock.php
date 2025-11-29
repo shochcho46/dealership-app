@@ -27,7 +27,9 @@ class Stock extends Model
         'stolen_quantity',
         'transfer_quantity',
         'froze_quantity',
-        'status'
+        'status',
+        'manufacture_date',
+        'expire_date'
     ];
 
     /**
@@ -44,6 +46,8 @@ class Stock extends Model
         'transfer_quantity' => 'integer',
         'froze_quantity' => 'integer',
         'status' => 'boolean',
+        'manufacture_date' => 'date',
+        'expire_date' => 'date',
     ];
 
     /**

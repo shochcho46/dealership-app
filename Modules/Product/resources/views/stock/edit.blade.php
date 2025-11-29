@@ -221,6 +221,35 @@
 
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="manufacture_date" class="form-label text-dark">Manufacture Date</label>
+                                        <input type="date"
+                                               name="manufacture_date"
+                                               id="manufacture_date"
+                                               class="form-control"
+                                               value="{{ old('manufacture_date', $stock->manufacture_date ? $stock->manufacture_date->format('Y-m-d') : '') }}">
+                                        @error('manufacture_date')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="expire_date" class="form-label text-dark">Expire Date</label>
+                                        <input type="date"
+                                               name="expire_date"
+                                               id="expire_date"
+                                               class="form-control"
+                                               value="{{ old('expire_date', $stock->expire_date ? $stock->expire_date->format('Y-m-d') : '') }}">
+                                        @error('expire_date')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="card calculation-card">
                                         <div class="card-body p-3">
                                             <h6 class="card-title text-dark">Stock Summary</h6>
@@ -300,6 +329,19 @@ $(document).ready(function() {
 
     // Bind calculation update to relevant fields
     $('#purchase_price, #quantity, #damage_quantity, #sold_quantity, #stolen_quantity, #transfer_quantity').on('input', updateCalculations);
+
+    // Validate expire date is after manufacture date
+    $('#manufacture_date, #expire_date').on('change', function(){
+        const manufactureDate = $('#manufacture_date').val();
+        const expireDate = $('#expire_date').val();
+
+        if (manufactureDate && expireDate) {
+            if (new Date(expireDate) < new Date(manufactureDate)) {
+                alert("Expire date must be after or equal to manufacture date!");
+                $('#expire_date').val('');
+            }
+        }
+    });
 
     // Initial calculation
     updateCalculations();

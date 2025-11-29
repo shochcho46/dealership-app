@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
+
+    // protected $guard_name = 'admin';
+
     protected $fillable = [
         'name',
         'email',
@@ -18,4 +22,36 @@ class Admin extends Authenticatable
         'otp',
         'status'
     ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
+    /**
+     * Get the admin's full display name
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->name . ' (' . $this->email . ')';
+    }
+
+    /**
+     * Check if admin is active
+     */
+    public function isActive()
+    {
+        return $this->status === 1;
+    }
+
+    /**
+     * Get admin roles as comma-separated string
+     */
+    public function getRolesStringAttribute()
+    {
+        return $this->roles->pluck('name')->implode(', ');
+    }
 }

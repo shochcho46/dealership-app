@@ -45,11 +45,77 @@
                     </div>
                 @endif
 
+                <!-- Budget Cards Section -->
+                <div class="row mb-4">
+                    <h5 class="mb-3">Budget Overview - Current Month ({{ now()->format('F Y') }})</h5>
+                    @forelse($expenseHeads as $head)
+                        <?php
+                            $totalExpensesCurrentMonth = $head->getTotalExpensesForCurrentMonth();
+                            $remainingAmount = $head->getRemainingAmountForCurrentMonth();
+                            $percentageUsed = ($totalExpensesCurrentMonth / $head->max_amount) * 100;
+
+                            if ($percentageUsed >= 90) {
+                                $cardClass = 'danger'; // Red
+                                $cardBg = 'bg-danger-light';
+                            } elseif ($percentageUsed >= 75) {
+                                $cardClass = 'warning'; // Yellow
+                                $cardBg = 'bg-warning-light';
+                            } elseif ($percentageUsed >= 50) {
+                                $cardClass = 'info'; // Blue
+                                $cardBg = 'bg-info-light';
+                            } else {
+                                $cardClass = 'success'; // Green
+                                $cardBg = 'bg-success-light';
+                            }
+                        ?>
+                        <div class="col-md-6 col-lg-3 mb-2 ">
+                            <div class="card border-0 shadow-sm {{ $cardBg }}" style="height: auto; background: linear-gradient(135deg, #ffffff, #edf0f4);">
+                                <div class="card-body p-2">
+                                    <h6 class="text-center card-title mb-1" style="font-size: 0.9rem;">{{ $head->title }}</h6><br>
+                                    <small class="text-muted d-block">Limit: ৳{{ number_format($head->max_amount, 2) }} | Used: <strong class="text-{{ $cardClass }}">৳{{ number_format($totalExpensesCurrentMonth, 2) }}</strong></small>
+                                    <small class="text-muted d-block">Remaining: <strong class="text-{{ $cardClass }}">৳{{ number_format($remainingAmount, 2) }}</strong></small>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <p class="text-muted">No active expense heads available.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <!-- Main Table Card -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <h3 class="card-title">All Expenses</h3>
                     </div>
                     <div class="card-body">
+                        <!-- Filters -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="filterExpenseHead" class="form-label">Filter by Expense Head</label>
+                                <select id="filterExpenseHead" class="form-select form-select-sm">
+                                    <option value="">All Expense Heads</option>
+                                    @foreach($expenseHeads as $head)
+                                        <option value="{{ $head->id }}">{{ $head->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterDateFrom" class="form-label">From Date</label>
+                                <input type="date" id="filterDateFrom" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterDateTo" class="form-label">To Date</label>
+                                <input type="date" id="filterDateTo" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" id="filterSubmitBtn" class="btn btn-primary btn-sm w-100">
+                                    <span class="mdi mdi-filter"></span> Filter
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-hover" id="expenseListTable">
                                 <thead>
@@ -67,7 +133,8 @@
                                 </thead>
                                 <tbody>
                                     @forelse($expenseLists as $expenseList)
-                                        <tr>
+                                        <tr data-expense-head-id="{{ $expenseList->expense_head_id }}"
+                                            data-expense-date="{{ $expenseList->expense_date->format('Y-m-d') }}">
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
                                                 <a href="{{ route('admin.expenseHeadEdit', $expenseList->expenseHead->id) }}"
@@ -150,15 +217,20 @@
                                 </tbody>
                                 @if($expenseLists->isNotEmpty())
                                 <tfoot>
-                                    <tr>
+                                    <tr class="table-active">
                                         <th colspan="4" class="text-end">Total:</th>
-                                        <th class="text-end">৳{{ number_format($expenseLists->sum('amount'), 2) }}</th>
+                                        <th class="text-end" id="totalAmount">৳{{ number_format($expenseLists->sum('amount'), 2) }}</th>
                                         <th colspan="4"></th>
                                     </tr>
                                 </tfoot>
                                 @endif
                             </table>
                         </div>
+                        @if($expenseLists->hasPages())
+                            <div class="mt-3">
+                                {{ $expenseLists->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -167,16 +239,54 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('custome-js')
 <script>
     $(document).ready(function() {
-        $('#expenseListTable').DataTable({
-            "order": [[5, "desc"]], // Sort by expense date descending
-            "pageLength": 25,
-            "columnDefs": [
-                { "orderable": false, "targets": [8] } // Disable sorting on Actions column
-            ]
+        // Filter submit button click
+        $('#filterSubmitBtn').on('click', function() {
+            filterTable();
         });
+
+        // Allow Enter key to trigger filter
+        $('#filterDateFrom, #filterDateTo, #filterExpenseHead').on('keypress', function(e) {
+            if (e.which === 13) {
+                filterTable();
+            }
+        });
+
+        function filterTable() {
+            var expenseHeadId = $('#filterExpenseHead').val();
+            var dateFrom = $('#filterDateFrom').val();
+            var dateTo = $('#filterDateTo').val();
+
+            // Show/hide table rows based on filters
+            $('#expenseListTable tbody tr').each(function() {
+                var rowHeadId = $(this).data('expense-head-id');
+                var rowDate = $(this).data('expense-date');
+
+                var matchHead = !expenseHeadId || rowHeadId == expenseHeadId;
+                var matchDateFrom = !dateFrom || rowDate >= dateFrom;
+                var matchDateTo = !dateTo || rowDate <= dateTo;
+
+                if (matchHead && matchDateFrom && matchDateTo) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // Update total
+            updateTableTotal();
+        }
+
+        function updateTableTotal() {
+            var total = 0;
+            $('#expenseListTable tbody tr:visible').each(function() {
+                var amount = $(this).find('td:eq(4)').text().replace(/[^0-9.]/g, '');
+                total += parseFloat(amount) || 0;
+            });
+            $('#totalAmount').text('৳' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        }
     });
 </script>
-@endsection
+@endpush

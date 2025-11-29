@@ -13,7 +13,8 @@ class ExpenseHeadController extends Controller
      */
     public function index()
     {
-        $expenseHeads = ExpenseHead::withCount('expenseLists')->latest()->get();
+        $limit = request()->get('limit', 30);
+        $expenseHeads = ExpenseHead::withCount('expenseLists')->latest()->paginate($limit);
         return view('product::expense-head.index', compact('expenseHeads'));
     }
 
