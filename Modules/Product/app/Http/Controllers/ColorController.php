@@ -13,7 +13,8 @@ class ColorController extends Controller
      */
     public function index()
     {
-        $colors = Color::latest()->get();
+        $limit = request()->get('limit', 30);
+        $colors = Color::latest()->paginate($limit);
         return view('product::color.index', compact('colors'));
     }
 

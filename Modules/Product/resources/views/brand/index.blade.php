@@ -99,6 +99,11 @@
                             </table>
                         </div>
                     </div>
+                     @if($brands->hasPages())
+                        <div class="mt-3">
+                            {{ $brands->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

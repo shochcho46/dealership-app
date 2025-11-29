@@ -100,6 +100,12 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        @if($companies->hasPages())
+                            <div class="mt-3">
+                                {{ $companies->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

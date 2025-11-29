@@ -91,23 +91,46 @@
 
     <!-- Summary Cards -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-3">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="summary-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b7a 100%);">
                 <div class="number">{{ number_format($totalDamaged) }}</div>
                 <div class="label">Total Damaged Items</div>
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-3">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="summary-card" style="background: linear-gradient(135deg, #6c757d 0%, #8e9499 100%);">
                 <div class="number">{{ number_format($totalLost) }}</div>
                 <div class="label">Total Lost Items</div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="col-xl-4 col-md-4 mb-4">
             <div class="summary-card" style="background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);">
-                <div class="number">৳{{ number_format($totalValue, 2) }}</div>
+                <div class="number">৳{{ bd_number_format($totalValue, 2) }}</div>
                 <div class="label">Total Value Impact</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
+            <div class="summary-card" style="background: linear-gradient(135deg, #1164ff 0%, #ff6b7a 100%);">
+                <div class="number">{{ number_format($rangeDamaged) }}</div>
+                <div class="label">DateRange Damaged Items</div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-4 mb-4">
+            <div class="summary-card" style="background: linear-gradient(135deg, #0c3457 0%, #8e9499 100%);">
+                <div class="number">{{ number_format($rangeLost) }}</div>
+                <div class="label">DateRange Lost Items</div>
+            </div>
+        </div>
+            <div class="col-xl-4 col-md-4 mb-4">
+            <div class="summary-card" style="background: linear-gradient(135deg, #a16202 0%, #ffc107 100%);">
+                <div class="number">৳{{ bd_number_format($rangeValue, 2) }}</div>
+                <div class="label">DateRange Value Impact</div>
             </div>
         </div>
     </div>
@@ -121,22 +144,39 @@
                         <label class="form-label">Type Filter</label>
                         <select name="type_filter" class="form-select">
                             <option value="">All Types</option>
-                            <option value="damage" {{ request('type_filter') == 1 ? 'selected' : '' }}>Damage</option>
-                            <option value="lost" {{ request('type_filter') == 2 ? 'selected' : '' }}>Lost</option>
+                            <option value="1" {{ request('type_filter') == 1 ? 'selected' : '' }}>Damage</option>
+                            <option value="2" {{ request('type_filter') == 2 ? 'selected' : '' }}>Lost</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+
+                    {{-- <div class="col-md-2">
                         <label class="form-label">Vendor Filter</label>
-                        <select name="vendor_filter" class="form-select">
+                        <select name="vendor_filter" class="form-select select2">
                             <option value="">All Vendors</option>
                             @foreach($vendors as $vendor)
                                 <option value="{{ $vendor->id }}"
                                     {{ request('vendor_filter') == $vendor->id ? 'selected' : '' }}>
-                                    {{ $vendor->shop_name }}
+                                    {{ $vendor->shop_name }}<span class="text-muted"> ({{ $vendor->mobile }})</span>
+                                </option>
+                            @endforeach
+                        </select>
+                    </div> --}}
+
+
+                    <div class="col-md-3">
+                        <label class="form-label">Vendor Filter</label>
+                        <select name="vendor_filter" class="select2 form-select mt-1 p-1">
+                            <option value="">All Vendors</option>
+                            @foreach($vendors as $vendor)
+                                <option value="{{ $vendor->id }}"
+                                    {{ request('vendor_filter') == $vendor->id ? 'selected' : '' }}>
+                                    {{ $vendor->shop_name }}<span class="text-muted"> ({{ $vendor->mobile }})</span>
                                 </option>
                             @endforeach
                         </select>
                     </div>
+
+
                     <div class="col-md-3">
                         <label class="form-label">Product Search</label>
                         <input type="text" name="product_search" class="form-control"
@@ -152,16 +192,16 @@
                     </div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-12">
+                    <div class="col-12 text-end">
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="mdi mdi-magnify"></i> Filter
                         </button>
                         <a href="{{ route('damage-return-lost.index') }}" class="btn btn-secondary me-2">
                             <i class="mdi mdi-refresh"></i> Reset
                         </a>
-                        <a href="{{ route('damage-return-lost.create') }}" class="btn btn-danger float-end">
+                        {{-- <a href="{{ route('damage-return-lost.create') }}" class="btn btn-danger float-end">
                             <i class="mdi mdi-plus"></i> Report New Issue
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
             </form>
@@ -172,6 +212,11 @@
     <div class="card">
         <div class="card-header">
             <h5 class="card-title mb-0">Damage/Return/Lost Records</h5>
+            <div class="text-end">
+                <a href="{{ route('damage-return-lost.create') }}" class="btn btn-danger float-end">
+                            <i class="mdi mdi-plus"></i> Report New Issue
+                        </a>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -209,10 +254,11 @@
                                 </td>
                                 <td>
                                     <strong class="text-danger">{{ number_format($record?->quantity) }}</strong>
-                                    <br><small class="text-muted">@ ৳{{ number_format($record?->unit_price, 2) }}</small>
+                                    <br><small class="text-muted">puchase ৳{{ number_format($record?->purchase_price, 2) }}</small>
+
                                 </td>
                                 <td>
-                                    <strong class="text-danger">৳{{ number_format($record?->total_amount, 2) }}</strong>
+                                    <strong class="text-danger">৳{{ number_format($record?->total_price, 2) }}</strong>
                                 </td>
                                 <td>
                                     <div style="max-width: 200px;">
@@ -262,6 +308,7 @@
                                     </div>
                                 </td>
                             </tr>
+
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center py-4">
@@ -352,5 +399,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
+
 </script>
 @endpush

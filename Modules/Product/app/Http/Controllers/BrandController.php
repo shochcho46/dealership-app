@@ -14,7 +14,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = Brand::with('company')->latest()->get();
+        $limit = request()->get('limit', 30);
+        $brands = Brand::with('company')->latest()->paginate($limit);
         return view('product::brand.index', compact('brands'));
     }
 

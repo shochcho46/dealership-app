@@ -210,8 +210,8 @@
                 <!-- Reports Section -->
                 <li class="nav-header">REPORTS</li>
 
-                <li class="nav-item {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-chart-line"></i>
                         <p>
                             Reports
@@ -226,9 +226,27 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('admin.reportCollection') }}" class="nav-link {{ request()->is('admin/report/collection') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-currency-usd"></i>
+                                <p>Collection</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.reportSellSummary') }}" class="nav-link {{ request()->is('admin/report/sell-summary') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-cart-arrow-down"></i>
+                                <p>Sell Summary</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('admin.reportProfitableProduct') }}" class="nav-link {{ request()->is('admin/report/profitable-product') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-trending-up"></i>
                                 <p>Profitable Products</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.financialReportIndex') }}" class="nav-link {{ request()->is('admin/financial-report/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-file-document-multiple"></i>
+                                <p>Financial Summary</p>
                             </a>
                         </li>
                     </ul>
@@ -237,8 +255,8 @@
                 <!-- Financial Section -->
                 <li class="nav-header">FINANCIAL MANAGEMENT</li>
 
-                <li class="nav-item {{ request()->is('admin/payment-collection/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/payment-collection/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-finance"></i>
                         <p>
                             Financial
@@ -252,12 +270,6 @@
                                 <p>Payment Collection</p>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->is('admin/invoice/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-file-document"></i>
-                                <p>Invoices</p>
-                            </a>
-                        </li> --}}
                         <li class="nav-item">
                             <a href="{{ route('admin.paymentMethodIndex') }}" class="nav-link {{ request()->is('admin/payment-method/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-credit-card"></i>
@@ -274,6 +286,42 @@
                             <a href="{{ route('admin.expenseListIndex') }}" class="nav-link {{ request()->is('admin/expense-list/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-currency-usd"></i>
                                 <p>Expense Lists</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.investorIndex') }}" class="nav-link {{ request()->is('admin/investor/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-account-cash"></i>
+                                <p>Investors</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.assetIndex') }}" class="nav-link {{ request()->is('admin/asset/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-briefcase"></i>
+                                <p>Assets</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.profitDistributeIndex') }}" class="nav-link {{ request()->is('admin/profit-distribute/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-chart-pie"></i>
+                                <p>Profit Distribute</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.profitDisbursementIndex') }}" class="nav-link {{ request()->is('admin/profit-disbursement/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-cash-refund"></i>
+                                <p>Profit Disbursement</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.bankIndex') }}" class="nav-link {{ request()->is('admin/bank/*') && !request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-bank"></i>
+                                <p>Banks</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.bankAccountDetailIndex') }}" class="nav-link {{ request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-bank-transfer"></i>
+                                <p>Bank Transactions</p>
                             </a>
                         </li>
                     </ul>

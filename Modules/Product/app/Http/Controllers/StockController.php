@@ -75,11 +75,15 @@ class StockController extends Controller
                 'purchase_price' => 'required|numeric|min:0',
                 'quantity' => 'required|integer|min:1',
                 'sell_price' => 'required|numeric|min:0',
+                'manufacture_date' => 'nullable|date',
+                'expire_date' => 'nullable|date|after_or_equal:manufacture_date',
             ], [], [
                 'product_id' => "Product at row " . ($index + 1),
                 'purchase_price' => "Purchase Price at row " . ($index + 1),
                 'quantity' => "Quantity at row " . ($index + 1),
                 'sell_price' => "Sell Price at row " . ($index + 1),
+                'manufacture_date' => "Manufacture Date at row " . ($index + 1),
+                'expire_date' => "Expire Date at row " . ($index + 1),
             ]);
 
             if ($validator->fails()) {
@@ -105,6 +109,8 @@ class StockController extends Controller
                 'transfer_quantity' =>  0,
                 'status' => 1,
                 'warehouse_id' => 1,
+                'manufacture_date' => $stockData['manufacture_date'] ?? null,
+                'expire_date' => $stockData['expire_date'] ?? null,
             ]);
             }
         // });
@@ -157,6 +163,8 @@ class StockController extends Controller
             'stolen_quantity' => 'nullable|integer|min:0',
             'transfer_quantity' => 'nullable|integer|min:0',
             'status' => 'nullable|boolean',
+            'manufacture_date' => 'nullable|date',
+            'expire_date' => 'nullable|date|after_or_equal:manufacture_date',
         ]);
 
         try {
@@ -174,6 +182,8 @@ class StockController extends Controller
                 'stolen_quantity' => $request->stolen_quantity ?? 0,
                 'transfer_quantity' => $request->transfer_quantity ?? 0,
                 'status' => $request->status ?? 1,
+                'manufacture_date' => $request->manufacture_date,
+                'expire_date' => $request->expire_date,
             ]);
 
             return redirect()->route('admin.stockIndex')->with('success', 'Stock updated successfully.');

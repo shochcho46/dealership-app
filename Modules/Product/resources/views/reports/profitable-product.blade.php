@@ -122,10 +122,10 @@
                                             <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
                                         </td>
                                         <td>{{ $product['name'] }}</td>
-                                        <td class="text-end">{{ number_format($product['total_sold_qty'], 0) }}</td>
-                                        <td class="text-end">৳{{ number_format($product['total_revenue'], 2) }}</td>
-                                        <td class="text-end">৳{{ number_format($product['total_cost'], 2) }}</td>
-                                        <td class="text-end fw-bold text-success">৳{{ number_format($product['total_profit'], 2) }}</td>
+                                        <td class="text-end">{{ bd_number_format($product['total_sold_qty'], 0) }}</td>
+                                        <td class="text-end">৳{{ bd_number_format($product['total_revenue'], 2) }}</td>
+                                        <td class="text-end">৳{{ bd_number_format($product['total_cost'], 2) }}</td>
+                                        <td class="text-end fw-bold text-success">৳{{ bd_number_format($product['total_profit'], 2) }}</td>
                                         <td class="text-end">
                                             <span class="badge {{ $badgeClass }}">
                                                 {{ number_format($product['profit_margin'], 2) }}%
@@ -145,9 +145,9 @@
                                 <tr>
                                     <th colspan="3" class="text-end">Total:</th>
                                     <th class="text-end">{{ number_format($totalQty, 0) }}</th>
-                                    <th class="text-end">৳{{ number_format($totalRevenue, 2) }}</th>
-                                    <th class="text-end">৳{{ number_format($totalCost, 2) }}</th>
-                                    <th class="text-end fw-bold text-success">৳{{ number_format($totalProfit, 2) }}</th>
+                                    <th class="text-end">৳{{ bd_number_format($totalRevenue, 2) }}</th>
+                                    <th class="text-end">৳{{ bd_number_format($totalCost, 2) }}</th>
+                                    <th class="text-end fw-bold text-success">৳{{ bd_number_format($totalProfit, 2) }}</th>
                                     <th class="text-end">
                                         @if($totalRevenue > 0)
                                             {{ number_format(($totalProfit / $totalRevenue) * 100, 2) }}%
@@ -175,7 +175,7 @@
                             <div class="card bg-info text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Revenue</h5><br>
-                                    <h2>৳{{ number_format($totalRevenue, 2) }}</h2>
+                                    <h2>৳{{ bd_number_format($totalRevenue, 2) }}</h2>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
                             <div class="card bg-warning text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Cost</h5><br>
-                                    <h2>৳{{ number_format($totalCost, 2) }}</h2>
+                                    <h2>৳{{ bd_number_format($totalCost, 2) }}</h2>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +191,7 @@
                             <div class="card bg-success text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Profit</h5><br>
-                                    <h2>৳{{ number_format($totalProfit, 2) }}</h2>
+                                    <h2>৳{{ bd_number_format($totalProfit, 2) }}</h2>
                                 </div>
                             </div>
                         </div>

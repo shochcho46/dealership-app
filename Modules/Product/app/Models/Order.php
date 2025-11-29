@@ -56,12 +56,19 @@ class Order extends Model
      */
     public function generateInvoiceId()
     {
+        $vendorCode = 'abc'; // Default if no vendor
+            if ($this->vendor_id) {
+                $vendor = Vendor::find($this->vendor_id);
+                if ($vendor && !empty($vendor->shop_name)) {
+                $vendorCode = strtoupper(substr($vendor->shop_name, 0, 2));
+                }
+            }
         $datePart = now()->format('d-m-y');
         $randomDigits = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $lastId = static::max('id') ?? 0;
         $nextId = $lastId + 1;
 
-        return "SSE-{$datePart}-{$randomDigits}-{$nextId}";
+        return "SSE-{$datePart}-{$randomDigits}-{$vendorCode}-{$nextId}";
     }
 
     /**

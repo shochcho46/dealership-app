@@ -198,7 +198,17 @@
                                                 <input type="number" data-name="stolen_quantity" class="form-control" min="0" value="0">
                                             </div>
 
-                                            <div class="col-md-6 text-end repeater-remove-btn mt-2">
+                                            <div class="col-md-3">
+                                                <label class="form-label text-dark">Manufacture Date</label>
+                                                <input type="date" data-name="manufacture_date" class="form-control manufacture-date">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label text-dark">Expire Date</label>
+                                                <input type="date" data-name="expire_date" class="form-control expire-date">
+                                            </div>
+
+                                            <div class="col-md-12 text-end repeater-remove-btn mt-3">
                                                 <button type="button" class="btn btn-outline-danger btn-sm remove-btn">
                                                     <i class="mdi mdi-delete"></i> Remove
                                                 </button>
@@ -385,6 +395,20 @@ $(document).ready(function () {
         let price = parseFloat($row.find(".purchase-price").val()) || 0;
         let qty = parseInt($row.find(".quantity").val()) || 0;
         $row.find(".total-price").text((price * qty).toFixed(2));
+    });
+
+    // Validate expire date is after manufacture date
+    $(document).on("change", ".manufacture-date, .expire-date", function(){
+        let $row = $(this).closest(".stock-entry-item");
+        let manufactureDate = $row.find(".manufacture-date").val();
+        let expireDate = $row.find(".expire-date").val();
+
+        if (manufactureDate && expireDate) {
+            if (new Date(expireDate) < new Date(manufactureDate)) {
+                alert("Expire date must be after or equal to manufacture date!");
+                $row.find(".expire-date").val('');
+            }
+        }
     });
 
     // Add/Remove row

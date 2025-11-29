@@ -14,7 +14,8 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $vendors = Vendor::with('country')->latest()->get();
+        $limit = request()->get('limit', 30);
+        $vendors = Vendor::with('country')->latest()->paginate($limit);
         return view('product::vendor.index', compact('vendors'));
     }
 

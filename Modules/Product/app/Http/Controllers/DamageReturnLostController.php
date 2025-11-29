@@ -22,16 +22,17 @@ class DamageReturnLostController extends Controller
      */
     public function index(Request $request)
     {
+        $limit = $request->limit ?? 30;
         $query = DamageReturnLost::with(['order', 'orderItem.product', 'stock']);
 
         // Apply filters
         if ($request->filled('type_filter')) {
-            $query->where('type', $request->type_filter);
+            $query->where('status', $request->type_filter);
         }
 
-        // if ($request->filled('vendor_filter')) {
-        //     $query->where('vendor_id', $request->vendor_filter);
-        // }
+        if ($request->filled('vendor_filter')) {
+            $query->where('vendor_id', $request->vendor_filter);
+        }
 
         if ($request->filled('product_search')) {
             $search = $request->product_search;
@@ -48,13 +49,34 @@ class DamageReturnLostController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $records = $query->orderBy('created_at', 'desc')->paginate(15);
+        $records = $query->orderBy('id', 'desc')->paginate($limit);
 
         // Summary data
         $totalDamaged = DamageReturnLost::where('status', 1)->sum('quantity');
-
-        $totalLost = DamageReturnLost::where('status', 2)->sum('quantity');
+        $totalLost = DamageReturnLost::where('status', 3)->sum('quantity');
         $totalValue = DamageReturnLost::sum('total_price');
+
+
+         $rangeQuery = DamageReturnLost::query();
+
+        if ($request->filled('date_from')) {
+            $rangeQuery->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $rangeQuery->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Only calculate if date filter exists
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $rangeDamaged = (clone $rangeQuery)->where('status', 1)->sum('quantity');
+            $rangeLost    = (clone $rangeQuery)->where('status', 3)->sum('quantity');
+            $rangeValue   = (clone $rangeQuery)->sum('total_price');
+        } else {
+            $rangeDamaged = null;
+            $rangeLost    = null;
+            $rangeValue   = null;
+        }
 
         // Get vendors and products for filters
         $vendors = Vendor::orderBy('shop_name')->get();
@@ -64,6 +86,9 @@ class DamageReturnLostController extends Controller
             'totalDamaged',
             'totalLost',
             'totalValue',
+            'rangeDamaged',
+            'rangeLost',
+            'rangeValue',
             'vendors'
         ));
     }
@@ -364,12 +389,10 @@ class DamageReturnLostController extends Controller
             }
 
             // Store which stock was affected (for the first one processed)
-            if (!$damageRecord->stock_id && !$damageRecord->order_item_stock_id) {
                 $damageRecord->update([
-                    'stock_id' => $stock->id,
-                    'order_item_stock_id' => $orderItemStock->id
-                ]);
-            }
+                            'stock_id' => $stock->id,
+                            'order_item_stock_id' => $orderItemStock->id
+                            ]);
 
             $remainingQuantity -= $quantityToProcess;
         }
@@ -525,71 +548,5 @@ class DamageReturnLostController extends Controller
         }
     }
 
-    /**
-     * Test function to verify our logic (can be removed in production)
-     */
-    public function test()
-    {
-        try {
-            // Get a sample order with items
-            $order = Order::with(['orderItems.orderItemStocks.stock'])->first();
 
-            if (!$order) {
-                return response()->json(['error' => 'No orders found for testing']);
-            }
-
-            $orderItem = $order->orderItems->first();
-
-            if (!$orderItem) {
-                return response()->json(['error' => 'No order items found for testing']);
-            }
-
-            // Test data before
-            $beforeData = [
-                'order_item_stocks' => $orderItem->orderItemStocks->map(function($ois) {
-                    return [
-                        'id' => $ois->id,
-                        'quantity' => $ois->quantity,
-                        'damage_quantity' => $ois->damage_quantity,
-                        'return_quantity' => $ois->return_quantity,
-                        'lost_quantity' => $ois->lost_quantity,
-                    ];
-                }),
-                'order_item' => [
-                    'id' => $orderItem->id,
-                    'quantity' => $orderItem->quantity,
-                    'damage_quantity' => $orderItem->damage_quantity,
-                    'return_quantity' => $orderItem->return_quantity,
-                    'lost_quantity' => $orderItem->lost_quantity,
-                ],
-                'order' => [
-                    'id' => $order->id,
-                    'total_quantity' => $order->total_quantity,
-                    'total_damage_quantity' => $order->total_damage_quantity,
-                    'total_return_quantity' => $order->total_return_quantity,
-                    'total_lost_quantity' => $order->total_lost_quantity,
-                ],
-                'stocks' => $orderItem->orderItemStocks->map(function($ois) {
-                    return [
-                        'id' => $ois->stock->id,
-                        'quantity' => $ois->stock->quantity,
-                        'sold_quantity' => $ois->stock->sold_quantity,
-                        'damage_quantity' => $ois->stock->damage_quantity,
-                        'stolen_quantity' => $ois->stock->stolen_quantity,
-                    ];
-                })
-            ];
-
-            return response()->json([
-                'message' => 'Test data retrieved successfully',
-                'order_id' => $order->id,
-                'order_item_id' => $orderItem->id,
-                'before_data' => $beforeData,
-                'instructions' => 'Use this data to test damage/return/lost creation'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Test failed: ' . $e->getMessage()]);
-        }
-    }
 }

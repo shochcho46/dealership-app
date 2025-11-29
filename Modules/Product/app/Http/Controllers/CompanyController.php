@@ -13,7 +13,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::latest()->get();
+        $limit = request()->get('limit', 30);
+        $companies = Company::latest()->paginate($limit);
         return view('product::company.index', compact('companies'));
     }
 

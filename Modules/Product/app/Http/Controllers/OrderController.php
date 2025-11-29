@@ -60,7 +60,8 @@ class OrderController extends Controller
         $completedOrders = Order::whereIn('order_status_id', [4, 5])->count(); // Shipped/Delivered
 
         // Get all order statuses and vendors for filters
-        $orderStatuses = OrderStatus::orderBy('id')->get();
+        $limit = request()->get('limit', 30);
+        $orderStatuses = OrderStatus::orderBy('id')->paginate($limit);
         $vendors = Vendor::orderBy('shop_name')->get();
 
         $placeBys = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();

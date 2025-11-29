@@ -133,7 +133,7 @@
                                 <th>Order</th>
                                 <th>Payment Method</th>
                                 <th>Amount</th>
-                                <th>Note</th>
+
                                 <th>Type</th>
                                 <th>Created By</th>
                                 <th>Deposited By</th>
@@ -161,7 +161,7 @@
                                             ৳{{ number_format($collection->amount, 2) }}
                                         </span>
                                     </td>
-                                    <td>{{ $collection->note ?? '-' }}</td>
+
                                     <td>
                                         <span class="badge {{ $collection->type_badge_class }}">
                                             {{ $collection->type_text }}
@@ -202,9 +202,13 @@
                         </tbody>
                     </table>
                 </div>
+                @if($collections->hasPages())
+                    <div class="mt-3">
+                        {{ $collections->links() }}
+                    </div>
+                @endif
 
                 <!-- Pagination -->
-                {{ $collections->links() }}
             </div>
         </div>
         @include('components.delete')

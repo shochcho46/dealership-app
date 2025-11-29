@@ -25,7 +25,8 @@ class DamageReturnLost extends Model implements HasMedia
         'purchase_price',
         'total_price',
         'order_item_stock_id',
-        'reason'
+        'reason',
+        'vendor_id'
     ];
 
     protected $casts = [
@@ -34,6 +35,7 @@ class DamageReturnLost extends Model implements HasMedia
         'purchase_price' => 'decimal:2',
         'total_price' => 'decimal:2',
         'order_item_stock_id' => 'integer',
+        'vendor_id' => 'integer',
     ];
 
     /**
@@ -187,6 +189,6 @@ class DamageReturnLost extends Model implements HasMedia
      */
     public function scopeLost($query)
     {
-        return $query->where('status', 2);
+        return $query->where('status', 3);
     }
 }

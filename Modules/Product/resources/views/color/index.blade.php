@@ -116,6 +116,11 @@
                                 </tbody>
                             </table>
                         </div>
+                        @if($colors->hasPages())
+                            <div class="mt-3">
+                                {{ $colors->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
