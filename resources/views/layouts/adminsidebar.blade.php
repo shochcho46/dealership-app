@@ -20,7 +20,7 @@
                 <li class="nav-header">USER MANAGEMENT</li>
 
                 <li class="nav-item {{ request()->is('admin/user/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/user/*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link">
                         <span class="nav-icon mdi mdi-account-multiple"></span>
                         <p>
                             Users
@@ -29,7 +29,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.adminUserIndex') }}" class="nav-link {{ request()->is('admin/user/index') || request()->is('admin/user/*/edit') || request()->is('admin/user/create') ? 'active' : '' }}">
+                            <a href="{{ route('admin.adminUserIndex') }}" class="nav-link {{ request()->is('admin/user/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-account-tie"></i>
                                 <p>Admin Users</p>
                             </a>
@@ -56,14 +56,20 @@
                     </ul>
                 </li>
 
+                <li class="nav-header">BUSINESS MANAGEMENT</li>
 
-
+                <li class="nav-item">
+                    <a href="{{ route('admin.businessIndex') }}" class="nav-link {{ request()->is('admin/business*') ? 'active' : '' }}">
+                        <i class="nav-icon mdi mdi-office-building"></i>
+                        <p>Business Setting</p>
+                    </a>
+                </li>
 
                 <li class="nav-header">PRODUCT MANAGEMENT</li>
 
                 <!-- Products Section -->
-                <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || request()->is('admin/company*') || request()->is('admin/brand*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || request()->is('admin/company*') || request()->is('admin/brand*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-package-variant-closed"></i>
                         <p>
                             Products
@@ -73,7 +79,7 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.companyIndex') }}" class="nav-link {{ request()->is('admin/company/*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.companyIndex') }}" class="nav-link {{ request()->is('admin/company/*') && !request()->is('admin/company-order/*') ? 'active' : '' }}">
                              <i class="nav-icon mdi mdi-domain"></i>
                                 <p>Companies</p>
                             </a> </li>
@@ -146,8 +152,8 @@
 
                 <li class="nav-header">ORDER MANAGEMENT</li>
                 <!-- Orders Section -->
-                <li class="nav-item {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-cart"></i>
                         <p>
                             Orders
@@ -165,6 +171,12 @@
                             <a href="{{ route('orders.create') }}" class="nav-link {{ request()->is('admin/order/create') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-plus-circle"></i>
                                 <p>Create Order</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.companyOrderIndex') }}" class="nav-link {{ request()->is('admin/company-order/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-domain"></i>
+                                <p>Company Orders</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -255,8 +267,8 @@
                 <!-- Financial Section -->
                 <li class="nav-header">FINANCIAL MANAGEMENT</li>
 
-                <li class="nav-item {{ request()->is('admin/payment-collection/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/payment-collection/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-finance"></i>
                         <p>
                             Financial
@@ -322,6 +334,12 @@
                             <a href="{{ route('admin.bankAccountDetailIndex') }}" class="nav-link {{ request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-bank-transfer"></i>
                                 <p>Bank Transactions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.capitalOverview') }}" class="nav-link {{ request()->is('admin/capital-overview') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-finance"></i>
+                                <p>Capital Overview</p>
                             </a>
                         </li>
                     </ul>
