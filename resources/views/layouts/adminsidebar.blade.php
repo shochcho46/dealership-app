@@ -8,148 +8,195 @@
     <div class="sidebar-wrapper">
         <nav class="mt-2"> <!--begin::Sidebar Menu-->
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
+                 @can('dashboard')
+                    <li class="nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                            <i class="nav-icon bi bi-border"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+                @endcan
 
-                <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link">
-                        <i class="nav-icon bi bi-border"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
+                @can('admin_user')
+                    <li class="nav-header">USER MANAGEMENT</li>
+
+                    <li class="nav-item {{ request()->is('admin/user/*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon mdi mdi-account-multiple"></span>
+                            <p>
+                                Users
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.adminUserIndex') }}" class="nav-link {{ request()->is('admin/user/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-account-tie"></i>
+                                    <p>Admin Users</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                 @endcan
+
+                @canany(['role_list', 'permission_list'])
+                    <li class="nav-item {{ request()->is('admin/role/permission/*') ? 'menu-open' : '' }}"> <a href="#" class="nav-link {{ request()->is('admin/role/permission/*') ? 'active' : '' }}">  <span class="nav-icon mdi mdi-shield-lock"></span>
+                            <p>
+                            Role & Permission
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('role_list')
+                                <li class="nav-item"> <a href="{{ route('admin.roleIndex') }}" class="nav-link {{ request()->is('admin/role/permission/role/*') ? 'active' : '' }}"> <i
+                                            class="nav-icon mdi mdi-sort-variant-lock"></i>
+                                        <p>Role List</p>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('permission_list')
+                                <li class="nav-item"> <a href="{{ route('admin.permissionIndex') }}" class="nav-link {{ request()->is('admin/role/permission/permission/*') ? 'active' : '' }}"> <i
+                                            class="nav-icon mdi mdi-axis-lock"></i>
+                                        <p>Permission List</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+
+                @endcanany
+
+                @can('business_setting')
+                    <li class="nav-header">BUSINESS MANAGEMENT</li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.businessIndex') }}" class="nav-link {{ request()->is('admin/business*') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-office-building"></i>
+                            <p>Business Setting</p>
+                        </a>
+                    </li>
+                @endcan
 
 
-                <li class="nav-header">USER MANAGEMENT</li>
+                @canany(['product_list', 'company_list', 'brand_list', 'color_list', 'unit_list'])
+                    <li class="nav-header">PRODUCT MANAGEMENT</li>
 
-                <li class="nav-item {{ request()->is('admin/user/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon mdi mdi-account-multiple"></span>
-                        <p>
-                            Users
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.adminUserIndex') }}" class="nav-link {{ request()->is('admin/user/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-account-tie"></i>
-                                <p>Admin Users</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <!-- Products Section -->
+                    <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-package-variant-closed"></i>
+                            <p>
+                                Products
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('company_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.companyIndex') }}" class="nav-link {{ request()->is('admin/company/*') && !request()->is('admin/company-order/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-domain"></i>
+                                        <p>Companies</p>
+                                    </a>
+                                </li>
+                            @endcan
 
-                <li class="nav-item {{ request()->is('admin/role/permission/*') ? 'menu-open' : '' }}"> <a href="#" class="nav-link {{ request()->is('admin/role/permission/*') ? 'active' : '' }}">  <span class="nav-icon mdi mdi-shield-lock"></span>
-                        <p>
-                           Role & Permission
-                            <i class="nav-arrow bi bi-chevron-right"></i>
+                            @can('brand_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.brandIndex') }}" class="nav-link {{ request()->is('admin/brand/*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-watermark"></i>
+                                        <p>Brands</p>
+                                    </a>
+                                </li>
+                            @endcan
 
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item"> <a href="{{ route('admin.roleIndex') }}" class="nav-link {{ request()->is('admin/role/permission/role/*') ? 'active' : '' }}"> <i
-                                    class="nav-icon mdi mdi-sort-variant-lock"></i>
-                                <p>Role List</p>
-                            </a> </li>
-                        <li class="nav-item"> <a href="{{ route('admin.permissionIndex') }}" class="nav-link {{ request()->is('admin/role/permission/permission/*') ? 'active' : '' }}"> <i
-                                    class="nav-icon mdi mdi-axis-lock"></i>
-                                <p>Permission List</p>
-                            </a> </li>
-                    </ul>
-                </li>
+                            @can('color_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.colorIndex') }}" class="nav-link {{ request()->is('admin/color*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-palette"></i>
+                                        <p>Colors</p>
+                                    </a>
+                                </li>
+                            @endcan
 
-                <li class="nav-header">BUSINESS MANAGEMENT</li>
+                            @can('unit_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.unitIndex') }}" class="nav-link {{ request()->is('admin/unit*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-scale-balance"></i>
+                                        <p>Units</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('product_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.productIndex') }}" class="nav-link {{ request()->is('admin/product/*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-package"></i>
+                                        <p>Products</p>
+                                    </a>
+                                </li>
+                            @endcan
 
-                <li class="nav-item">
-                    <a href="{{ route('admin.businessIndex') }}" class="nav-link {{ request()->is('admin/business*') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-office-building"></i>
-                        <p>Business Setting</p>
-                    </a>
-                </li>
+                        </ul>
+                    </li>
+                @endcanany
 
-                <li class="nav-header">PRODUCT MANAGEMENT</li>
+                @can('vendor_list')
+                    <li class="nav-header">VENDOR MANAGEMENT</li>
+                    <!-- Vendors -->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->is('admin/vendor/*') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-account-group"></i>
+                            <p>Vendors</p>
+                        </a>
+                    </li>
+                @endcan
 
-                <!-- Products Section -->
-                <li class="nav-item {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/product/*') || request()->is('admin/color*') || request()->is('admin/unit*') || (request()->is('admin/company/*') && !request()->is('admin/company-order/*')) || request()->is('admin/brand*') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-package-variant-closed"></i>
-                        <p>
-                            Products
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.companyIndex') }}" class="nav-link {{ request()->is('admin/company/*') && !request()->is('admin/company-order/*') ? 'active' : '' }}">
-                             <i class="nav-icon mdi mdi-domain"></i>
-                                <p>Companies</p>
-                            </a> </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.brandIndex') }}" class="nav-link {{ request()->is('admin/brand/*') ? 'active' : '' }}">
-                             <i class="nav-icon mdi mdi-watermark"></i>
-                                <p>Brands</p>
-                        </a> </li>
+                @canany(['stock_list', 'stock_overview_list', 'warehouse_list'])
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.productIndex') }}" class="nav-link {{ request()->is('admin/product/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-package"></i>
-                                <p>Products</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.colorIndex') }}" class="nav-link {{ request()->is('admin/color*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-palette"></i>
-                                <p>Colors</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.unitIndex') }}" class="nav-link {{ request()->is('admin/unit*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-scale-balance"></i>
-                                <p>Units</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <li class="nav-header">STOCK MANAGEMENT</li>
+                    <!-- Stock Management -->
+                    <li class="nav-item {{ request()->is('admin/stock/*') || request()->is('admin/warehouse/*') || request()->is('admin/report/stock-overview') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->is('admin/stock/*') || request()->is('admin/warehouse/*') || request()->is('admin/report/stock-overview') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-warehouse"></i>
+                            <p>
+                                Stock Management
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('warehouse_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.warehouseIndex') }}" class="nav-link {{ request()->is('admin/warehouse/*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-home-city"></i>
+                                        <p>Warehouses</p>
+                                    </a>
+                                </li>
+                            @endcan
 
-                <li class="nav-header">STOCK MANAGEMENT</li>
-                <!-- Stock Management -->
-                <li class="nav-item {{ request()->is('admin/stock/*') || request()->is('admin/warehouse/*') || request()->is('admin/report/stock-overview') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/stock/*') || request()->is('admin/warehouse/*') || request()->is('admin/report/stock-overview') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-warehouse"></i>
-                        <p>
-                            Stock Management
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.stockIndex') }}" class="nav-link {{ request()->is('admin/stock/*') && !request()->is('admin/report/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-package-variant"></i>
-                                <p>Stock List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.warehouseIndex') }}" class="nav-link {{ request()->is('admin/warehouse/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-home-city"></i>
-                                <p>Warehouses</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.reportStockOverview') }}" class="nav-link {{ request()->is('admin/report/stock-overview') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-chart-box-outline"></i>
-                                <p>Stock Overview</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                            @can('stock_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.stockIndex') }}" class="nav-link {{ request()->is('admin/stock/*') && !request()->is('admin/report/*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-package-variant"></i>
+                                        <p>Stock List</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('stock_overview_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.reportStockOverview') }}" class="nav-link {{ request()->is('admin/report/stock-overview') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-chart-box-outline"></i>
+                                        <p>Stock Overview</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcanany
 
-                <!-- Vendors -->
-                <li class="nav-item">
-                    <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->is('admin/vendor/*') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-account-group"></i>
-                        <p>Vendors</p>
-                    </a>
-                </li>
 
+            @canany(['company_order_list', 'order_status_list', 'add_order', 'order_list'])
                 <li class="nav-header">ORDER MANAGEMENT</li>
                 <!-- Orders Section -->
                 <li class="nav-item {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') ? 'menu-open' : '' }}">
@@ -161,64 +208,81 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->is('admin/order/index') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-format-list-bulleted"></i>
-                                <p>All Orders</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('orders.create') }}" class="nav-link {{ request()->is('admin/order/create') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-plus-circle"></i>
-                                <p>Create Order</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.companyOrderIndex') }}" class="nav-link {{ request()->is('admin/company-order/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-domain"></i>
-                                <p>Company Orders</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.orderStatusIndex') }}" class="nav-link {{ request()->is('admin/order-status/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-progress-check"></i>
-                                <p>Order Status</p>
-                            </a>
-                        </li>
+                        @can('company_order_list')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.companyOrderIndex') }}" class="nav-link {{ request()->is('admin/company-order/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-domain"></i>
+                                    <p>Company Orders</p>
+                                </a>
+                            </li>
+                        @endcan
+
+                        @can('order_status_list')
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.orderStatusIndex') }}" class="nav-link {{ request()->is('admin/order-status/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-progress-check"></i>
+                                    <p>Order Status</p>
+                                </a>
+                            </li>
+                        @endcan
+
+                        @can('add_order')
+                            <li class="nav-item">
+                                <a href="{{ route('orders.create') }}" class="nav-link {{ request()->is('admin/order/create') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-plus-circle"></i>
+                                    <p>Create Sales Order</p>
+                                </a>
+                            </li>
+                        @endcan
+                        @can('order_list')
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index') }}" class="nav-link {{ request()->is('admin/order/index') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-format-list-bulleted"></i>
+                                    <p>All Orders</p>
+                                </a>
+                            </li>
+                        @endcan
+
                     </ul>
                 </li>
+            @endcanany
+            @can('invoice_list')
+                    <li class="nav-header">INVOICE MANAGEMENT</li>
+                    <!-- Invoice -->
+                    <li class="nav-item">
+                        <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->is('admin/invoice/*') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-file-document"></i>
+                            <p>All Invoice</p>
+                        </a>
+                    </li>
+            @endcan
+
+                @can('damage_return_lost_list')
+                    <li class="nav-header">RETURN MANAGEMENT</li>
+
+                    <!-- RETURN & Issues -->
+                    <li class="nav-item {{ request()->is('damage-return-lost/*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->is('damage-return-lost/*') ? 'active' : '' }}">
+                            <i class="nav-icon mdi mdi-alert-circle"></i>
+                            <p>
+                                Damage & Return
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('damage-return-lost.index') }}" class="nav-link {{ request()->is('damage-return-lost/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-package-down"></i>
+                                    <p>Damage/Return/Lost</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endcan
 
 
-                 <!-- Invoice -->
-                <li class="nav-item">
-                    <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->is('admin/invoice/*') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-file-document"></i>
-                        <p>Invoice</p>
-                    </a>
-                </li>
-
-
-                <li class="nav-header">RETURN MANAGEMENT</li>
-
-                <!-- RETURN & Issues -->
-                <li class="nav-item {{ request()->is('damage-return-lost/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('damage-return-lost/*') ? 'active' : '' }}">
-                        <i class="nav-icon mdi mdi-alert-circle"></i>
-                        <p>
-                            Damage & Return
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('damage-return-lost.index') }}" class="nav-link {{ request()->is('damage-return-lost/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-package-down"></i>
-                                <p>Damage/Return/Lost</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
+                @canany(['order_report', 'collection_list', 'sell_summery_list', 'financial_summery_list', 'profitable_product_list'])
                 <!-- Reports Section -->
                 <li class="nav-header">REPORTS</li>
 
@@ -231,38 +295,58 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+
+                    @can('order_report')
                         <li class="nav-item">
                             <a href="{{ route('admin.reportOrderReport') }}" class="nav-link {{ request()->is('admin/report/order-report') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-file-chart"></i>
                                 <p>Order Report</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('collection_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.reportCollection') }}" class="nav-link {{ request()->is('admin/report/collection') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-currency-usd"></i>
                                 <p>Collection</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('sell_summery_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.reportSellSummary') }}" class="nav-link {{ request()->is('admin/report/sell-summary') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-cart-arrow-down"></i>
                                 <p>Sell Summary</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.reportProfitableProduct') }}" class="nav-link {{ request()->is('admin/report/profitable-product') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-trending-up"></i>
-                                <p>Profitable Products</p>
-                            </a>
-                        </li>
+                    @endcan
+
+                    @can('financial_summery_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.financialReportIndex') }}" class="nav-link {{ request()->is('admin/financial-report/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-file-document-multiple"></i>
                                 <p>Financial Summary</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('profitable_product_list')
+                         <li class="nav-item">
+                            <a href="{{ route('admin.reportProfitableProduct') }}" class="nav-link {{ request()->is('admin/report/profitable-product') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-trending-up"></i>
+                                <p>Profitable Products</p>
+                            </a>
+                        </li>
+                    @endcan
                     </ul>
                 </li>
+
+                @endcanany
+
+
+            @canany(['payment_collection_list', 'profit_distribute_list', 'profit_disbursment_list', 'bank_list', 'bank_transaction_list', 'capital_overview', 'investor_list', 'asset_list', 'payment_method_list', 'expense_head_list', 'expense_list'])
 
                 <!-- Financial Section -->
                 <li class="nav-header">FINANCIAL MANAGEMENT</li>
@@ -276,76 +360,115 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+
+                    @can('payment_collection_list')
+
                         <li class="nav-item">
                             <a href="{{ route('payment-collections.index') }}" class="nav-link {{ request()->is('admin/payment-collection/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-cash-multiple"></i>
                                 <p>Payment Collection</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.paymentMethodIndex') }}" class="nav-link {{ request()->is('admin/payment-method/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-credit-card"></i>
-                                <p>Payment Methods</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.expenseHeadIndex') }}" class="nav-link {{ request()->is('admin/expense-head/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-format-list-text"></i>
-                                <p>Expense Heads</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.expenseListIndex') }}" class="nav-link {{ request()->is('admin/expense-list/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-currency-usd"></i>
-                                <p>Expense Lists</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.investorIndex') }}" class="nav-link {{ request()->is('admin/investor/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-account-cash"></i>
-                                <p>Investors</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.assetIndex') }}" class="nav-link {{ request()->is('admin/asset/*') ? 'active' : '' }}">
-                                <i class="nav-icon mdi mdi-briefcase"></i>
-                                <p>Assets</p>
-                            </a>
-                        </li>
+                    @endcan
+
+                    @can('profit_distribute_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.profitDistributeIndex') }}" class="nav-link {{ request()->is('admin/profit-distribute/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-chart-pie"></i>
                                 <p>Profit Distribute</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('profit_disbursment_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.profitDisbursementIndex') }}" class="nav-link {{ request()->is('admin/profit-disbursement/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-cash-refund"></i>
                                 <p>Profit Disbursement</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('bank_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.bankIndex') }}" class="nav-link {{ request()->is('admin/bank/*') && !request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-bank"></i>
                                 <p>Banks</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('bank_transaction_list')
                         <li class="nav-item">
                             <a href="{{ route('admin.bankAccountDetailIndex') }}" class="nav-link {{ request()->is('admin/bank-transaction/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-bank-transfer"></i>
                                 <p>Bank Transactions</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('capital_overview')
                         <li class="nav-item">
                             <a href="{{ route('admin.capitalOverview') }}" class="nav-link {{ request()->is('admin/capital-overview') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-finance"></i>
                                 <p>Capital Overview</p>
                             </a>
                         </li>
+                    @endcan
+
+                    @can('investor_list')
+                        <li class="nav-item">
+                            <a href="{{ route('admin.investorIndex') }}" class="nav-link {{ request()->is('admin/investor/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-account-cash"></i>
+                                <p>Investors</p>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('asset_list')
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.assetIndex') }}" class="nav-link {{ request()->is('admin/asset/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-briefcase"></i>
+                                <p>Assets</p>
+                            </a>
+                        </li>
+
+                    @endcan
+
+                    @can('payment_method_list')
+
+                         <li class="nav-item">
+                            <a href="{{ route('admin.paymentMethodIndex') }}" class="nav-link {{ request()->is('admin/payment-method/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-credit-card"></i>
+                                <p>Payment Methods</p>
+                            </a>
+                        </li>
+
+                    @endcan
+
+                    @can('expense_head_list')
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.expenseHeadIndex') }}" class="nav-link {{ request()->is('admin/expense-head/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-format-list-text"></i>
+                                <p>Expense Heads</p>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('expense_list')
+                        <li class="nav-item">
+                            <a href="{{ route('admin.expenseListIndex') }}" class="nav-link {{ request()->is('admin/expense-list/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-currency-usd"></i>
+                                <p>Expense Lists</p>
+                            </a>
+                        </li>
+                    @endcan
                     </ul>
                 </li>
 
-
+            @endcanany
 
             </ul> <!--end::Sidebar Menu-->
         </nav>

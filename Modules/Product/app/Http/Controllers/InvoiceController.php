@@ -8,6 +8,7 @@ use Modules\Product\Models\Order;
 use Modules\Product\Models\VendorAccount;
 use Modules\Product\Models\Vendor;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Modules\Admin\Entities\Business;
 use setasign\Fpdi\Fpdi;
 
 class InvoiceController extends Controller
@@ -310,6 +311,17 @@ class InvoiceController extends Controller
      */
     private function getCompanyInfo()
     {
+        $business = Business::first();
+        if ($business) {
+            return [
+                'name' => $business->company_name,
+                'address' => $business->address,
+                'phone' => $business->mobile_one,
+                'phone_two' => $business->mobile_two,
+                'email' => $business->email,
+                'website' => 'https://www.bddealership.com',
+            ];
+        }
         return [
             'name' => config('app.name', 'Inventory Management System'),
             'address' => 'Your Company Address Here',

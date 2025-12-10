@@ -25,7 +25,19 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with(['vendor', 'orderStatus', 'orderItems.product']);
+        // Filter orders based on user role
+            $user = Auth::guard('admin')->user();
+
+           if (!$user->hasAnyRole(['SuperAdmin', 'admin', 'subadmin'])) {
+
+                // For other roles, only show orders placed by them
+                $query = Order::with(['vendor', 'orderStatus', 'orderItems.product'])
+                    ->where('place_by', $user->id);
+            } else {
+                // For privileged roles, show all orders
+                $query = Order::with(['vendor', 'orderStatus', 'orderItems.product']);
+            }
+        // $query = Order::with(['vendor', 'orderStatus', 'orderItems.product']);
 
         // Apply filters
         if ($request->filled('invoice_search')) {

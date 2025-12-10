@@ -12,6 +12,8 @@ use Modules\Product\Models\CompanyOrderPayment;
 use Modules\Product\Models\PaymentMethod;
 use Modules\Product\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Modules\Admin\Entities\Business;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyOrderController extends Controller
 {
@@ -404,10 +406,10 @@ class CompanyOrderController extends Controller
 
         try {
             DB::beginTransaction();
-
+            $price = $item?->product?->package_unit_quantity > 0 ? $item->price / $item->product->package_unit_quantity : $item->price;
             // Calculate damage and lost prices
-            $damagePrice = $request->damage_quantity * $item->price;
-            $lostPrice = $request->lost_quantity * $item->price;
+            $damagePrice = $request->damage_quantity * $price;
+            $lostPrice = $request->lost_quantity * $price;
 
             $item->update([
                 'damage_quantity' => $request->damage_quantity,
@@ -418,8 +420,8 @@ class CompanyOrderController extends Controller
 
             // Recalculate total_price considering damage and lost
             // Total = (quantity - damage - lost) * price + damage_price + lost_price
-            $effectiveQuantity = $item->quantity - $request->damage_quantity - $request->lost_quantity;
-            $newTotalPrice = ($effectiveQuantity * $item->price) + $damagePrice + $lostPrice;
+            $effectiveQuantity = ($item->quantity*$item->product->package_unit_quantity) - $request->damage_quantity - $request->lost_quantity;
+            $newTotalPrice = ($effectiveQuantity * $price) + $damagePrice + $lostPrice;
             $item->update(['total_price' => $newTotalPrice]);
 
             // Recalculate order total amount
@@ -467,9 +469,34 @@ class CompanyOrderController extends Controller
     public function generatePdf(CompanyOrder $companyOrder)
     {
         $companyOrder->load(['company', 'items']);
+        $business = Business::first();
 
-        $pdf = Pdf::loadView('product::company-order.pdf', compact('companyOrder'));
+        // Prepare logo as base64 if exists
+       $logoBase64 = null;
+
+        if ($business && $business->hasMedia('logo')) {
+
+            $media = $business->getFirstMedia('logo'); // Media object
+
+            // Spatie: get relative S3 path like "32/ssenterprise.png"
+            $path = $media->getPath();
+
+            // Spatie: get the Storage disk (s3)
+           $disk = Storage::disk($media->disk);
+
+            // Fetch file from S3
+            if ($disk->exists($path)) {
+
+                $fileContent = $disk->get($path);
+
+                $mime = $media->mime_type;
+                $logoBase64 = "data:{$mime};base64," . base64_encode($fileContent);
+            }
+
+         }
+        $pdf = Pdf::loadView('product::company-order.pdf', compact('companyOrder', 'business', 'logoBase64'));
 
         return $pdf->stream('order-' . $companyOrder->order_number . '.pdf');
+
     }
 }
