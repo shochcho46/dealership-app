@@ -25,6 +25,8 @@ use Modules\Product\Http\Controllers\ProfitDisbursementController;
 use Modules\Product\Http\Controllers\BankController;
 use Modules\Product\Http\Controllers\BankAccountDetailController;
 use Modules\Product\Http\Controllers\FinancialReportController;
+use Modules\Product\Http\Controllers\CapitalOverviewController;
+use Modules\Product\Http\Controllers\CompanyOrderController;
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -98,6 +100,24 @@ Route::prefix('admin')->group(function () {
             Route::get('order-status/{orderStatus}/edit', 'edit')->name('admin.orderStatusEdit');
             Route::put('order-status/{orderStatus}/update', 'update')->name('admin.orderStatusUpdate');
             Route::delete('order-status/{orderStatus}/delete', 'destroy')->name('admin.orderStatusDestroy');
+        });
+
+        // Company Order routes
+        Route::controller(CompanyOrderController::class)->group(function () {
+            Route::get('company-order/index', 'index')->name('admin.companyOrderIndex');
+            Route::get('company-order/create', 'create')->name('admin.companyOrderCreate');
+            Route::post('company-order/store', 'store')->name('admin.companyOrderStore');
+            Route::get('company-order/{companyOrder}/show', 'show')->name('admin.companyOrderShow');
+            Route::get('company-order/{companyOrder}/edit', 'edit')->name('admin.companyOrderEdit');
+            Route::put('company-order/{companyOrder}/update', 'update')->name('admin.companyOrderUpdate');
+            Route::delete('company-order/{companyOrder}/delete', 'destroy')->name('admin.companyOrderDestroy');
+            Route::get('company-order/products/{companyId}', 'getProductsByCompany')->name('admin.companyOrderProducts');
+            Route::post('company-order/{companyOrder}/payment', 'addPayment')->name('admin.companyOrderAddPayment');
+            Route::put('company-order/{companyOrder}/payment/{payment}', 'updatePayment')->name('admin.companyOrderUpdatePayment');
+            Route::delete('company-order/{companyOrder}/payment/{payment}', 'deletePayment')->name('admin.companyOrderDeletePayment');
+            Route::put('company-order/{companyOrder}/item/{item}/damage-lost', 'updateItemDamageLost')->name('admin.companyOrderItemDamageLost');
+            Route::put('company-order/{companyOrder}/status', 'updateStatus')->name('admin.companyOrderUpdateStatus');
+            Route::get('company-order/{companyOrder}/pdf', 'generatePdf')->name('admin.companyOrderPdf');
         });
 
         // Product routes (Admin)
@@ -294,6 +314,11 @@ Route::prefix('admin')->group(function () {
             Route::get('financial-report/{financialReport}/edit', 'edit')->name('admin.financialReportEdit');
             Route::put('financial-report/{financialReport}/update', 'update')->name('admin.financialReportUpdate');
             Route::delete('financial-report/{financialReport}/delete', 'destroy')->name('admin.financialReportDestroy');
+        });
+
+        // Capital Overview route
+        Route::controller(CapitalOverviewController::class)->group(function () {
+            Route::get('capital-overview', 'index')->name('admin.capitalOverview');
         });
 
     });

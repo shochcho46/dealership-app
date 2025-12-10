@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator ;
 use Modules\Admin\Entities\Account;
+use Modules\Admin\Entities\Business;
 use Modules\Admin\Entities\Category;
 use Propaganistas\LaravelPhone\PhoneNumber;
 use Propaganistas\LaravelPhone\Rules\Phone;
@@ -28,7 +29,8 @@ class AdminController extends Controller
     {
         $datas = Country::all();
         $genders = Gender::all();
-        return view('auth.admin.login',compact('datas','genders'));
+        $busineesSetting = Business::first();
+        return view('auth.admin.login',compact('datas','genders','busineesSetting'));
 
     }
 

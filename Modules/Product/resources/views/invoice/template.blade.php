@@ -606,7 +606,7 @@
                     <div class="company-details">
                         {!! nl2br(e($companyInfo['address'])) !!}<br>
                         <b>Phone1:</b> {{ $companyInfo['phone'] }}<br>
-                        <b>Phone2:</b> {{ $companyInfo['phone'] }}<br>
+                        <b>Phone2:</b> {{ $companyInfo['phone_two'] }}<br>
                         <b>Website:</b> {{ $companyInfo['website'] }}
                     </div>
                 </div>
@@ -693,7 +693,7 @@
                 <div class="totals-left">
                     <div class="payment-info">
                         <div class="section-title">Payment Information</div>
-                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 5 days' }}</div>
+                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 1 days' }}</div>
                         <div><strong>Due Date:</strong> {{ $order->created_at->addDays(5)->format('d M Y') }}</div>
                         @if ($order->payment_status > 0)
                             <div style="margin-top:4px;">
@@ -734,7 +734,7 @@
 
             <div class="footer">
                 <div><strong>Thank you for your business!</strong></div>
-                <div>Hotline: {{ $companyInfo['phone'] }} | {{ $companyInfo['phone'] }}</div>
+                <div>Hotline: {{ $companyInfo['phone'] }} | {{ $companyInfo['phone_two'] }}</div>
                 <div>Generated on {{ now()->format('d M Y H:i:s') }} | Invoice {{ $order->invoice_id }}</div>
             </div>
         </section>
@@ -753,8 +753,8 @@
                     <div class="company-details">
                         {!! nl2br(e($companyInfo['address'])) !!}<br>
                         <b>Phone1:</b> {{ $companyInfo['phone'] }}<br>
-                        <b>Phone2:</b> {{ $companyInfo['phone'] }}<br>
-                        <b>Website:</b> {{ $companyInfo['website'] }}
+                        <b>Phone2:</b> {{ $companyInfo['phone_two'] }}<br>
+                        {{-- <b>Website:</b> {{ $companyInfo['website'] }} --}}
                     </div>
                 </div>
 
@@ -839,7 +839,7 @@
                 <div class="totals-left">
                     <div class="payment-info">
                         <div class="section-title">Payment Information</div>
-                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 30 days' }}</div>
+                        <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 1 days' }}</div>
                         <div><strong>Due Date:</strong> {{ $order->created_at->addDays(30)->format('d M Y') }}</div>
                         @if ($order->payment_status > 0)
                             <div style="margin-top:4px;">
@@ -880,7 +880,7 @@
 
             <div class="footer">
                 <div><strong>Customer Copy - Please keep for your records</strong></div>
-                <div>Hotline: {{ $companyInfo['phone'] }} | {{ $companyInfo['phone'] }}</div>
+                <div>Hotline: {{ $companyInfo['phone'] }} | {{ $companyInfo['phone_two'] }}</div>
                 <div>Generated on {{ now()->format('d M Y H:i:s') }} | Invoice {{ $order->invoice_id }}</div>
             </div>
         </section>

@@ -101,7 +101,7 @@ class RoleController extends Controller
     public function roleWithPermission(Role $role)
     {
         $role = $role;
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('id','asc')->get();
         $assignedPermissions = $role->permissions->pluck('id')->toArray();
         return view('role::role.assing',compact('role', 'permissions', 'assignedPermissions'));
     }

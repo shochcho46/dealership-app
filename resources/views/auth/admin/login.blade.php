@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Park</title><!--begin::Primary Meta Tags-->
+    <title>{{ config('app.name', $busineesSetting->company_name) }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Park | Login Page">
     <meta name="author" content="ColorlibHQ">
@@ -19,10 +19,25 @@
 <body class="login-page bg-body-secondary">
     <div class="login-box">
         <div class="card card-outline card-primary">
-            <div class="card-header"> <a href="{{ route('adminLogin') }}" class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover">
-                    <h1 class="mb-0"> <b>SS-ENTERPRISE</b>
-                    </h1>
-                </a> </div>
+
+
+            @if($busineesSetting->hasMedia('logo'))
+                 <div class="card-header text-center"> <a href="{{ route('adminLogin') }}" class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover">
+                        <img src="{{ $busineesSetting->getFirstMediaUrl('logo') }}" alt="Logo" class="brand-image" style="max-height: 100px; max-width: 100%;">
+                    </a>
+                </div>
+
+            @else
+                <div class="card-header"> <a href="{{ route('adminLogin') }}" class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover">
+                        <h1 class="mb-0"> <b>SS-ENTERPRISE</b>
+                        </h1>
+                    </a>
+                </div>
+            @endif
+
+
+
+
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in</p>
                 <form action="{{route('adminValidateLogin')}}" method="post">

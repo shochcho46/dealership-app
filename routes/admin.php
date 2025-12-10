@@ -43,6 +43,16 @@ Route::prefix('admin')->group(function () {
             Route::put('user/{admin}/toggle-status', 'toggleStatus')->name('admin.adminUserToggleStatus');
         });
 
+        // Business Settings Routes
+        Route::controller(\Modules\Admin\Http\Controllers\BusinessController::class)->group(function () {
+            Route::get('business', 'index')->name('admin.businessIndex');
+            Route::get('business/create', 'create')->name('admin.businessCreate');
+            Route::post('business/store', 'store')->name('admin.businessStore');
+            Route::get('business/{business}/edit', 'edit')->name('admin.businessEdit');
+            Route::put('business/{business}/update', 'update')->name('admin.businessUpdate');
+            Route::delete('business/{business}/logo', 'deleteLogo')->name('admin.businessDeleteLogo');
+        });
+
     });
 
 });
