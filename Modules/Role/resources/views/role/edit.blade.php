@@ -25,7 +25,7 @@
 </div>
 
     <div class="app-content">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <h1 class="mt-3">Role List</h1>
                 <div class="text-end m-3">

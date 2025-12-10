@@ -45,13 +45,12 @@
                                 <a href="{{ route('orders.edit', $order) }}" class="btn btn-sm btn-primary">
                                     <i class="mdi mdi-pencil me-1"></i>Edit Order
                                 </a>
-                                <form action="{{ route('orders.cancel', $order) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to cancel this order? Stock will be restored.')">
-                                        <i class="mdi mdi-cancel me-1"></i>Cancel Order
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-url="{{ route('orders.cancel', $order) }}">
+                                    <i class="mdi mdi-cancel me-1"></i>Cancel Order
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -304,5 +303,8 @@
         </div>
     </div>
 </div>
+
+@include('components.delete')
+
 @endsection
 

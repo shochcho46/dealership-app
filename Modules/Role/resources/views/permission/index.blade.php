@@ -25,7 +25,7 @@
 </div>
 
     <div class="app-content">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <h1 class="mt-3">Permission List</h1>
                 <div class="d-flex justify-content-between align-items-end mt-3 mb-3">
