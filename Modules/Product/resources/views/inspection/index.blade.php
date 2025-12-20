@@ -1,29 +1,16 @@
 @extends('layouts.app')
 
-@push('custome-css')
-<style>
-    .vendor-image {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        border: 2px solid #dee2e6;
-        object-fit: cover;
-    }
-</style>
-@endpush
-
 @section('content')
-
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0">Vendor Management</h3>
+                <h3 class="mb-0">Stock Inspection</h3>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Vendors</li>
+                    <li class="breadcrumb-item active" aria-current="page">Inspections</li>
                 </ol>
             </div>
         </div>
@@ -35,10 +22,10 @@
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h1 class="mt-3">Vendor List</h1>
+                    <h1 class="mt-3">Inspection List</h1>
                     <div class="text-end">
-                        <a href="{{ route('admin.vendorCreate') }}" class="btn btn-primary">
-                            <span class="mdi mdi-plus"></span> Add New Vendor
+                        <a href="{{ route('admin.inspectionCreate') }}" class="btn btn-primary">
+                            <span class="mdi mdi-plus"></span> Add Inspection
                         </a>
                     </div>
                 </div>
@@ -59,7 +46,7 @@
 
                 <div class="card card-primary card-outline mb-4">
                     <div class="card-header">
-                        <div class="card-title">All Vendors</div>
+                        <div class="card-title">All Inspections</div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -67,52 +54,51 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Image</th>
-                                        <th>Shop Name</th>
-                                        <th>Contact Person</th>
-                                        <th>Mobile</th>
-                                        <th>Email</th>
-                                        <th>Country</th>
-                                        <th>Status</th>
+                                        <th>Inspection Number</th>
+                                        <th>Inspection Date</th>
+                                        <th>Total Damage Qty</th>
+                                        <th>Damage Amount</th>
+                                        <th>Total Lost Qty</th>
+                                        <th>Lost Amount</th>
+                                        <th>Total Amount</th>
+                                        <th>Inspected By</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($vendors as $vendor)
+                                    @forelse($inspections as $inspection)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
-                                                <img src="{{ $vendor->vendor_image_thumb_url }}" alt="Vendor Image" class="vendor-image">
+                                                <strong class="text-primary">{{ $inspection->inspection_number }}</strong>
                                             </td>
-                                            <td>{{ $vendor->shop_name }}</td>
-                                            <td>{{ $vendor->contact_person ?? 'N/A' }}</td>
-                                            <td>{{ $vendor->mobile }}</td>
-                                            <td>{{ $vendor->email ?? 'N/A' }}</td>
-                                            <td>{{ $vendor->country->name ?? 'N/A' }}</td>
+                                            <td>{{ $inspection->inspection_date->format('d M, Y') }}</td>
                                             <td>
-                                                @if($vendor->status)
-                                                    <span class="badge bg-success">Active</span>
-                                                @else
-                                                    <span class="badge bg-danger">Inactive</span>
-                                                @endif
+                                                <span class="badge bg-danger">{{ $inspection->total_damage_qty }}</span>
                                             </td>
+                                            <td>৳{{ number_format($inspection->total_damage_amount, 2) }}</td>
+                                            <td>
+                                                <span class="badge bg-warning">{{ $inspection->total_lost_qty }}</span>
+                                            </td>
+                                            <td>৳{{ number_format($inspection->total_lost_amount, 2) }}</td>
+                                            <td>
+                                                <strong class="text-danger">
+                                                    ৳{{ number_format($inspection->total_damage_amount + $inspection->total_lost_amount, 2) }}
+                                                </strong>
+                                            </td>
+                                            <td>{{ $inspection->inspectedBy->name ?? 'N/A' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <a href="{{ route('admin.vendorAccount', $vendor->uuid) }}"
+                                                    <a href="{{ route('admin.inspectionShow', $inspection) }}"
                                                        class="btn btn-sm btn-outline-info"
-                                                       title="View Account">
-                                                        <span class="mdi mdi-wallet"></span>
-                                                    </a>
-                                                    <a href="{{ route('admin.vendorEdit', $vendor) }}"
-                                                       class="btn btn-sm btn-outline-primary"
-                                                       title="Edit">
-                                                        <span class="mdi mdi-pencil"></span>
+                                                       title="View Details">
+                                                        <span class="mdi mdi-eye"></span>
                                                     </a>
                                                     <button type="button"
                                                             class="btn btn-sm btn-outline-danger delete-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#deleteModal"
-                                                            data-url="{{ route('admin.vendorDestroy', $vendor) }}"
+                                                            data-url="{{ route('admin.inspectionDestroy', $inspection) }}"
                                                             title="Delete">
                                                         <span class="mdi mdi-delete"></span>
                                                     </button>
@@ -121,7 +107,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="9" class="text-center">No vendors found</td>
+                                            <td colspan="10" class="text-center">No inspections found</td>
                                         </tr>
                                     @endforelse
                                     @include('components.delete')
@@ -129,16 +115,12 @@
                             </table>
                         </div>
                     </div>
-                        <div class="card-footer d-flex justify-content-end">
-                            {{ $vendors->links() }}
-                        </div>
+                    <div class="card-footer d-flex justify-content-end">
+                        {{ $inspections->links() }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-
-@push('custome-js')
-
-@endpush

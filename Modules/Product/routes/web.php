@@ -27,6 +27,10 @@ use Modules\Product\Http\Controllers\BankAccountDetailController;
 use Modules\Product\Http\Controllers\FinancialReportController;
 use Modules\Product\Http\Controllers\CapitalOverviewController;
 use Modules\Product\Http\Controllers\CompanyOrderController;
+use Modules\Product\Http\Controllers\InspectionController;
+
+// Public vendor account route (outside admin middleware)
+Route::get('vendor-account/{uuid}', [VendorController::class, 'vendorPublicAccount'])->name('vendor.publicAccount');
 
 // Admin routes for Product module management
 Route::prefix('admin')->group(function () {
@@ -90,6 +94,7 @@ Route::prefix('admin')->group(function () {
             Route::get('vendor/{vendor}/edit', 'edit')->name('admin.vendorEdit');
             Route::put('vendor/{vendor}/update', 'update')->name('admin.vendorUpdate');
             Route::delete('vendor/{vendor}/delete', 'destroy')->name('admin.vendorDestroy');
+            Route::get('vendor/{uuid}/account', 'account')->name('admin.vendorAccount');
         });
 
         // Order Status routes
@@ -264,6 +269,15 @@ Route::prefix('admin')->group(function () {
             Route::get('report/sell-summary', 'sellSummary')->name('admin.reportSellSummary');
             Route::get('report/due-orders-list', 'dueOrdersList')->name('admin.reportDueOrdersList');
             Route::get('report/profitable-product', 'profitableProduct')->name('admin.reportProfitableProduct');
+        });
+
+        // Inspection routes
+        Route::controller(InspectionController::class)->group(function () {
+            Route::get('inspection/index', 'index')->name('admin.inspectionIndex');
+            Route::get('inspection/create', 'create')->name('admin.inspectionCreate');
+            Route::post('inspection/store', 'store')->name('admin.inspectionStore');
+            Route::get('inspection/{inspection}/show', 'show')->name('admin.inspectionShow');
+            Route::delete('inspection/{inspection}/delete', 'destroy')->name('admin.inspectionDestroy');
         });
 
         // Order routes

@@ -5,7 +5,10 @@ namespace Modules\Product\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Vendor;
+use Modules\Product\Models\VendorAccount;
 use App\Models\Country;
+use Carbon\Carbon;
+use Modules\Admin\Entities\Business;
 
 class VendorController extends Controller
 {
@@ -166,5 +169,101 @@ class VendorController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete vendor. Please try again.');
         }
+    }
+
+    /**
+     * Display vendor account/financial records (Admin)
+     */
+    public function account(Request $request, $uuid)
+    {
+        $vendor = Vendor::where('uuid', $uuid)->firstOrFail();
+
+        // Get date range from request or default to current month
+        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->endOfMonth()->format('Y-m-d'));
+
+        // Build query for vendor accounts with eager loading
+        $accountsQuery = VendorAccount::where('vendor_id', $vendor->id)
+            ->with(['order', 'paymentMethod', 'depositeBy'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('id', 'desc');
+
+        // Get period accounts
+        $accounts = $accountsQuery->get();
+
+        // Calculate period totals
+        $totalDebit = $accounts->where('type', 1)->sum('amount');
+        $totalCredit = $accounts->where('type', 2)->sum('amount');
+        $balance = $totalCredit - $totalDebit;
+
+        // Get all-time data
+        $allTimeAccounts = VendorAccount::where('vendor_id', $vendor->id)->get();
+        $allTimeDebit = $allTimeAccounts->where('type', 1)->sum('amount');
+        $allTimeCredit = $allTimeAccounts->where('type', 2)->sum('amount');
+        $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
+        $totalTransactions = $allTimeAccounts->count();
+
+        return view('product::vendor.account', compact(
+            'vendor',
+            'accounts',
+            'totalDebit',
+            'totalCredit',
+            'balance',
+            'allTimeDebit',
+            'allTimeCredit',
+            'allTimeBalance',
+            'totalTransactions',
+            'startDate',
+            'endDate'
+        ));
+    }
+
+    /**
+     * Display vendor account/financial records (Public - For Vendor Access)
+     */
+    public function vendorPublicAccount(Request $request, $uuid)
+    {
+        $vendor = Vendor::where('uuid', $uuid)->firstOrFail();
+
+        // Get date range from request or default to current month
+        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->endOfMonth()->format('Y-m-d'));
+
+        // Build query for vendor accounts with eager loading
+        $accountsQuery = VendorAccount::where('vendor_id', $vendor->id)
+            ->with(['order', 'paymentMethod', 'depositeBy'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('id', 'desc');
+
+        // Get period accounts
+        $accounts = $accountsQuery->get();
+
+        // Calculate period totals
+        $totalDebit = $accounts->where('type', 1)->sum('amount');
+        $totalCredit = $accounts->where('type', 2)->sum('amount');
+        $balance = $totalCredit - $totalDebit;
+
+        // Get all-time data
+        $allTimeAccounts = VendorAccount::where('vendor_id', $vendor->id)->get();
+        $allTimeDebit = $allTimeAccounts->where('type', 1)->sum('amount');
+        $allTimeCredit = $allTimeAccounts->where('type', 2)->sum('amount');
+        $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
+        $totalTransactions = $allTimeAccounts->count();
+        $businessDetail = Business::first();
+
+        return view('product::vendor.public-account', compact(
+            'vendor',
+            'accounts',
+            'totalDebit',
+            'totalCredit',
+            'balance',
+            'allTimeDebit',
+            'allTimeCredit',
+            'allTimeBalance',
+            'totalTransactions',
+            'startDate',
+            'endDate',
+            'businessDetail'
+        ));
     }
 }
