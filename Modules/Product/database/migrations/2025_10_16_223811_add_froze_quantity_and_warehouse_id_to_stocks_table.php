@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\Product\Models\Warehouse;
 
 return new class extends Migration
 {
@@ -14,8 +15,8 @@ return new class extends Migration
         Schema::table('stocks', function (Blueprint $table) {
             $table->integer('froze_quantity')->default(0)->after('transfer_quantity');
             $table->foreignIdFor(Warehouse::class)->nullable()->after('product_id');
-            
-            
+
+
         });
     }
 

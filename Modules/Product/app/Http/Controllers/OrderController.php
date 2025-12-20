@@ -533,7 +533,8 @@ class OrderController extends Controller
 
          $orders = Order::whereIn('id', $request->order_ids)->get();
          foreach ($orders as $order) {
-             if ($order->order_status_id == 4 || $order->order_status_id == 5 || $order->order_status_id == 6) {
+            //  if ($order->order_status_id == 4 || $order->order_status_id == 5 || $order->order_status_id == 6) {
+             if ( $order->order_status_id == 5 || $order->order_status_id == 6) {
                 return response()->json(['message' => 'Orders status cannot be changed as they are already shipped, delivered, or cancelled.'], 400);
              }
             }
