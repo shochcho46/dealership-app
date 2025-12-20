@@ -224,7 +224,7 @@
                                     @endphp
 
                                     @if($availableQty > 0)
-                                        <div class="order-item" onclick="selectOrderItem({{ $item->id }}, {{ $availableQty }}, {{ $item->sell_price }})">
+                                        <div class="order-item" onclick="selectOrderItem({{ $item->id }}, {{ $availableQty }}, {{ $item->sell_price - $item?->discount_price }})">
                                             <div class="row align-items-center">
                                                 <div class="col-md-1">
                                                     <input type="radio" class="form-check-input item-radio"

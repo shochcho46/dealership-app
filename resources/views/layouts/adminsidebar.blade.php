@@ -284,12 +284,12 @@
                 @endcan
 
 
-                @canany(['order_report', 'collection_list', 'sell_summery_list', 'financial_summery_list', 'profitable_product_list'])
+                @canany(['order_report', 'collection_list', 'sell_summery_list', 'financial_summery_list', 'profitable_product_list','inspection_list'])
                 <!-- Reports Section -->
                 <li class="nav-header">REPORTS</li>
 
-                <li class="nav-item {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') || request()->is('admin/inspection/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/report/order-report') || request()->is('admin/report/profitable-product') || request()->is('admin/report/collection') || request()->is('admin/report/sell-summary') || request()->is('admin/financial-report/*') || request()->is('admin/inspection/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-chart-line"></i>
                         <p>
                             Reports
@@ -297,6 +297,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+
 
                     @can('order_report')
                         <li class="nav-item">
@@ -339,6 +340,15 @@
                             <a href="{{ route('admin.reportProfitableProduct') }}" class="nav-link {{ request()->is('admin/report/profitable-product') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-trending-up"></i>
                                 <p>Profitable Products</p>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('inspection_list')
+                        <li class="nav-item">
+                            <a href="{{ route('admin.inspectionIndex') }}" class="nav-link {{ request()->is('admin/inspection/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-clipboard-check"></i>
+                                <p>Inspection</p>
                             </a>
                         </li>
                     @endcan
