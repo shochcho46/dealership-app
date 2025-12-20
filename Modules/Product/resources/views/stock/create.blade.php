@@ -228,8 +228,16 @@
                             </div>
 
                             <div class="text-end mt-4">
-                                <button type="submit" class="btn btn-primary">
+                                {{-- <button type="submit" class="btn btn-primary">
                                     <i class="mdi mdi-content-save"></i> Save Stock Entries
+                                </button> --}}
+                                <button type="submit" class="btn btn-primary" id="saveStockBtn">
+                                    <span class="btn-text">
+                                        <i class="mdi mdi-content-save"></i> Save Stock Entries
+                                    </span>
+                                    <span class="btn-loading d-none">
+                                        <i class="mdi mdi-loading mdi-spin"></i> Saving...
+                                    </span>
                                 </button>
                             </div>
 
@@ -420,6 +428,25 @@ $(document).ready(function () {
 
     // Initial call
     updateRepeater();
+
+
+
+    // Handle form submission loading state
+    $('form').on('submit', function () {
+        const $btn = $('#saveStockBtn');
+
+        // Prevent double submit
+        if ($btn.prop('disabled')) {
+            return false;
+        }
+
+        // Disable button
+        $btn.prop('disabled', true);
+
+        // Toggle loading UI
+        $btn.find('.btn-text').addClass('d-none');
+        $btn.find('.btn-loading').removeClass('d-none');
+    });
 
 });
 </script>

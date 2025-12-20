@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements HasMedia
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
     // protected $guard_name = 'admin';
 
@@ -53,5 +55,20 @@ class Admin extends Authenticatable
     public function getRolesStringAttribute()
     {
         return $this->roles->pluck('name')->implode(', ');
+    }
+
+    /**
+     * Register media collections
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile_picture')
+            ->singleFile()
+            ->acceptsMimeTypes([
+            'image/jpeg',
+            'image/png',
+            'image/jpg',
+            'image/webp'
+        ]);
     }
 }

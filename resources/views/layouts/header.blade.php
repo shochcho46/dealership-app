@@ -8,7 +8,14 @@
 
 
             <li class="nav-item"> <a class="nav-link" href="#" data-lte-toggle="fullscreen"> <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i> <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none;"></i> </a> </li> <!--end::Fullscreen Toggle--> <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu"> <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"> <img src="{{asset('assets/img/usr.gif')}}" class="user-image rounded-circle shadow" alt="User Image"> <span class="d-none d-md-inline">
+            <li class="nav-item dropdown user-menu"> <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                @auth('web')
+                    <img src="{{asset('assets/img/usr.gif')}}" class="user-image rounded-circle shadow" alt="User Image">
+                @endauth
+                @auth('admin')
+                    <img src="{{ Auth::guard('admin')->user()->hasMedia('profile_picture') ? Auth::guard('admin')->user()->getFirstMediaUrl('profile_picture') : asset('assets/img/usr.gif') }}" class="user-image rounded-circle shadow" alt="User Image">
+                @endauth
+                <span class="d-none d-md-inline">
 
                 @auth('web')
                     {{Auth::guard('web')->user()->name}}
@@ -18,7 +25,13 @@
                 @endauth
             </span> </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end"> <!--begin::User Image-->
-                    <li class="user-header text-bg-primary"> <img src="{{asset('assets/img/usr.gif')}}" class="rounded-circle shadow" alt="User Image">
+                    <li class="user-header text-bg-primary">
+                        @auth('web')
+                            <img src="{{asset('assets/img/usr.gif')}}" class="rounded-circle shadow" alt="User Image">
+                        @endauth
+                        @auth('admin')
+                            <img src="{{ Auth::guard('admin')->user()->hasMedia('profile_picture') ? Auth::guard('admin')->user()->getFirstMediaUrl('profile_picture') : asset('assets/img/usr.gif') }}" class="rounded-circle shadow" alt="User Image">
+                        @endauth
                         <p>
                             @auth('web')
                                 {{Auth::guard('web')->user()->name}}
@@ -32,12 +45,16 @@
 
                      <!--end::Menu Body--> <!--begin::Menu Footer-->
                     @auth('web')
-                        <li class="user-footer"> <a href="#" class="btn btn-default btn-flat">Profile</a> <a href="{{route('user.logout')}}" class="btn btn-default btn-flat float-end">Sign out</a> </li> <!--end::Menu Footer-->
+                        <li class="user-footer">
+                            <a href="#" class="btn btn-default btn-flat">Profile</a>
+                            <a href="{{route('user.logout')}}" class="btn btn-default btn-flat float-end">Sign out</a> </li> <!--end::Menu Footer-->
 
                     @endauth
 
                     @auth('admin')
-                        <li class="user-footer"> <a href="#" class="btn btn-default btn-flat">Profile</a> <a href="{{route('admin.logout')}}" class="btn btn-default btn-flat float-end"> Sign Out</a> </li> <!--end::Menu Footer-->
+                        <li class="user-footer">
+                             <a href="{{route('admin.profile')}}" class="btn btn-default btn-flat">Profile</a>
+                             <a href="{{route('admin.logout')}}" class="btn btn-default btn-flat float-end"> Sign Out</a> </li> <!--end::Menu Footer-->
 
                     @endauth
 

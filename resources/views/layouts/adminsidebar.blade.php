@@ -1,9 +1,11 @@
 <aside class="app-sidebar bg-white shadow" data-bs-theme="light"> <!--begin::Sidebar Brand-->
     <div class="sidebar-brand"> <!--begin::Brand Link-->
-        <a href="{{ route('admin.dashboard') }}" class="brand-link">
-
-                <span class="brand-text fw-light">PARK</span> <!--end::Brand Text-->
-            </a> <!--end::Brand Link--> </div>
+            <a href="{{ route('admin.dashboard') }}" class="brand-link">
+                <span class="brand-text fw-light">{{ config('app.name', 'SS-ENTERPRISE') }}</span>
+                <!--end::Brand Text-->
+            </a>
+            <!--end::Brand Link-->
+    </div>
     <!--end::Sidebar Brand--> <!--begin::Sidebar Wrapper-->
     <div class="sidebar-wrapper">
         <nav class="mt-2"> <!--begin::Sidebar Menu-->

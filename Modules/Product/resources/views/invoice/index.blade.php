@@ -244,13 +244,14 @@
                                            title="Download PDF">
                                             <i class="mdi mdi-invoice"></i>
                                         </a>
-
-                                        @if($order->payment_status < 2)
-                                            <a href="{{ route('payment-collections.create', ['vendor_id' => $order->vendor_id]) }}"
-                                               class="btn btn-outline-success" title="Collect Payment">
-                                                <i class="mdi mdi-cash"></i>
-                                            </a>
-                                        @endif
+                                        @can('payment_collection_list')
+                                            @if($order->payment_status < 2)
+                                                <a href="{{ route('payment-collections.create', ['vendor_id' => $order->vendor_id]) }}"
+                                                class="btn btn-outline-success" title="Collect Payment">
+                                                    <i class="mdi mdi-cash"></i>
+                                                </a>
+                                            @endif
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
