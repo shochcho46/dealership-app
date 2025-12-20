@@ -28,6 +28,21 @@ Route::prefix('admin')->group(function () {
         Route::controller(AdminController::class)->group(function () {
             Route::get('dashboard', 'dashboard')->name('admin.dashboard');
             Route::get('logout', 'logout')->name('admin.logout');
+            Route::get('profile', 'profile')->name('admin.profile');
+            Route::post('profile/update', 'updateProfile')->name('admin.updateProfile');
+            Route::post('profile/update-password', 'updateProfilePassword')->name('admin.updateProfilePassword');
+
+            // Dashboard Data API Routes
+            Route::get('dashboard/stats', 'getDashboardStats')->name('admin.dashboard.stats');
+            Route::get('dashboard/charts/sales', 'getSalesChartData')->name('admin.dashboard.charts.sales');
+            Route::get('dashboard/charts/revenue', 'getRevenueChartData')->name('admin.dashboard.charts.revenue');
+            Route::get('dashboard/charts/expenses', 'getExpensesChartData')->name('admin.dashboard.charts.expenses');
+            Route::get('dashboard/charts/profit', 'getProfitChartData')->name('admin.dashboard.charts.profit');
+            Route::get('dashboard/charts/products', 'getProductsChartData')->name('admin.dashboard.charts.products');
+            Route::get('dashboard/charts/user-orders', 'getUserOrdersChartData')->name('admin.dashboard.charts.userOrders');
+            Route::get('dashboard/charts/user-collection', 'getUserCollectionChartData')->name('admin.dashboard.charts.userCollection');
+            Route::get('dashboard/recent-orders', 'getRecentOrders')->name('admin.dashboard.recentOrders');
+            Route::get('dashboard/top-products', 'getTopProducts')->name('admin.dashboard.topProducts');
 
         });
 
