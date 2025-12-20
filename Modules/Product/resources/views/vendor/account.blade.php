@@ -125,8 +125,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Period Debit</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($totalDebit, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Period Debit</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($totalDebit, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-arrow-up-bold summary-icon"></i>
                         </div>
@@ -138,8 +138,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Period Credit</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($totalCredit, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Period Credit</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($totalCredit, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-arrow-down-bold summary-icon"></i>
                         </div>
@@ -151,8 +151,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Period Balance</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($balance, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Period Balance</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($balance, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-calculator summary-icon"></i>
                         </div>
@@ -164,8 +164,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Period Records</h6>
-                                <h3 class="mb-0 summary-amount">{{ $accounts->count() }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Period Records</h6><br>
+                                <h5 class="mb-0 summary-amount">{{ $accounts->count() }}</h5>
                             </div>
                             <i class="mdi mdi-file-document-multiple summary-icon"></i>
                         </div>
@@ -182,8 +182,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">All-Time Debit</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($allTimeDebit, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">All-Time Debit</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($allTimeDebit, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-trending-up summary-icon"></i>
                         </div>
@@ -195,8 +195,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">All-Time Credit</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($allTimeCredit, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">All-Time Credit</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($allTimeCredit, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-trending-down summary-icon"></i>
                         </div>
@@ -208,8 +208,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Overall Balance</h6>
-                                <h3 class="mb-0 summary-amount">৳{{ number_format($allTimeBalance, 2) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Overall Balance</h6><br>
+                                <h5 class="mb-0 summary-amount">৳{{ number_format($allTimeBalance, 2) }}</h5>
                             </div>
                             <i class="mdi mdi-wallet summary-icon"></i>
                         </div>
@@ -221,8 +221,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-white mb-1 summary-title">Total Transactions</h6>
-                                <h3 class="mb-0 summary-amount">{{ number_format($totalTransactions) }}</h3>
+                                <h6 class="card-title text-white mb-1 summary-title">Total Transactions</h6><br>
+                                <h5 class="mb-0 summary-amount">{{ number_format($totalTransactions) }}</h5>
                             </div>
                             <i class="mdi mdi-chart-line summary-icon"></i>
                         </div>
