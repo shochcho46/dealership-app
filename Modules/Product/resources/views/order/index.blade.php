@@ -27,11 +27,6 @@
         padding: 0.25rem 0.5rem;
     }
 
-    .table-responsive {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
 
     .summary-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -227,11 +222,9 @@
                             <th>Invoice ID</th>
                             <th>Vendor</th>
                             <th>Place By</th>
-                            <th>Status</th>
                             <th>Payment Status</th>
                             <th>Items</th>
                             <th>Total Amount</th>
-                            <th>Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -243,8 +236,12 @@
                                            value="{{ $order->id }}" onchange="updateBulkSelection()">
                                 </td>
                                 <td>
-                                    <strong>{{ $order->invoice_id }}</strong>
+                                    <strong>{{ $order->invoice_id }}</strong><br>
+                                    <span class="badge {{ $order->status_badge_class }}">
+                                        {{ $order->orderStatus->name }}
+                                    </span>
                                     <br><small class="text-muted">{{ $order->created_at->format('M d, Y h:i A') }}</small>
+                                    <br><small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
                                 </td>
                                 <td>
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
@@ -255,11 +252,7 @@
                                     <strong>{{ $order->placeBy->name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order?->placeBy?->phone ?? 'N/A' }}</small>
                                 </td>
-                                <td>
-                                    <span class="badge {{ $order->status_badge_class }} status-badge">
-                                        {{ $order->orderStatus->name ?? 'Unknown' }}
-                                    </span>
-                                </td>
+
                                 <td>
                                     <span class="badge {{ $order->payment_status_badge_class }} status-badge">
                                         {{ $order->payment_status_text }}
@@ -275,15 +268,14 @@
                                         <br><small class="text-success">Discount: ৳{{ number_format($order->total_discount_amount, 2) }}</small>
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $order->created_at->format('M d, Y') }}
-                                    <br><small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
-                                </td>
+
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-info" title="View">
-                                            <i class="mdi mdi-eye"></i>
-                                        </a>
+                                        @can('order_show')
+                                            <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-info" title="View">
+                                                <i class="mdi mdi-eye"></i>
+                                            </a>
+                                         @endcan
                                         @if($order->canBeCancelled())
                                             <a href="{{ route('orders.edit', $order) }}" class="btn btn-outline-primary" title="Edit">
                                                 <i class="mdi mdi-pencil"></i>

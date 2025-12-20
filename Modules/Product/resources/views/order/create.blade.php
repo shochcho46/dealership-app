@@ -784,5 +784,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     // Allow form submission to proceed
     return true;
 });
+
+
 </script>
 @endpush
