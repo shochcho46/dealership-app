@@ -231,10 +231,12 @@
                     <tbody>
                         @forelse($orders as $order)
                             <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input order-checkbox"
-                                           value="{{ $order->id }}" onchange="updateBulkSelection()">
-                                </td>
+                                @can('update_order_status')
+                                    <td>
+                                        <input type="checkbox" class="form-check-input order-checkbox"
+                                            value="{{ $order->id }}" onchange="updateBulkSelection()">
+                                    </td>
+                                @endcan
                                 <td>
                                     <strong>{{ $order->invoice_id }}</strong><br>
                                     <span class="badge {{ $order->status_badge_class }}">
