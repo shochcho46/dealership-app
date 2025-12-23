@@ -70,6 +70,8 @@ class InvoiceController extends Controller
         // return $pdf->download("Invoice-{$order->invoice_id}.pdf");
 
         return $pdf->stream("Invoice-{$order->invoice_id}.pdf");
+
+
     }
 
     /**
@@ -109,72 +111,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    /**
-     * Generate bulk invoices
-     */
-    // public function bulkInvoices(Request $request)
-    // {
-    //     $request->validate([
-    //         'order_ids' => 'required|array|min:1',
-    //         'order_ids.*' => 'exists:orders,id'
-    //     ]);
 
-    //     $orders = Order::with(['vendor', 'orderItems.product', 'orderStatus', 'admin'])
-    //         ->whereIn('id', $request->order_ids)
-    //         ->whereIn('order_status_id', [4, 5]) // Only shipped or delivered
-    //         ->get();
-
-    //     if ($orders->isEmpty()) {
-    //         return back()->with('error', 'No valid orders found for invoice generation.');
-    //     }
-
-    //     // Create a ZIP file with all invoices
-    //     $zipFileName = 'bulk-invoices-' . date('Y-m-d-H-i-s') . '.zip';
-    //     $zipPath = storage_path('app/temp/' . $zipFileName);
-
-    //     // Ensure temp directory exists
-    //     if (!file_exists(storage_path('app/temp'))) {
-    //         mkdir(storage_path('app/temp'), 0755, true);
-    //     }
-
-    //     $zip = new \ZipArchive();
-    //     if ($zip->open($zipPath, \ZipArchive::CREATE) !== TRUE) {
-    //         return back()->with('error', 'Cannot create zip file for bulk invoices.');
-    //     }
-
-    //     foreach ($orders as $order) {
-    //         // Get vendor account information
-    //         $vendorTotalDue = VendorAccount::where('vendor_id', $order->vendor_id)
-    //             ->where('type', 1)
-
-    //             ->sum('amount');
-
-    //         $vendorPaidAmount = VendorAccount::where('vendor_id', $order->vendor_id)
-    //             ->where('type', 1)
-
-    //             ->sum('amount');
-    //         $previousdue =  $vendorTotalDue - $order->total_amount;
-    //         $data = [
-    //             'order' => $order,
-    //             'vendor' => $order->vendor,
-    //             'orderItems' => $order->orderItems,
-    //             'vendorTotalDue' => $vendorTotalDue,
-    //             'vendorPaidAmount' => $vendorPaidAmount,
-    //             'previousDue' => $previousdue,
-    //             'companyInfo' => $this->getCompanyInfo()
-    //         ];
-
-    //         $pdf = PDF::loadView('product::invoice.template', $data);
-    //         $pdf->setPaper('A4', 'portrait');
-
-    //         $pdfContent = $pdf->output();
-    //         $zip->addFromString("Invoice-{$order->invoice_id}.pdf", $pdfContent);
-    //     }
-
-    //     $zip->close();
-
-    //     return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
-    // }
 
 
     public function bulkInvoices(Request $request)
