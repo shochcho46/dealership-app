@@ -8,7 +8,7 @@
     <style>
         @font-face {
             font-family: 'kalpurush';
-            src: url('{{ public_path('fonts/kalpurush.ttf') }}') format('truetype');
+            src: url("{{ storage_path('fonts/kalpurush.ttf') }}") format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -456,7 +456,7 @@
             }
 
             .footer {
-                font-size: 6pt; /* Slightly increased from 5.5pt */
+                font-size: 8pt; /* Slightly increased from 5.5pt */
             }
 
             .preview-notice {
@@ -732,11 +732,11 @@
                 </div>
             </div>
 
-            <div class="footer">
+            {{-- <div class="footer">
                 <div><strong>Thank you for your business!</strong></div>
                 <div>Hotline: {{ $companyInfo['phone'] }} | {{ $companyInfo['phone_two'] }}</div>
                 <div>Generated on {{ now()->format('d M Y H:i:s') }} | Invoice {{ $order->invoice_id }}</div>
-            </div>
+            </div> --}}
         </section>
         <div class="separator-line"></div>
         <!-- SECOND COPY: CUSTOMER COPY -->
