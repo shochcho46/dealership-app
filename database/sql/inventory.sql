@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 10, 2025 at 09:20 PM
+-- Generation Time: Dec 24, 2025 at 08:29 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -63,7 +63,7 @@ INSERT INTO `admins` (`id`, `name`, `email`, `phone`, `status`, `email_verified_
 
 CREATE TABLE `assets` (
   `id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `price` decimal(15,2) NOT NULL,
   `type` tinyint NOT NULL COMMENT '1=Investment, 2=Profit',
   `status` tinyint(1) NOT NULL DEFAULT '1',
@@ -86,10 +86,10 @@ INSERT INTO `assets` (`id`, `name`, `price`, `type`, `status`, `created_at`, `up
 
 CREATE TABLE `banks` (
   `id` bigint UNSIGNED NOT NULL,
-  `bank_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `account_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `account_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `branch_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `account_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `account_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `branch_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -114,7 +114,7 @@ CREATE TABLE `bank_account_details` (
   `amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `type` tinyint NOT NULL COMMENT '1=Credit, 2=Debit',
   `transaction_date` date NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_ci,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -174,12 +174,12 @@ CREATE TABLE `brand_product` (
 
 CREATE TABLE `businesses` (
   `id` bigint UNSIGNED NOT NULL,
-  `company_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mobile_one` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mobile_two` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci,
-  `brand_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mobile_one` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mobile_two` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `brand_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -208,7 +208,7 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:36:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:9:\"role_list\";s:1:\"c\";s:5:\"admin\";}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:10:\"admin_user\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:9:\"dashboard\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:3;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:15:\"permission_list\";s:1:\"c\";s:5:\"admin\";}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:16:\"business_setting\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:12:\"company_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:10:\"brand_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:10:\"color_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:9:\"unit_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:12:\"product_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:11:\"vendor_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:14:\"warehouse_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:10:\"stock_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:19:\"stock_overview_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:18:\"company_order_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:15;a:3:{s:1:\"a\";i:16;s:1:\"b\";s:17:\"order_status_list\";s:1:\"c\";s:5:\"admin\";}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:9:\"add_order\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:4;i:2;i:6;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:10:\"order_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:4;i:2;i:6;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:12:\"invoice_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:4:{i:0;i:3;i:1;i:4;i:2;i:5;i:3;i:6;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:23:\"damage_return_lost_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:12:\"order_report\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:15:\"collection_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:5;i:2;i:6;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:17:\"sell_summery_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:22:\"financial_summery_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:23:\"profitable_product_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:23:\"payment_collection_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:22:\"profit_distribute_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:23:\"profit_disbursment_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:9:\"bank_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:21:\"bank_transaction_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:16:\"capital_overview\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:13:\"investor_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:10:\"asset_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:3;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:19:\"payment_method_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:34;a:3:{s:1:\"a\";i:35;s:1:\"b\";s:17:\"expense_head_list\";s:1:\"c\";s:5:\"admin\";}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:12:\"expense_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}}s:5:\"roles\";a:4:{i:0;a:3:{s:1:\"a\";i:6;s:1:\"b\";s:5:\"admin\";s:1:\"c\";s:5:\"admin\";}i:1;a:3:{s:1:\"a\";i:3;s:1:\"b\";s:8:\"director\";s:1:\"c\";s:5:\"admin\";}i:2;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:2:\"sr\";s:1:\"c\";s:5:\"admin\";}i:3;a:3:{s:1:\"a\";i:5;s:1:\"b\";s:3:\"dsr\";s:1:\"c\";s:5:\"admin\";}}}', 1765482743);
+('spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:38:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:9:\"role_list\";s:1:\"c\";s:5:\"admin\";}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:10:\"admin_user\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:9:\"dashboard\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:3;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:15:\"permission_list\";s:1:\"c\";s:5:\"admin\";}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:16:\"business_setting\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:12:\"company_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:10:\"brand_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:10:\"color_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:9:\"unit_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:12:\"product_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:11:\"vendor_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:14:\"warehouse_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:10:\"stock_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:19:\"stock_overview_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:18:\"company_order_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:15;a:3:{s:1:\"a\";i:16;s:1:\"b\";s:17:\"order_status_list\";s:1:\"c\";s:5:\"admin\";}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:9:\"add_order\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:4;i:2;i:6;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:10:\"order_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:4;i:2;i:6;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:12:\"invoice_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:4:{i:0;i:3;i:1;i:4;i:2;i:5;i:3;i:6;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:23:\"damage_return_lost_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:12:\"order_report\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:15:\"collection_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:3:{i:0;i:3;i:1;i:5;i:2;i:6;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:17:\"sell_summery_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:22:\"financial_summery_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:23:\"profitable_product_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:23:\"payment_collection_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:22:\"profit_distribute_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:23:\"profit_disbursment_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:9:\"bank_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:6;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:21:\"bank_transaction_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:16:\"capital_overview\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:13:\"investor_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:10:\"asset_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:1:{i:0;i:3;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:19:\"payment_method_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:34;a:3:{s:1:\"a\";i:35;s:1:\"b\";s:17:\"expense_head_list\";s:1:\"c\";s:5:\"admin\";}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:12:\"expense_list\";s:1:\"c\";s:5:\"admin\";s:1:\"r\";a:2:{i:0;i:3;i:1;i:6;}}i:36;a:3:{s:1:\"a\";i:37;s:1:\"b\";s:15:\"inspection_list\";s:1:\"c\";s:5:\"admin\";}i:37;a:3:{s:1:\"a\";i:38;s:1:\"b\";s:19:\"update_order_status\";s:1:\"c\";s:5:\"admin\";}}s:5:\"roles\";a:4:{i:0;a:3:{s:1:\"a\";i:6;s:1:\"b\";s:5:\"admin\";s:1:\"c\";s:5:\"admin\";}i:1;a:3:{s:1:\"a\";i:3;s:1:\"b\";s:8:\"director\";s:1:\"c\";s:5:\"admin\";}i:2;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:2:\"sr\";s:1:\"c\";s:5:\"admin\";}i:3;a:3:{s:1:\"a\";i:5;s:1:\"b\";s:3:\"dsr\";s:1:\"c\";s:5:\"admin\";}}}', 1766686911);
 
 -- --------------------------------------------------------
 
@@ -286,12 +286,12 @@ INSERT INTO `companies` (`id`, `name`, `email`, `phone`, `address`, `city`, `sta
 CREATE TABLE `company_orders` (
   `id` bigint UNSIGNED NOT NULL,
   `company_id` bigint UNSIGNED DEFAULT NULL,
-  `order_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `order_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `paid_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `payment_status` enum('unpaid','partial','paid') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'unpaid',
-  `status` enum('pending','received') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
-  `notes` text COLLATE utf8mb4_unicode_ci,
+  `payment_status` enum('unpaid','partial','paid') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'unpaid',
+  `status` enum('pending','received') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -315,9 +315,9 @@ CREATE TABLE `company_order_items` (
   `id` bigint UNSIGNED NOT NULL,
   `company_order_id` bigint UNSIGNED NOT NULL,
   `product_id` bigint UNSIGNED DEFAULT NULL,
-  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `measurement_unit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `package_unit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `measurement_unit` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `package_unit` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `quantity` decimal(15,2) NOT NULL DEFAULT '0.00',
   `damage_quantity` int NOT NULL DEFAULT '0',
   `lost_quantity` int NOT NULL DEFAULT '0',
@@ -350,7 +350,7 @@ CREATE TABLE `company_order_payments` (
   `payment_method_id` bigint UNSIGNED DEFAULT NULL,
   `amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `payment_date` date DEFAULT NULL,
-  `notes` text COLLATE utf8mb4_unicode_ci,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -759,7 +759,7 @@ CREATE TABLE `financial_reports` (
   `profit_for_shareholders` decimal(15,2) NOT NULL DEFAULT '0.00',
   `profit_for_sadaqah` decimal(15,2) NOT NULL DEFAULT '0.00',
   `profit_to_retain` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `remarks` text COLLATE utf8mb4_unicode_ci,
+  `remarks` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -785,6 +785,65 @@ CREATE TABLE `genders` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inspections`
+--
+
+CREATE TABLE `inspections` (
+  `id` bigint UNSIGNED NOT NULL,
+  `inspection_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inspection_date` date NOT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `total_damage_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_lost_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_damage_qty` int NOT NULL DEFAULT '0',
+  `total_lost_qty` int NOT NULL DEFAULT '0',
+  `inspected_by` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inspections`
+--
+
+INSERT INTO `inspections` (`id`, `inspection_number`, `inspection_date`, `notes`, `total_damage_amount`, `total_lost_amount`, `total_damage_qty`, `total_lost_qty`, `inspected_by`, `created_at`, `updated_at`) VALUES
+(4, 'INS-20251220-0001', '2025-12-20', NULL, 88.00, 25.00, 11, 5, 1, '2025-12-20 15:32:19', '2025-12-20 15:32:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inspection_items`
+--
+
+CREATE TABLE `inspection_items` (
+  `id` bigint UNSIGNED NOT NULL,
+  `inspection_id` bigint UNSIGNED NOT NULL,
+  `product_id` bigint UNSIGNED NOT NULL,
+  `stock_id` bigint UNSIGNED DEFAULT NULL,
+  `system_qty` int NOT NULL DEFAULT '0',
+  `physical_qty` int NOT NULL DEFAULT '0',
+  `damage_qty` int NOT NULL DEFAULT '0',
+  `lost_qty` int NOT NULL DEFAULT '0',
+  `damage_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `lost_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `avg_purchase_price` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `remarks` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inspection_items`
+--
+
+INSERT INTO `inspection_items` (`id`, `inspection_id`, `product_id`, `stock_id`, `system_qty`, `physical_qty`, `damage_qty`, `lost_qty`, `damage_amount`, `lost_amount`, `avg_purchase_price`, `remarks`, `created_at`, `updated_at`) VALUES
+(5, 4, 1, 5, 50, 50, 10, 0, 80.00, 0.00, 8.00, NULL, '2025-12-20 15:32:19', '2025-12-20 15:32:19'),
+(6, 4, 1, 6, 30, 25, 0, 5, 0.00, 25.00, 5.00, NULL, '2025-12-20 15:32:19', '2025-12-20 15:32:19'),
+(7, 4, 2, 1, 5, 5, 1, 0, 8.00, 0.00, 8.00, NULL, '2025-12-20 15:32:19', '2025-12-20 15:32:19');
 
 -- --------------------------------------------------------
 
@@ -816,8 +875,8 @@ INSERT INTO `investment_details` (`id`, `investor_id`, `amount`, `investment_dat
 
 CREATE TABLE `investors` (
   `id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `company` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
@@ -1110,7 +1169,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (75, '2025_12_01_211457_create_company_order_payments_table', 25),
 (76, '2025_12_01_221046_add_damage_lost_columns_to_company_order_items_table', 26),
 (77, '2025_12_01_221056_add_status_to_company_orders_table', 26),
-(78, '2025_12_03_211854_create_businesses_table', 27);
+(78, '2025_12_03_211854_create_businesses_table', 27),
+(79, '2025_12_21_000001_create_inspections_table', 28),
+(80, '2025_12_21_000002_add_stock_id_to_inspection_items', 29);
 
 -- --------------------------------------------------------
 
@@ -1261,7 +1322,8 @@ INSERT INTO `orders` (`id`, `invoice_id`, `admin_id`, `place_by`, `total_amount`
 (1, 'SSE-13-11-25-6212-1', 5, 5, 35.00, 35.00, 6, 1.00, 1, 4, 1, 1, 0, 2, '2025-11-13 14:10:00', '2025-11-18 11:29:57'),
 (2, 'SSE-06-12-25-5769-TU-2', 1, 3, 28.00, 28.00, 3, 2.00, 0, 6, 2, 0, 0, 2, '2025-12-06 12:15:44', '2025-12-06 12:27:38'),
 (3, 'SSE-06-12-25-2236-TU-3', 1, 3, 18.00, 2.00, 3, 2.00, 1, 4, 1, 0, 0, 2, '2025-12-06 12:19:44', '2025-12-06 12:27:38'),
-(4, 'SSE-09-12-25-6364-TU-4', 1, 5, 10.00, 0.00, 1, 0.00, 0, 6, 0, 0, 0, 2, '2025-12-09 15:26:50', '2025-12-09 15:39:45');
+(4, 'SSE-09-12-25-6364-TU-4', 1, 5, 10.00, 0.00, 1, 0.00, 0, 6, 0, 0, 0, 2, '2025-12-09 15:26:50', '2025-12-09 15:39:45'),
+(5, 'SSE-24-12-25-2975-দে-5', 1, 5, 10.00, 0.00, 1, 0.00, 0, 2, 0, 0, 0, 10, '2025-12-24 14:28:41', '2025-12-24 14:28:41');
 
 -- --------------------------------------------------------
 
@@ -1294,7 +1356,8 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `purchase
 (2, 1, 1, 3, 7.00, 8.00, 24.00, 0.00, 1, 0, 0, '2025-11-13 14:10:00', '2025-11-18 11:29:57'),
 (3, 2, 2, 3, 8.67, 10.00, 28.00, 2.00, 0, 0, 0, '2025-12-06 12:15:44', '2025-12-06 12:15:44'),
 (5, 3, 2, 3, 8.67, 10.00, 28.00, 2.00, 1, 0, 0, '2025-12-06 12:21:16', '2025-12-06 12:24:50'),
-(6, 4, 2, 1, 9.00, 10.00, 10.00, 0.00, 0, 0, 0, '2025-12-09 15:26:50', '2025-12-09 15:26:50');
+(6, 4, 2, 1, 9.00, 10.00, 10.00, 0.00, 0, 0, 0, '2025-12-09 15:26:50', '2025-12-09 15:26:50'),
+(7, 5, 2, 1, 9.00, 10.00, 10.00, 0.00, 0, 0, 0, '2025-12-24 14:28:41', '2025-12-24 14:28:41');
 
 -- --------------------------------------------------------
 
@@ -1330,7 +1393,8 @@ INSERT INTO `order_item_stocks` (`id`, `orderitem_id`, `stock_id`, `quantity`, `
 (4, 3, 1, 1, 8.00, 10.00, 10.00, 0.67, 2.00, 0, 0, 0, '2025-12-06 12:15:44', '2025-12-06 12:15:44'),
 (7, 5, 2, 2, 9.00, 10.00, 20.00, 1.33, 1.00, 1, 0, 0, '2025-12-06 12:21:16', '2025-12-06 12:24:50'),
 (8, 5, 1, 1, 8.00, 10.00, 10.00, 0.67, 2.00, 0, 0, 0, '2025-12-06 12:21:16', '2025-12-06 12:21:16'),
-(9, 6, 2, 1, 9.00, 10.00, 10.00, 0.00, 1.00, 0, 0, 0, '2025-12-09 15:26:50', '2025-12-09 15:26:50');
+(9, 6, 2, 1, 9.00, 10.00, 10.00, 0.00, 1.00, 0, 0, 0, '2025-12-09 15:26:50', '2025-12-09 15:26:50'),
+(10, 7, 2, 1, 9.00, 10.00, 10.00, 0.00, 1.00, 0, 0, 0, '2025-12-24 14:28:41', '2025-12-24 14:28:41');
 
 -- --------------------------------------------------------
 
@@ -1447,7 +1511,9 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (33, 'asset_list', 'admin', '2025-12-05 15:44:18', '2025-12-05 15:44:18'),
 (34, 'payment_method_list', 'admin', '2025-12-05 15:44:43', '2025-12-05 15:44:43'),
 (35, 'expense_head_list', 'admin', '2025-12-05 15:45:20', '2025-12-05 15:45:20'),
-(36, 'expense_list', 'admin', '2025-12-05 15:45:39', '2025-12-05 15:45:39');
+(36, 'expense_list', 'admin', '2025-12-05 15:45:39', '2025-12-05 15:45:39'),
+(37, 'inspection_list', 'admin', '2025-12-20 15:37:54', '2025-12-20 15:37:54'),
+(38, 'update_order_status', 'admin', '2025-12-23 10:28:37', '2025-12-23 10:28:37');
 
 -- --------------------------------------------------------
 
@@ -1540,7 +1606,7 @@ CREATE TABLE `profit_disbursements` (
   `investor_id` bigint UNSIGNED NOT NULL,
   `amount` decimal(15,2) NOT NULL,
   `disbursement_date` date NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_ci,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1561,7 +1627,7 @@ INSERT INTO `profit_disbursements` (`id`, `investor_id`, `amount`, `disbursement
 
 CREATE TABLE `profit_distributes` (
   `id` bigint UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `month` tinyint NOT NULL,
   `year` int NOT NULL,
   `total_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
@@ -1591,7 +1657,7 @@ CREATE TABLE `profit_distribute_details` (
   `amount` decimal(15,2) NOT NULL,
   `type` tinyint NOT NULL COMMENT '1=Credit, 2=Debit',
   `date` date NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1742,10 +1808,14 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('0zUPZteKqhUshinIfGJGuGjI61IeK3jnHIe4jzSi', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiZ2xLRUpCbTVLa0JkRjZDYnM0T2ZpbHJDaktEWDdtaTE0UVFFWGFnYyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozOToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL29yZGVyL2luZGV4Ijt9czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9pbnZvaWNlLzMvZ2VuZXJhdGUiO3M6NToicm91dGUiO3M6MTc6Imludm9pY2VzLmdlbmVyYXRlIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MjoibG9naW5fYWRtaW5fNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1766516602),
 ('bvcsHU98f1MDKMQbWpb3SwOBYa9KJNzKL4Tne2pl', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoic0phNENySWFlQW9KbUZncHdPaUdkSUtLVkdJd3Zlc2RRR3NDQlNiRSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo1NDoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL3JvbGUvcGVybWlzc2lvbi9yb2xlL2luZGV4Ijt9czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9jb21wYW55LW9yZGVyLzEvc2hvdyI7czo1OiJyb3V0ZSI7czoyMjoiYWRtaW4uY29tcGFueU9yZGVyU2hvdyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTI6ImxvZ2luX2FkbWluXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1765316419),
 ('gJdMIxmOmN39uqCsJ0ySsgOttHZaL7JpKar9mJWo', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRDhGbkt0bVo1d3pQRFd5N0tIbUNJalpOY3NpQlhWMFlhSTVLWWJteiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7czoxMDoiYWRtaW5Mb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1765400815),
 ('HMmWiVMV4uRQk2h4NDt4pfCVQcNRMhV3MLXpfk4f', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiamFpamJrOUFrVzlRcE16UXhSbmVYTDc2N3l1cENGSldVMnpxRmFaNCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9pbnZvaWNlLzMvcHJldmlldyI7czo1OiJyb3V0ZSI7czoxNjoiaW52b2ljZXMucHJldmlldyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTI6ImxvZ2luX2FkbWluXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1765401564),
-('qaOmkX80OXnvqgsCkASMpEixUNvhVgSvNkR4VQ2n', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQWxoaHJNOXZDTm84NWRKazdPYmdYZEg1VUlnR1N5Q2VZOHJYdHFNeSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MTI0OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vb3JkZXIvaW5kZXg/ZGF0ZV9mcm9tPSZkYXRlX3RvPSZpbnZvaWNlX3NlYXJjaD0mcGxhY2VfYnlfZmlsdGVyPSZzdGF0dXNfZmlsdGVyPTMmdmVuZG9yX2ZpbHRlcj01IjtzOjU6InJvdXRlIjtzOjEyOiJvcmRlcnMuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUyOiJsb2dpbl9hZG1pbl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1765311718);
+('LoA06KgVZZ3xPZ021faWbEzGU4elu0fiSeQCc7D3', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZXNQMVdOQ1NjR3ZrcXBPMm0wVVB6aWpuVkRPTkw2OU8wWjA5bnF1SiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9vcmRlci9pbmRleCI7czo1OiJyb3V0ZSI7czoxMjoib3JkZXJzLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MjoibG9naW5fYWRtaW5fNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1766608122),
+('q50njFrYKG6EiMoIZbGoAjioosSQlTgmgqijoSX4', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiR3RzdFpzUjVVUjhzWUJlSkgzZ29FR2ZTQVpWaEQ4RjRrM3lDTkF4UyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9pbnZvaWNlL2luZGV4IjtzOjU6InJvdXRlIjtzOjE0OiJpbnZvaWNlcy5pbmRleCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTI6ImxvZ2luX2FkbWluXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1766516595),
+('qaOmkX80OXnvqgsCkASMpEixUNvhVgSvNkR4VQ2n', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQWxoaHJNOXZDTm84NWRKazdPYmdYZEg1VUlnR1N5Q2VZOHJYdHFNeSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MTI0OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vb3JkZXIvaW5kZXg/ZGF0ZV9mcm9tPSZkYXRlX3RvPSZpbnZvaWNlX3NlYXJjaD0mcGxhY2VfYnlfZmlsdGVyPSZzdGF0dXNfZmlsdGVyPTMmdmVuZG9yX2ZpbHRlcj01IjtzOjU6InJvdXRlIjtzOjEyOiJvcmRlcnMuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUyOiJsb2dpbl9hZG1pbl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1765311718),
+('TPLinEMAoGeOi0iOw2wXGtOk0peNpE6CsQeqhLjN', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidmNPaXhuY0RUcmt5eG8zUTZQUVZIejdhZ0JEU2JLTU1yQzRiMWtLTiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Nzk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi92ZW5kb3IvYjFhNDE0ZDUtMjYwNS00NzI5LTliNzctOTI3YjViODQ3OTRhL2FjY291bnQiO3M6NToicm91dGUiO3M6MTk6ImFkbWluLnZlbmRvckFjY291bnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUyOiJsb2dpbl9hZG1pbl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1766267907);
 
 -- --------------------------------------------------------
 
@@ -1780,9 +1850,11 @@ CREATE TABLE `stocks` (
 
 INSERT INTO `stocks` (`id`, `product_id`, `warehouse_id`, `batch_id`, `purchase_price`, `quantity`, `total_price`, `sell_price`, `damage_quantity`, `sold_quantity`, `stolen_quantity`, `transfer_quantity`, `froze_quantity`, `status`, `manufacture_date`, `expire_date`, `created_at`, `updated_at`) VALUES
 (1, 2, 1, 'B-20251025213413', 8.00, 6, 48.00, 9.00, 0, 1, 0, 0, 0, 1, '2024-06-26', '2026-07-03', '2025-10-25 15:34:13', '2025-12-06 12:22:04'),
-(2, 2, 1, 'B-20251025213413', 9.00, 5, 45.00, 10.00, 1, 3, 0, 0, 0, 1, NULL, NULL, '2025-10-25 15:34:13', '2025-12-09 15:39:45'),
+(2, 2, 1, 'B-20251025213413', 9.00, 5, 45.00, 10.00, 1, 3, 0, 0, 1, 1, NULL, NULL, '2025-10-25 15:34:13', '2025-12-24 14:28:41'),
 (3, 1, 1, 'B-20251025213413', 7.00, 5, 35.00, 8.00, 0, 2, 0, 0, 0, 1, NULL, NULL, '2025-10-25 15:34:13', '2025-11-18 11:29:57'),
-(4, 1, 1, 'B-20251025213413', 6.00, 5, 30.00, 7.00, 0, 0, 0, 0, 0, 1, NULL, NULL, '2025-10-25 15:34:13', '2025-10-25 16:37:34');
+(4, 1, 1, 'B-20251025213413', 6.00, 5, 30.00, 7.00, 0, 0, 0, 0, 0, 1, NULL, NULL, '2025-10-25 15:34:13', '2025-10-25 16:37:34'),
+(5, 1, 1, 'B-20251220213023', 8.00, 50, 400.00, 10.00, 0, 0, 0, 0, 0, 1, '2025-12-21', '2025-12-27', '2025-12-20 15:30:23', '2025-12-20 15:30:23'),
+(6, 1, 1, 'B-20251220213023', 5.00, 30, 150.00, 7.00, 0, 0, 0, 0, 0, 1, '2025-12-21', '2025-12-27', '2025-12-20 15:30:23', '2025-12-20 15:30:23');
 
 -- --------------------------------------------------------
 
@@ -1930,7 +2002,8 @@ CREATE TABLE `vendors` (
 INSERT INTO `vendors` (`id`, `uuid`, `email`, `mobile`, `shop_name`, `contact_person`, `country_id`, `full_address`, `lat`, `long`, `status`, `created_at`, `updated_at`) VALUES
 (2, 'ef3ec731-aae2-11f0-9e2d-b00cd1288582', 'rakibrahman.bd@gmail.com', '01740303507', 'turash', 'tursh', 18, 'test', NULL, NULL, 1, '2025-10-11 06:35:32', '2025-10-11 06:35:32'),
 (5, '0e8fd8cd-4b91-44d2-a908-c0b971650a3c', 'joxofeqypa@mailinator.com', '01740303673', 'shakib', 'Labore occaecat elig', 18, 'Eos occaecat aspern', 78.00000000, 40.00000000, 1, '2025-10-16 17:07:33', '2025-10-25 15:06:13'),
-(6, 'b1a414d5-2605-4729-9b77-927b5b84794a', NULL, '01740505676', 'rumon', NULL, 18, 'Et esse sapiente ut', NULL, NULL, 1, '2025-10-17 05:49:04', '2025-10-25 15:06:04');
+(6, 'b1a414d5-2605-4729-9b77-927b5b84794a', NULL, '01740505676', 'rumon', NULL, 18, 'Et esse sapiente ut', NULL, NULL, 1, '2025-10-17 05:49:04', '2025-10-25 15:06:04'),
+(10, '2a17471f-62dc-4bcb-8757-746718a5bc2a', NULL, '0174333', 'দেশে ফিরতে লন্ডনের', NULL, 18, NULL, NULL, NULL, 1, '2025-12-24 12:35:57', '2025-12-24 12:35:57');
 
 -- --------------------------------------------------------
 
@@ -2149,6 +2222,23 @@ ALTER TABLE `financial_reports`
 --
 ALTER TABLE `genders`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inspections`
+--
+ALTER TABLE `inspections`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `inspections_inspection_number_unique` (`inspection_number`),
+  ADD KEY `inspections_inspected_by_foreign` (`inspected_by`);
+
+--
+-- Indexes for table `inspection_items`
+--
+ALTER TABLE `inspection_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inspection_items_inspection_id_foreign` (`inspection_id`),
+  ADD KEY `inspection_items_product_id_foreign` (`product_id`),
+  ADD KEY `inspection_items_stock_id_foreign` (`stock_id`);
 
 --
 -- Indexes for table `investment_details`
@@ -2553,6 +2643,18 @@ ALTER TABLE `genders`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `inspections`
+--
+ALTER TABLE `inspections`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `inspection_items`
+--
+ALTER TABLE `inspection_items`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT for table `investment_details`
 --
 ALTER TABLE `investment_details`
@@ -2580,7 +2682,7 @@ ALTER TABLE `media`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `oauth_clients`
@@ -2598,19 +2700,19 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `order_item_stocks`
 --
 ALTER TABLE `order_item_stocks`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `order_statuses`
@@ -2628,7 +2730,7 @@ ALTER TABLE `payment_methods`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -2688,7 +2790,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `stocks`
 --
 ALTER TABLE `stocks`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tags`
@@ -2718,7 +2820,7 @@ ALTER TABLE `user_details`
 -- AUTO_INCREMENT for table `vendors`
 --
 ALTER TABLE `vendors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `vendor_accounts`
@@ -2796,6 +2898,20 @@ ALTER TABLE `expense_lists`
 --
 ALTER TABLE `financial_reports`
   ADD CONSTRAINT `financial_reports_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `inspections`
+--
+ALTER TABLE `inspections`
+  ADD CONSTRAINT `inspections_inspected_by_foreign` FOREIGN KEY (`inspected_by`) REFERENCES `admins` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `inspection_items`
+--
+ALTER TABLE `inspection_items`
+  ADD CONSTRAINT `inspection_items_inspection_id_foreign` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `inspection_items_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `inspection_items_stock_id_foreign` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `investment_details`
