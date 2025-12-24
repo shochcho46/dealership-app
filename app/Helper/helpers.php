@@ -5,6 +5,7 @@ use Propaganistas\LaravelPhone\PhoneNumber;
 use Propaganistas\LaravelPhone\Rules\Phone;
 use Carbon\Carbon;
 use App\Jobs\SendSmsJob;
+use libphonenumber\NumberParseException;
 
 
 if (! function_exists('validationError')) {
@@ -52,9 +53,21 @@ if (! function_exists('validationError')) {
 if (! function_exists('validationMobileNumber')) {
     function validationMobileNumber($mobileNumber,$iso)
     {
-        $phone = new PhoneNumber($mobileNumber, $iso);
-       $generatedPhone =  $phone->formatForMobileDialingInCountry($iso);
-        return  $generatedPhone;
+        // $phone = new PhoneNumber($mobileNumber, $iso);
+        // $generatedPhone =  $phone?->formatForMobileDialingInCountry($iso);
+        // return  $generatedPhone;
+
+        try {
+                $phone = new PhoneNumber($mobileNumber, $iso);
+
+                $generatedPhone = $phone->formatForMobileDialingInCountry($iso);
+
+            return $generatedPhone;
+            }
+        catch (NumberParseException $e) {
+                // Invalid phone number or wrong country ISO
+                return null; // or throw custom validation error
+            }
     }
    }
 

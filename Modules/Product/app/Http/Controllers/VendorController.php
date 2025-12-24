@@ -37,7 +37,7 @@ class VendorController extends Controller
     public function store(Request $request)
     {
         // Validation
-        $request->validate([
+     $request->validate([
             'shop_name' => 'required|string|max:255',
             'mobile' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
@@ -59,12 +59,13 @@ class VendorController extends Controller
             'vendor_image.max' => 'Vendor image must not be larger than 10MB.',
         ]);
 
+
         try {
             $countriesIso = Country::where('id',18)->first();
             $phoneNumber = validationMobileNumber($request->mobile,$countriesIso->iso);
             $vendor = Vendor::create([
                 'shop_name' => $request->shop_name,
-                'mobile' => $phoneNumber,
+                'mobile' => $phoneNumber ?? $request->mobile,
                 'email' => $request->email,
                 'contact_person' => $request->contact_person,
                 'country_id' => 18,
@@ -81,7 +82,8 @@ class VendorController extends Controller
             }
 
             return redirect()->route('admin.vendorIndex')->with('success', 'Vendor created successfully!');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return back()->with('error', 'Failed to create vendor. Please try again.')->withInput();
         }
     }
