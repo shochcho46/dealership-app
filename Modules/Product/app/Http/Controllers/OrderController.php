@@ -113,7 +113,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validation =   $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'place_by' => 'required|exists:admins,id',
             'items' => 'required|array|min:1',
@@ -185,6 +185,7 @@ class OrderController extends Controller
                            ->with('success', 'Order created successfully with Invoice ID: ' . $order->invoice_id);
 
         } catch (\Exception $e) {
+            Log::error('Error creating order: ' . $e->getMessage());
             DB::rollback();
             return redirect()->back()
                            ->withInput()
@@ -290,7 +291,7 @@ class OrderController extends Controller
                            ->with('error', 'This order cannot be updated.');
         }
 
-        $request->validate([
+     $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'place_by' => 'required|exists:admins,id',
             'items' => 'required|array|min:1',

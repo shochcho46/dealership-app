@@ -60,7 +60,13 @@ class Order extends Model
             if ($this->vendor_id) {
                 $vendor = Vendor::find($this->vendor_id);
                 if ($vendor && !empty($vendor->shop_name)) {
-                $vendorCode = strtoupper(substr($vendor->shop_name, 0, 2));
+                // $vendorCode = strtoupper(substr($vendor->shop_name, 0, 2));
+
+                $vendorCode = mb_strtoupper(
+                    mb_substr($vendor->shop_name, 0, 2, 'UTF-8'),
+                    'UTF-8'
+                );
+
                 }
             }
         $datePart = now()->format('d-m-y');
