@@ -776,7 +776,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         alert('Validation errors:\n' + validationErrors.join('\n'));
         return false;
     }
-
     // Disable submit button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Creating Order...';
