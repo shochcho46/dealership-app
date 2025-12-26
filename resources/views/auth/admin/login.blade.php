@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>{{ config('app.name', $busineesSetting->company_name) }}</title>
+    <title>{{ config('app.name', $busineesSetting?->company_name) }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Park | Login Page">
     <meta name="author" content="ColorlibHQ">
@@ -21,7 +21,7 @@
         <div class="card card-outline card-primary">
 
 
-            @if($busineesSetting->hasMedia('logo'))
+            @if($busineesSetting?->hasMedia('logo'))
                  <div class="card-header text-center"> <a href="{{ route('adminLogin') }}" class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover">
                         <img src="{{ $busineesSetting->getFirstMediaUrl('logo') }}" alt="Logo" class="brand-image" style="max-height: 100px; max-width: 100%;">
                     </a>
