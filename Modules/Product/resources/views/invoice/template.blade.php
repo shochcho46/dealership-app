@@ -643,6 +643,7 @@
                     <div>Total Due: ৳ {{ number_format($vendorTotalDue, 2) }}</div>
                     <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div>
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
+                    <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                        <strong> New Balance Due: </strong>৳
                         {{-- <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong> --}}
@@ -790,6 +791,7 @@
                     <div>Total Due: ৳ {{ number_format($vendorTotalDue, 2) }}</div>
                     <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div>
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
+                    <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                         <strong> New Balance Due: </strong> ৳
                         <strong>{{ number_format($vendorTotalDue, 2) }}</strong>
