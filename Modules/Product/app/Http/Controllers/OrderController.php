@@ -549,7 +549,8 @@ class OrderController extends Controller
                 $order->update(['order_status_id' => $request->status_id]);
 
                 // If status is shipped (4) or delivered (5), convert froze to sold and create vendor account record
-                if (in_array($request->status_id, [4, 5])) {
+                // if (in_array($request->status_id, [4, 5])) {
+                if (in_array($request->status_id, [4])) {
                     foreach ($order->orderItems as $orderItem) {
                         foreach ($orderItem->orderItemStocks as $orderItemStock) {
                             $stock = $orderItemStock->stock;

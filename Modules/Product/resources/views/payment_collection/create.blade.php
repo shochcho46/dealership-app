@@ -357,7 +357,9 @@ $(document).ready(function() {
             html += `
                 <tr>
                     <td>
-                        <input type="checkbox" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount}">
+                    
+                    <input type="radio" name="selected_order" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount}">
+
                     </td>
                     <td>${order.invoice_id || ''}</td>
                     <td>${createdAt}</td>
@@ -368,7 +370,7 @@ $(document).ready(function() {
                 </tr>
             `;
         });
-
+        // <input type="checkbox" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount}">
         $('#orders_list').html(html);
         $('#pending_orders').show();
     }

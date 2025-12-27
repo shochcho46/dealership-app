@@ -39,6 +39,10 @@ class InvoiceController extends Controller
         $vendorNetDue = $vendorTotalDue - $vendorPaidAmount;
         $previousdue =  $vendorTotalDue - $order->total_amount;
 
+        $currentInvoicePayment = VendorAccount::where('vendor_id', $order->vendor_id)->where('order_id', $order->id)
+                                ->where('type', 2) // Debit type
+                                ->sum('amount');
+
         $pdf = Pdf::setOptions([
             'margin-top' => 5,
             'margin-right' => 5,
@@ -61,6 +65,7 @@ class InvoiceController extends Controller
             'vendorPaidAmount' => $vendorPaidAmount,
             'previousDue' => $previousdue,
             'companyInfo' => $this->getCompanyInfo(),
+            'currentInvoicePayment' => $currentInvoicePayment,
             'preview' => true
         ])
             ->setPaper('A4', 'portrait');
@@ -99,6 +104,10 @@ class InvoiceController extends Controller
         $previousdue =  $vendorTotalDue - $order->total_amount;
 
         $vendorNetDue = $vendorTotalDue - $vendorPaidAmount;
+
+        $currentInvoicePayment = VendorAccount::where('vendor_id', $order->vendor_id)->where('order_id', $order->id)
+                                ->where('type', 2) // Debit type
+                                ->sum('amount');
         return view('product::invoice.template', [
             'order' => $order,
             'vendor' => $order->vendor,
@@ -106,6 +115,7 @@ class InvoiceController extends Controller
             'vendorTotalDue' => $vendorNetDue,
             'vendorPaidAmount' => $vendorPaidAmount,
             'previousDue' => $previousdue,
+            'currentInvoicePayment' => $currentInvoicePayment,
             'companyInfo' => $this->getCompanyInfo(),
             'preview' => true
         ]);
@@ -150,6 +160,10 @@ class InvoiceController extends Controller
 
             $previousDue = $vendorTotalDue - $order->total_amount;
 
+            $currentInvoicePayment = VendorAccount::where('vendor_id', $order->vendor_id)->where('order_id', $order->id)
+                                ->where('type', 2) // Debit type
+                                ->sum('amount');
+
             $data = [
                 'order' => $order,
                 'vendor' => $order->vendor,
@@ -157,6 +171,7 @@ class InvoiceController extends Controller
                 'vendorTotalDue' => $vendorTotalDue,
                 'vendorPaidAmount' => $vendorPaidAmount,
                 'previousDue' => $previousDue,
+                'currentInvoicePayment' => $currentInvoicePayment,
                 'companyInfo' => $this->getCompanyInfo(),
             ];
 
