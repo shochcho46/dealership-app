@@ -88,7 +88,9 @@ class PaymentCollectionController extends Controller
             'collection_date' => 'required|date',
             'deposite_by' => 'required|exists:admins,id',
             'note' => 'nullable|string|max:1000',
-            'payment_document' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,webp|max:5120'
+            'payment_document' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,webp|max:5120',
+            'order_ids' => 'required|array|min:1',
+            'order_ids.*' => 'exists:orders,id',
         ]);
 
         try {
@@ -99,6 +101,11 @@ class PaymentCollectionController extends Controller
 
                 $pendingOrders = Order::where('vendor_id', $request->vendor_id)->where('payment_status', '!=', 2)->orderBy('created_at', 'asc')->get();
 
+                if($request->filled('order_ids') )
+                {
+                    $pendingOrders = Order::where('vendor_id', $request->vendor_id)->where('payment_status', '!=', 2)->whereIn('id', $request->order_ids)->orderBy('created_at', 'asc')->get();
+                    
+                }
                 $processedOrders = [];
                 $createdPayments = [];
 
