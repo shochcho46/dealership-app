@@ -75,6 +75,30 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            {{-- <div class="col-md-2">
+                                <label class="form-label">Status Filter</label>
+                                <select name="status_filter" class="form-select select2">
+                                    <option value="all" {{ request('status_filter') === null ? 'selected' : '' }}>All Status</option>
+                                    @foreach($filterorderStatuses as $status)
+                                        <option value="{{ $status->id }}"
+                                            {{ request('status_filter') == $status->id ? 'selected' : '' }}>
+                                            {{ $status->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div> --}}
+
+                             <div class="col-md-2">
+                                <label class="form-label">Payment Status Filter</label>
+                                <select name="payment_status_filter" class="form-select select2">
+                                    <option value="" {{ request('payment_status_filter') === null || request('payment_status_filter') === '' ? 'selected' : '' }}>All Status</option>
+                                    <option value="0" {{ request('payment_status_filter') == '0' ? 'selected' : '' }}>unpaid</option>
+                                    <option value="1" {{ request('payment_status_filter') == '1' ? 'selected' : '' }}>partial paid</option>
+                                    <option value="2" {{ request('payment_status_filter') == '2' ? 'selected' : '' }}>paid</option>
+                                </select>
+                            </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">&nbsp;</label>
                                 <div class="d-flex gap-2">
@@ -124,11 +148,15 @@
                                         <td>
                                             <a href="{{ route('invoices.preview', $item->order_id) }}" target="_blank">
                                                {{ $item?->order?->invoice_id  }}
-                                            </a>
+                                            </a><br>
+                                            <span class="badge {{ $item?->order?->payment_status_badge_class }} status-badge">
+                                                    {{ $item?->order?->payment_status_text }}
+                                            </span>
+
                                         </td>
                                         <td>{{ $item->order->created_at->format('d M Y') }}</td>
                                         <td>{{ $item->order->vendor->shop_name ?? 'N/A' }}</td>
-                                        <td>{{ $item->product->name }}</td>
+                                        <td>{{ $item?->product?->name }}</td>
                                         <td>{{ $item->order->placeBy->name ?? 'N/A' }}</td>
                                         <td class="">
                                            Total: {{ number_format($item->quantity, 0) }}

@@ -330,10 +330,11 @@
 
                 <div class="ship-to">
                     <div class="section-title">Account Summary:</div>
-                    <div> <b>Total Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b></div>
-                    <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div>
+                    <div> <b>All Time Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b></div>
+                    {{-- <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div> --}}
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
+                    <div>Current Invoice Due: ৳ {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                        {{-- <strong> New Balance Due: </strong>৳ --}}
                         {{-- <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong> --}}
@@ -347,7 +348,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Product Description</th>
+                        <th>Product</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Damage</th>
                         <th class="text-center">Lost</th>
@@ -479,10 +480,11 @@
 
                 <div class="ship-to">
                     <div class="section-title">Account Summary:</div>
-                    <div><b>Total Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b></div>
-                    <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div>
+                    <div><b>All Time Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b></div>
+                    {{-- <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div> --}}
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
+                    <div>Current Invoice Due: ৳ {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}</div>
                     {{-- <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                         <strong> New Balance Due: </strong> ৳
                         <strong>{{ number_format($vendorTotalDue, 2) }}</strong>
@@ -495,7 +497,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Product Description</th>
+                        <th>Product</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Damage</th>
                         <th class="text-center">Lost</th>

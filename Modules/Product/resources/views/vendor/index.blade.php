@@ -98,11 +98,19 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
+                                                    <a href="{{ route('vendor.publicAccount', $vendor->uuid) }}"
+                                                       class="btn btn-sm btn-outline-secondary"
+                                                       title="View Account"
+                                                       target="_blank">
+                                                        <span class="mdi mdi-globe"></span>
+                                                    </a>
+
                                                     <a href="{{ route('admin.vendorAccount', $vendor->uuid) }}"
                                                        class="btn btn-sm btn-outline-info"
                                                        title="View Account">
                                                         <span class="mdi mdi-wallet"></span>
                                                     </a>
+
                                                     <a href="{{ route('admin.vendorEdit', $vendor) }}"
                                                        class="btn btn-sm btn-outline-primary"
                                                        title="Edit">

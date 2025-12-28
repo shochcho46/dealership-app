@@ -17,6 +17,7 @@ use Modules\Product\Models\ExpenseList;
 use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Modules\Product\Models\OrderStatus;
 
 class ReportController extends Controller
 {
@@ -122,6 +123,17 @@ class ReportController extends Controller
             });
         }
 
+
+        if ($request->filled('status_filter')) {
+            $query->where('order_status_id', $request->status_filter);
+        }
+
+        if ($request->filled('payment_status_filter')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->where('payment_status', $request->payment_status_filter);
+            });
+        }
+
         $fullQuery = clone $query;
 
         $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
@@ -144,8 +156,8 @@ class ReportController extends Controller
         $vendors = Vendor::orderBy('shop_name')->get();
         $products = Product::orderBy('name')->get();
         $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
-
-        return view('product::reports.order-report', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage'));
+        $filterorderStatuses = OrderStatus::orderBy('id')->get();
+        return view('product::reports.order-report', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage', 'filterorderStatuses'));
     }
 
     /**
