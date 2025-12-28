@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Admin;
 
+use function PHPSTORM_META\type;
+
 class Order extends Model
 {
     use HasFactory;
@@ -117,6 +119,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function vendorAccounts()
+    {
+        return $this->hasMany(VendorAccount::class);
+    }
+
     /**
      * Scope for active orders
      */
@@ -143,6 +150,18 @@ class Order extends Model
     public function getNetAmountAttribute()
     {
         return $this->total_amount ;
+    }
+
+    public function getOrderPaymentAttribute()
+    {
+        return $this->vendorAccounts->where('type',2)->sum('amount'); ;
+    }
+
+
+    public function getOrderDueAttribute()
+    {
+        $paidAmount = $this->vendorAccounts->where('type',2)->sum('amount');
+        return $this->total_amount - $paidAmount;
     }
 
     /**
