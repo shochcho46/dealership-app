@@ -45,8 +45,17 @@ class OrderController extends Controller
         }
 
         if ($request->filled('status_filter')) {
-            $query->where('order_status_id', $request->status_filter);
+
+            if ($request->status_filter != 'all') {
+                $query->where('order_status_id', $request->status_filter);
+            }
+
+        // else status_filter = '', show all => no where condition
         }
+            else {
+                // Default load pending orders (assuming status_id = 1 is pending)
+                $query->where('order_status_id', 2);
+            }
 
         if ($request->filled('vendor_filter')) {
             $query->where('vendor_id', $request->vendor_filter);
@@ -73,7 +82,27 @@ class OrderController extends Controller
 
         // Get all order statuses and vendors for filters
         $limit = request()->get('limit', 30);
-        $orderStatuses = OrderStatus::orderBy('id')->paginate($limit);
+
+         $filterorderStatuses = OrderStatus::orderBy('id')->get();
+        $orderStatuses = OrderStatus::orderBy('id')->whereIn('id',[3,6])->get();
+        if ($request->status_filter == 'all' || $request->status_filter == 6 || $request->status_filter == 5) {
+            $orderStatuses = [];
+        }
+
+        if ($request->status_filter == 2) {
+            $orderStatuses = OrderStatus::orderBy('id')->whereIn('id',[3,6])->get();
+        }
+
+        if ($request->status_filter == 3) {
+            $orderStatuses = OrderStatus::orderBy('id')->whereIn('id',[4,6])->get();
+        }
+
+        if ($request->status_filter == 4) {
+            $orderStatuses = OrderStatus::orderBy('id')->whereIn('id',[5])->get();
+        }
+
+
+
         $vendors = Vendor::orderBy('shop_name')->get();
 
         $placeBys = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
@@ -86,7 +115,8 @@ class OrderController extends Controller
             'completedOrders',
             'orderStatuses',
             'vendors',
-            'placeBys'
+            'placeBys',
+            'filterorderStatuses'
         ));
     }
 

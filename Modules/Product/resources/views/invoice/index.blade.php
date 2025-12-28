@@ -108,7 +108,7 @@
         <div class="card-body">
             <form method="GET" action="{{ route('invoices.index') }}">
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Invoice Search</label>
                         <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
@@ -125,6 +125,20 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Place By Filter</label>
+                        <select name="place_by_filter" class="form-select">
+                            <option value="">All Place By</option>
+                            @foreach($placeBys as $placeBy)
+                                <option value="{{ $placeBy->id }}"
+                                    {{ request('place_by_filter') == $placeBy->id ? 'selected' : '' }}>
+                                    {{ $placeBy->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="col-md-2">
                         <label class="form-label">Date From</label>
                         <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
@@ -133,22 +147,27 @@
                         <label class="form-label">Date To</label>
                         <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                     </div>
-                    <div class="col-md-2">
+                    {{-- <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
                         <div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="mdi mdi-magnify"></i> Filter
                             </button>
                         </div>
-                    </div>
-                </div>
-                <div class="row mt-3">
+                    </div> --}}
+
+
                     <div class="col-12">
-                        <a href="{{ route('invoices.index') }}" class="btn btn-secondary me-2">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="mdi mdi-magnify"></i> Filter
+                        </button>
+                        <a href="{{ route('invoices.index') }}" class="btn btn-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
                         </a>
+
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -186,12 +205,15 @@
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
                             <th>Invoice ID</th>
+                            <th>Place By</th>
                             <th>Vendor</th>
                             <th>Order Status</th>
                             <th>Payment Status</th>
                             <th>Items</th>
                             <th>Amount</th>
-                            <th>Date</th>
+                            <th>Paid</th>
+                            <th>Due</th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -205,6 +227,11 @@
                                 <td>
                                     <strong>{{ $order->invoice_id }}</strong>
                                     <br><small class="text-muted">{{ $order->created_at->format('M d, Y h:i A') }}</small>
+                                    <br><small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
+                                </td>
+
+                                <td>
+                                    <strong>{{ $order->placeBy->name }}</strong>
                                 </td>
                                 <td>
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
@@ -225,14 +252,16 @@
                                     <br><small class="text-muted">{{ $order->total_quantity }} items</small>
                                 </td>
                                 <td>
-                                    <strong>৳{{ number_format($order->total_amount, 2) }}</strong>
+                                    <strong class="text-primary">৳{{ number_format($order->total_amount, 2) }}</strong>
                                     @if($order->total_discount_amount > 0)
-                                        <br><small class="text-success">Discount: ৳{{ number_format($order->total_discount_amount, 2) }}</small>
+                                        <br><small class="text-warning">Discount: ৳{{ number_format($order->total_discount_amount, 2) }}</small>
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $order->created_at->format('M d, Y') }}
-                                    <br><small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
+                                     <strong class="text-success">৳{{ number_format($order->order_payment, 2) }}</strong>
+                                </td>
+                                <td>
+                                     <strong class="text-danger">৳{{ number_format($order->order_due, 2) }}</strong>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
@@ -265,6 +294,23 @@
                             </tr>
                         @endforelse
                     </tbody>
+
+                    <tfoot class="table-secondary">
+                                <tr>
+                                    <th colspan="7" class="text-end">Page Total:</th>
+                                    <th class="text-primary">৳{{ number_format($pageTotalAmount, 2) }}</th>
+                                    <th class="text-success">৳{{ number_format($pageTotalPaidAmount, 2) }}</th>
+                                    <th class="text-danger">৳{{ number_format($pageTotalDueAmount, 2) }}</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                                <tr>
+                                    <th colspan="7" class="text-end">Filtered Total:</th>
+                                    <th class="text-primary">৳{{ number_format($filteredTotalAmount, 2) }}</th>
+                                    <th class="text-success">৳{{ number_format($filteredTotalPaidAmount, 2) }}</th>
+                                    <th class="text-danger">৳{{ number_format($filteredTotalDueAmount, 2) }}</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                    </tfoot>
                 </table>
             </div>
 
