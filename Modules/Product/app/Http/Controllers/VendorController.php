@@ -191,11 +191,11 @@ class VendorController extends Controller
             ->orderBy('id', 'desc');
 
         // Get period accounts
-        $accounts = $accountsQuery->get();
+        $resulit = $accountsQuery->get();
 
         // Calculate period totals
-        $totalDebit = $accounts->where('type', 1)->sum('amount');
-        $totalCredit = $accounts->where('type', 2)->sum('amount');
+        $totalDebit = $resulit->where('type', 1)->sum('amount');
+        $totalCredit = $resulit->where('type', 2)->sum('amount');
         $balance = $totalCredit - $totalDebit;
 
         // Get all-time data
@@ -204,6 +204,7 @@ class VendorController extends Controller
         $allTimeCredit = $allTimeAccounts->where('type', 2)->sum('amount');
         $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
         $totalTransactions = $allTimeAccounts->count();
+        $accounts =  $accountsQuery->paginate(50);
 
         return view('product::vendor.account', compact(
             'vendor',
@@ -238,11 +239,11 @@ class VendorController extends Controller
             ->orderBy('id', 'desc');
 
         // Get period accounts
-        $accounts = $accountsQuery->get();
+        $resulit = $accountsQuery->get();
 
         // Calculate period totals
-        $totalDebit = $accounts->where('type', 1)->sum('amount');
-        $totalCredit = $accounts->where('type', 2)->sum('amount');
+        $totalDebit = $resulit->where('type', 1)->sum('amount');
+        $totalCredit = $resulit->where('type', 2)->sum('amount');
         $balance = $totalCredit - $totalDebit;
 
         // Get all-time data
@@ -252,6 +253,7 @@ class VendorController extends Controller
         $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
         $totalTransactions = $allTimeAccounts->count();
         $businessDetail = Business::first();
+        $accounts =  $accountsQuery->paginate(50);
 
         return view('product::vendor.public-account', compact(
             'vendor',
@@ -267,5 +269,38 @@ class VendorController extends Controller
             'endDate',
             'businessDetail'
         ));
+    }
+
+
+     public function storeVendorAccount(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'vendor_id' => 'required',
+            'type' => 'required|in:1,2',
+        ]);
+
+        try {
+            $investment = VendorAccount::create([
+                'vendor_id' => $request->vendor_id,
+                'amount' => $request->amount,
+                'type' => $request->type
+            ]);
+            return back()->with('success', 'Investment added successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to add investment. Please try again.')->withInput();
+        }
+    }
+
+
+     public function destroyVendorAccount(VendorAccount $vendorAccount)
+    {
+        try {
+            // Clear all media
+            $vendorAccount->delete();
+            return back()->with('success', 'Account deleted successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete account. Please try again.');
+        }
     }
 }

@@ -235,8 +235,34 @@
         <div class="card card-primary card-outline">
             <div class="card-header">
                 <h3 class="card-title">Transaction History ({{ $accounts->count() }} records)</h3>
-            </div>
+
+                    <div class="card-tools">
+                        @can('vendor_account_list')
+
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addInvestmentModal">
+                                <i class="mdi mdi-plus"></i> Add account
+                            </button>
+                        @endcan
+                        {{-- <a href="{{ route('admin.investorIndex') }}" class="btn btn-secondary btn-sm">
+                            <i class="mdi mdi-arrow-left"></i> Back
+                        </a> --}}
+                    </div>
+                </div>
             <div class="card-body">
+
+                   @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="">
@@ -250,6 +276,7 @@
                                 <th>Note</th>
                                 <th>Created By</th>
                                 <th>Deposited By</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -292,6 +319,20 @@
                                     </td>
                                     <td>{{ $account->createdBy->name ?? 'N/A' }}</td>
                                     <td>{{ $account->depositeBy->name ?? 'N/A' }}</td>
+
+                                    <td>
+                                        @can('vendor_account_list')
+
+                                            <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal"
+                                                    data-url="{{ route('admin.destroyVendorAccount', $account->id) }}"
+                                                    title="Delete">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+
+                                        @endcan
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -301,12 +342,14 @@
                                     </td>
                                 </tr>
                             @endforelse
+
+                             @include('components.delete')
                         </tbody>
                         @if($accounts->count() > 0)
                             <tfoot class="table-secondary">
                                 <tr>
                                     <th colspan="5" class="text-end">Totals:</th>
-                                    <th colspan="4">
+                                    <th colspan="5">
                                         <span class="text-danger">Debit: ৳{{ number_format($totalDebit, 2) }}</span>
                                         <span class="mx-2">|</span>
                                         <span class="text-success">Credit: ৳{{ number_format($totalCredit, 2) }}</span>
@@ -320,7 +363,68 @@
                         @endif
                     </table>
                 </div>
+                 <div class="mt-3">
+                    {{ $accounts->links() }}
+                </div>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Investment Modal -->
+<div class="modal fade" id="addInvestmentModal" tabindex="-1" role="dialog" aria-labelledby="addInvestmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('admin.storeVendorAccount') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addInvestmentModalLabel">Add account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="amount">Amount <span class="text-danger">*</span></label>
+                        <input type="number"
+                               class="form-control @error('amount') is-invalid @enderror"
+                               id="amount"
+                               name="amount"
+                               step="0.01"
+                               value="{{ old('amount') }}"
+                               placeholder="Enter amount"
+                               required>
+                        @error('amount')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Type <span class="text-danger">*</span></label>
+                        <select
+                            class="form-control @error('type') is-invalid @enderror"
+                            id="type"
+                            name="type"
+                            required>
+                            <option value="">Select Type</option>
+                            <option value="1" {{ old('type') == 1 ? 'selected' : '' }}>Debit</option>
+                            <option value="2" {{ old('type') == 2 ? 'selected' : '' }}>Credit</option>
+                        </select>
+                        @error('type')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <input type="hidden" name="vendor_id" value="{{ $vendor->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="mdi mdi-cancel"></i> Close
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-content-save"></i> Save Account
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -334,5 +438,14 @@
         document.getElementById('start_date').setAttribute('max', today);
         document.getElementById('end_date').setAttribute('max', today);
     });
+
+    $(document).ready(function() {
+     // Show modal if there are validation errors
+        @if($errors->any())
+            var addModal = new bootstrap.Modal(document.getElementById('addInvestmentModal'));
+            addModal.show();
+        @endif
+    });
+    // Delete Investment Button - Set form action dynamically
 </script>
 @endpush

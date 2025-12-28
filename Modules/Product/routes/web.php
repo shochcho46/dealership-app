@@ -95,6 +95,8 @@ Route::prefix('admin')->group(function () {
             Route::put('vendor/{vendor}/update', 'update')->name('admin.vendorUpdate');
             Route::delete('vendor/{vendor}/delete', 'destroy')->name('admin.vendorDestroy');
             Route::get('vendor/{uuid}/account', 'account')->name('admin.vendorAccount');
+            Route::post('vendor/add/money', 'storeVendorAccount')->name('admin.storeVendorAccount');
+            Route::delete('vendor/delete/{vendorAccount}/money', 'destroyVendorAccount')->name('admin.destroyVendorAccount');
         });
 
         // Order Status routes

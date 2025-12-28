@@ -252,23 +252,18 @@ class InvoiceController extends Controller
 
         // PAGE totals (collection sums)
         $pageTotalAmount = $orders->sum('total_amount');
-        $pageTotalPaidAmount = $orders->sum(function ($order) {
-            return $order->vendorAccounts->where('type',2)->sum('amount');
-        });
-        $pageTotalDueAmount = $orders->sum(function ($order) {
-            return $order->order_due; // uses your accessor
-        });
+        // $pageTotalPaidAmount = $orders->sum(function ($order) {
+        //     return $order->vendorAccounts->where('type',2)->sum('amount');
+        // });
+        $pageTotalPaidAmount = $orders->sum('paid_amount');
+        $pageTotalDueAmount = $pageTotalAmount - $pageTotalPaidAmount;
 
 
        // FILTERED totals (all matching rows)
         $filteredOrders = $fullQuery->get(); // get as collection
         $filteredTotalAmount = $filteredOrders->sum('total_amount');
-        $filteredTotalPaidAmount = $filteredOrders->sum(function ($order) {
-            return $order->vendorAccounts->where('type',2)->sum('amount');
-        });
-        $filteredTotalDueAmount = $filteredOrders->sum(function ($order) {
-            return $order->order_due;
-        });
+        $filteredTotalPaidAmount = $filteredOrders->sum('paid_amount');
+        $filteredTotalDueAmount = $filteredTotalAmount - $filteredTotalPaidAmount;
 
         // Summary data
         $totalInvoices = Order::whereIn('order_status_id', [4, 5])->count();
