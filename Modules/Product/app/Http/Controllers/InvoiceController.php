@@ -2,6 +2,7 @@
 
 namespace Modules\Product\Http\Controllers;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Product\Models\Order;
@@ -217,8 +218,10 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with(['vendor', 'orderStatus', 'orderItems'])
-            ->whereIn('order_status_id', [4, 5]); // Shipped or delivered only
+        $limit = $request->limit ?? 15;
+
+       $query = Order::with(['vendor', 'orderStatus', 'orderItems', 'vendorAccounts'])
+                ->whereIn('order_status_id', [4, 5]); // Shipped or delivered only
 
         // Apply filters
         if ($request->filled('invoice_search')) {
@@ -237,7 +240,35 @@ class InvoiceController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->paginate(15);
+        if ($request->filled('place_by_filter')) {
+            $query->where('place_by', $request->place_by_filter);
+        }
+
+        $fullQuery = clone $query;
+
+        $orders = $query->orderBy('id', 'desc')->paginate($limit);
+
+
+
+        // PAGE totals (collection sums)
+        $pageTotalAmount = $orders->sum('total_amount');
+        $pageTotalPaidAmount = $orders->sum(function ($order) {
+            return $order->vendorAccounts->where('type',2)->sum('amount');
+        });
+        $pageTotalDueAmount = $orders->sum(function ($order) {
+            return $order->order_due; // uses your accessor
+        });
+
+
+       // FILTERED totals (all matching rows)
+        $filteredOrders = $fullQuery->get(); // get as collection
+        $filteredTotalAmount = $filteredOrders->sum('total_amount');
+        $filteredTotalPaidAmount = $filteredOrders->sum(function ($order) {
+            return $order->vendorAccounts->where('type',2)->sum('amount');
+        });
+        $filteredTotalDueAmount = $filteredOrders->sum(function ($order) {
+            return $order->order_due;
+        });
 
         // Summary data
         $totalInvoices = Order::whereIn('order_status_id', [4, 5])->count();
@@ -247,14 +278,21 @@ class InvoiceController extends Controller
 
         // Get vendors for filter
         $vendors = Vendor::orderBy('shop_name')->get();
-
+        $placeBys  = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
         return view('product::invoice.index', compact(
             'orders',
             'totalInvoices',
             'totalInvoiceAmount',
             'paidInvoices',
             'unpaidInvoices',
-            'vendors'
+            'vendors',
+            'placeBys',
+            'pageTotalAmount',
+            'filteredTotalAmount',
+            'pageTotalPaidAmount',
+            'filteredTotalPaidAmount',
+            'pageTotalDueAmount',
+            'filteredTotalDueAmount'
         ));
     }
 

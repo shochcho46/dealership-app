@@ -120,7 +120,9 @@
                         <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
                     </div>
-                    <div class="col-md-2">
+
+
+                    {{-- <div class="col-md-2">
                         <label class="form-label">Status Filter</label>
                         <select name="status_filter" class="form-select">
                             <option value="">All Status</option>
@@ -131,7 +133,23 @@
                                 </option>
                             @endforeach
                         </select>
+                    </div> --}}
+
+
+                    <div class="col-md-2">
+                        <label class="form-label">Status Filter</label>
+                        <select name="status_filter" class="form-select">
+                            <option value="all" {{ request('status_filter') === null ? 'selected' : '' }}>All Status</option>
+                            @foreach($filterorderStatuses as $status)
+                                <option value="{{ $status->id }}"
+                                    {{ request('status_filter') == $status->id ? 'selected' : '' }}>
+                                    {{ $status->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+
+
                     <div class="col-md-2">
                         <label class="form-label">Vendor Filter</label>
                         <select name="vendor_filter" class="form-select">
