@@ -1,3 +1,21 @@
+<style>
+/* ===== FIX SIDEBAR SCROLL ISSUE (ADMINLTE MOBILE SAFE) ===== */
+
+.app-sidebar {
+    height: 100vh;
+}
+
+/* Make sidebar content scrollable */
+.app-sidebar .sidebar-wrapper {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+/* ===== END FIX SIDEBAR SCROLL ISSUE ===== */
+</style>
+
+
 <aside class="app-sidebar bg-white shadow" data-bs-theme="light"> <!--begin::Sidebar Brand-->
     <div class="sidebar-brand"> <!--begin::Brand Link-->
             <a href="{{ route('admin.dashboard') }}" class="brand-link">
