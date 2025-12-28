@@ -102,7 +102,7 @@
                                                        class="btn btn-sm btn-outline-secondary"
                                                        title="View Account"
                                                        target="_blank">
-                                                        <span class="mdi mdi-globe"></span>
+                                                        <span class="mdi mdi-web"></span>
                                                     </a>
 
                                                     <a href="{{ route('admin.vendorAccount', $vendor->uuid) }}"
