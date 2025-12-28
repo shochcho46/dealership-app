@@ -83,7 +83,7 @@ class OrderController extends Controller
         // Get all order statuses and vendors for filters
         $limit = request()->get('limit', 30);
 
-         $filterorderStatuses = OrderStatus::orderBy('id')->get();
+        $filterorderStatuses = OrderStatus::orderBy('id')->get();
         $orderStatuses = OrderStatus::orderBy('id')->whereIn('id',[3,6])->get();
         if ($request->status_filter == 'all' || $request->status_filter == 6 || $request->status_filter == 5) {
             $orderStatuses = [];

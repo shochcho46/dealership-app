@@ -167,11 +167,11 @@
                                             <td>{{ $loop->iteration + ($stocks->currentPage() - 1) * $stocks->perPage() }}</td>
                                             <td>
                                                 <div class="stock-summary">
-                                                    <strong>{{ $stock->product->name }}</strong><br>
+                                                    <strong>{{ $stock?->product?->name }}</strong><br>
 
                                                     <div>
-                                                        @if($stock->product->media && $stock->product->media->count())
-                                                            <img src="{{ $stock->product->product_image_thumb_url }}"
+                                                        @if($stock?->product?->media && $stock?->product?->media->count())
+                                                            <img src="{{ $stock?->product?->product_image_thumb_url }}"
                                                                  alt="Product Image"
                                                                  class="img-thumbnail"
                                                                  style="width: 50px; height: 50px; object-fit: cover;">
@@ -180,47 +180,47 @@
                                                         @endif
                                                     </div>
                                                     <small class="text-muted">
-                                                        <i class="mdi mdi-palette"></i> {{ $stock->product->color->name ?? 'N/A' }} |
-                                                        <i class="mdi mdi-scale-balance"></i> {{ $stock->product->unit->name ?? 'N/A' }}
+                                                        <i class="mdi mdi-palette"></i> {{ $stock?->product?->color->name ?? 'N/A' }} |
+                                                        <i class="mdi mdi-scale-balance"></i> {{ $stock?->product?->unit->name ?? 'N/A' }}
                                                     </small>
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge bg-info batch-badge">{{ $stock->batch_id }}</span>
+                                                <span class="badge bg-info batch-badge">{{ $stock?->batch_id }}</span>
                                             </td>
                                             <td>
-                                                <strong>৳{{ number_format($stock->purchase_price, 2) }}</strong>
+                                                <strong>৳{{ number_format($stock?->purchase_price, 2) }}</strong>
                                             </td>
                                             <td>
-                                                <span class="badge bg-secondary">{{ number_format($stock->quantity) }}</span>
+                                                <span class="badge bg-secondary">{{ number_format($stock?->quantity) }}</span>
                                             </td>
                                             <td>
-                                                <span class="badge remaining-quantity {{ $stock->remaining_quantity > 0 ? 'bg-success' : ($stock->remaining_quantity == 0 ? 'bg-warning' : 'bg-danger') }}">
-                                                    {{ number_format($stock->remaining_quantity) }}
+                                                <span class="badge remaining-quantity {{ $stock?->remaining_quantity > 0 ? 'bg-success' : ($stock?->remaining_quantity == 0 ? 'bg-warning' : 'bg-danger') }}">
+                                                    {{ number_format($stock?->remaining_quantity) }}
                                                 </span>
-                                                @if($stock->remaining_quantity <= 0)
+                                                @if($stock?->remaining_quantity <= 0)
                                                     <br><small class="text-danger">Out of Stock</small>
-                                                @elseif($stock->remaining_quantity <= ($stock->quantity * 0.2))
+                                                @elseif($stock?->remaining_quantity <= ($stock?->quantity * 0.2))
                                                     <br><small class="text-warning">Low Stock</small>
                                                 @endif
                                             </td>
                                             <td>
-                                                <strong>৳{{ number_format($stock->sell_price, 2) }}</strong>
+                                                <strong>৳{{ number_format($stock?->sell_price, 2) }}</strong>
                                                 @php
-                                                    $profitMargin = $stock->purchase_price > 0 ? (($stock->sell_price - $stock->purchase_price) / $stock->purchase_price) * 100 : 0;
+                                                    $profitMargin = $stock?->purchase_price > 0 ? (($stock?->sell_price - $stock?->purchase_price) / $stock?->purchase_price) * 100 : 0;
                                                 @endphp
                                                 <br><small class="text-{{ $profitMargin >= 0 ? 'success' : 'danger' }}">
                                                     {{ number_format($profitMargin, 1) }}% margin
                                                 </small>
                                             </td>
                                             <td>
-                                                <strong>৳{{ number_format($stock->total_price, 2) }}</strong>
+                                                <strong>৳{{ number_format($stock?->total_price, 2) }}</strong>
                                                 <br><small class="text-muted">
-                                                    Current: ৳{{ number_format($stock->remaining_quantity * $stock->sell_price, 2) }}
+                                                    Current: ৳{{ number_format($stock?->remaining_quantity * $stock?->sell_price, 2) }}
                                                 </small>
                                             </td>
                                             <td>
-                                                @if($stock->status)
+                                                @if($stock?->status)
                                                     <span class="badge bg-success stock-status-badge">
                                                         <i class="mdi mdi-check-circle"></i> Active
                                                     </span>
@@ -231,8 +231,8 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                Manufactured:<span class="text-muted">{{ $stock?->manufacture_date ? $stock->manufacture_date->format('M d, Y') : 'Na' }}</span>
-                                                <br> Expire:<small class="text-muted">{{ $stock?->expire_date ? $stock->expire_date->format('M d, Y') : 'Na' }}</small>
+                                                Manufactured:<span class="text-muted">{{ $stock?->manufacture_date ? $stock?->manufacture_date->format('M d, Y') : 'Na' }}</span>
+                                                <br> Expire:<small class="text-muted">{{ $stock?->expire_date ? $stock?->expire_date->format('M d, Y') : 'Na' }}</small>
 
                                             </td>
 
@@ -243,7 +243,7 @@
                                                        title="View Details">
                                                         <span class="mdi mdi-eye"></span>
                                                     </a>
-                                                    @if($stock->sold_quantity == 0 && $stock->froze_quantity == 0)
+                                                    @if($stock?->sold_quantity == 0 && $stock?->froze_quantity == 0)
                                                         <a href="{{ route('admin.stockEdit', $stock) }}"
                                                            class="btn btn-sm btn-outline-warning"
                                                            title="Edit Stock">
@@ -252,7 +252,7 @@
                                                     @else
                                                         <button type="button"
                                                                 class="btn btn-sm btn-outline-secondary"
-                                                                title="Cannot edit (Sold: {{ $stock->sold_quantity }}, Frozen: {{ $stock->froze_quantity }})"
+                                                                title="Cannot edit (Sold: {{ $stock?->sold_quantity }}, Frozen: {{ $stock?->froze_quantity }})"
                                                                 disabled>
                                                             <span class="mdi mdi-lock"></span>
                                                         </button>

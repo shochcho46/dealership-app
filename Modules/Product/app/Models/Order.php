@@ -160,8 +160,7 @@ class Order extends Model
 
     public function getOrderDueAttribute()
     {
-        $paidAmount = $this->vendorAccounts->where('type',2)->sum('amount');
-        return $this->total_amount - $paidAmount;
+        return $this->total_amount - ($this->total_discount_amount + $this->paid_amount);
     }
 
     /**
