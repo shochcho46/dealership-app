@@ -104,7 +104,7 @@ class PaymentCollectionController extends Controller
                 if($request->filled('order_ids') )
                 {
                     $pendingOrders = Order::where('vendor_id', $request->vendor_id)->where('payment_status', '!=', 2)->whereIn('id', $request->order_ids)->orderBy('created_at', 'asc')->get();
-                    
+
                 }
                 $processedOrders = [];
                 $createdPayments = [];
@@ -150,10 +150,13 @@ class PaymentCollectionController extends Controller
 
                     if ($newPaidAmount >= $orderTotalAmount) {
                         $order->payment_status = 2; // Fully Paid
+                        $order->paid_at = now();
                     } elseif ($newPaidAmount > 0) {
                         $order->payment_status = 1; // Partially Paid
+                        $order->paid_at = null;
                     } else {
                         $order->payment_status = 0; // Unpaid
+                        $order->paid_at = null;
                     }
 
                     $order->save();

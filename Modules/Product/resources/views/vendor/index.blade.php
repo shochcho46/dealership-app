@@ -58,9 +58,16 @@
                 @endif
 
                 <div class="card card-primary card-outline mb-4">
-                    <div class="card-header">
-                        <div class="card-title">All Vendors</div>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">All Vendors</div>
+                        <form method="GET" action="{{ route("admin.vendorIndex")}}" class="d-flex" role="search">
+                            <input type="text" name="search" class="form-control" placeholder="Search vendors..." value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-outline-primary m-1">Filter</button>
+                        </form>
                     </div>
+                    {{-- <div class="card-header">
+                        <div class="card-title">All Vendors</div>
+                    </div> --}}
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -73,6 +80,7 @@
                                         <th>Mobile</th>
                                         <th>Email</th>
                                         <th>Country</th>
+                                        <th>Due Balance</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -89,6 +97,7 @@
                                             <td>{{ $vendor->mobile }}</td>
                                             <td>{{ $vendor->email ?? 'N/A' }}</td>
                                             <td>{{ $vendor->country->name ?? 'N/A' }}</td>
+                                            <td class="text-danger"> ৳ {{ $vendor->due_balance }}</td>
                                             <td>
                                                 @if($vendor->status)
                                                     <span class="badge bg-success">Active</span>
@@ -134,6 +143,21 @@
                                     @endforelse
                                     @include('components.delete')
                                 </tbody>
+                                <tfoot class="table-secondary">
+
+                                    <tr>
+                                        <th colspan="7" class="text-end">Current Page Total:</th>
+                                        <th class="text-danger"> ৳ {{ $pageDueBalance }}</th>
+
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="7" class="text-end">All Page Total:</th>
+                                        <th class="text-danger"> ৳ {{ $overallDueBalance }}</th>
+                                    </tr>
+
+                            </tfoot>
+
                             </table>
                         </div>
                     </div>

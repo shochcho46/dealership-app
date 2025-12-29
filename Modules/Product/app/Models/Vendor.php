@@ -123,4 +123,12 @@ class Vendor extends Model implements HasMedia
     {
         return $this->getFirstMediaUrl('vendor_image', 'thumb') ?: asset('assets/images/default-vendor.png');
     }
+
+    public function getDueBalanceAttribute()
+    {
+        $total_credit = $this->vendorAccounts()->where('type',2)->sum('amount');
+        $total_debit = $this->vendorAccounts()->where('type',1)->sum('amount');
+        return $total_debit - $total_credit;
+    }
+
 }

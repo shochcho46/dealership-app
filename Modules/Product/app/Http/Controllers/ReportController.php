@@ -422,4 +422,71 @@ class ReportController extends Controller
             'pageDue'
         ));
     }
+
+
+    public function orderProfitReport(Request $request)
+    {
+        $limit = $request->limit ?? 50;
+        $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'orderItemStocks.stock'])
+                ->whereHas('order', function ($q) use ($request) {
+                        $q->where('payment_status', 2);
+                    });
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->whereDate('paid_at', '>=', $request->date_from);
+            });
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->whereDate('paid_at', '<=', $request->date_to);
+            });
+        }
+
+        // Filter by vendor
+        if ($request->filled('vendor_id')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->where('vendor_id', $request->vendor_id);
+            });
+        }
+
+        // Filter by product
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->product_id);
+        }
+
+        // Filter by place_by
+        if ($request->filled('place_by')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->where('place_by', $request->place_by);
+            });
+        }
+
+        $fullQuery = clone $query;
+
+        $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
+
+
+        $totalQuantity = $fullQuery->get()->sum('quantity') - $fullQuery->get()->sum('return_quantity');
+        $totalPurchase = $fullQuery->get()->sum('total_purchase');
+        $totalSellPrice = $fullQuery->get()->sum('total_sell');
+        $totalDiscount = $fullQuery->get()->sum('discount_price');
+        $totalProfit = $fullQuery->get()->sum('item_total_profit');
+
+
+        $currentQuantityPage = $orderItems->getCollection()->sum('quantity') - $orderItems->getCollection()->sum('return_quantity');
+        $currentPurchasePage = $orderItems->getCollection()->sum('total_purchase');
+        $currentSellPricePage = $orderItems->getCollection()->sum('total_sell');
+        $currentDiscountPage = $orderItems->getCollection()->sum('discount_price');
+        $currentProfitPage = $orderItems->getCollection()->sum('item_total_profit');
+
+        // Get filter data
+        $vendors = Vendor::orderBy('shop_name')->get();
+        $products = Product::orderBy('name')->get();
+        $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
+
+        return view('product::reports.order-profitreport', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage'));
+    }
 }
