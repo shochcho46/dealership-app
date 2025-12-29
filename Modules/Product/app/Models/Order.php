@@ -25,7 +25,8 @@ class Order extends Model
         'payment_status',
         'total_damage_quantity',
         'total_lost_quantity',
-        'vendor_id'
+        'vendor_id',
+        'paid_at',
     ];
 
     protected $casts = [
