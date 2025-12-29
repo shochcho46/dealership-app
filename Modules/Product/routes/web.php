@@ -267,6 +267,7 @@ Route::prefix('admin')->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('report/stock-overview', 'stockOverview')->name('admin.reportStockOverview');
             Route::get('report/order-report', 'orderReport')->name('admin.reportOrderReport');
+            Route::get('report/profit-order-report', 'orderProfitReport')->name('admin.reportOrderProfitReport');
             Route::get('report/collection', 'collectionReport')->name('admin.reportCollection');
             Route::get('report/sell-summary', 'sellSummary')->name('admin.reportSellSummary');
             Route::get('report/due-orders-list', 'dueOrdersList')->name('admin.reportDueOrdersList');

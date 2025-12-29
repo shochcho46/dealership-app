@@ -8,6 +8,7 @@ use Modules\Product\Models\Vendor;
 use Modules\Product\Models\VendorAccount;
 use App\Models\Country;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Modules\Admin\Entities\Business;
 
 class VendorController extends Controller
@@ -17,9 +18,56 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $limit = request()->get('limit', 30);
-        $vendors = Vendor::with('country')->latest()->paginate($limit);
-        return view('product::vendor.index', compact('vendors'));
+        $limit = request()->get('limit', 35);
+        $search = request()->get('search');
+        $query = Vendor::with('country')
+            ->withSum(
+                ['vendorAccounts as total_debit' => function ($q) {
+                    $q->where('type', 1);
+                }],
+                'amount'
+            )->withSum(
+                ['vendorAccounts as total_credit' => function ($q) {
+                    $q->where('type', 2);
+                }],
+                'amount'
+            )
+
+        ->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('email', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%")
+                    ->orWhere('shop_name', 'like', "%{$search}%")
+                    ->orWhere('contact_person', 'like', "%{$search}%");
+            });
+        });
+
+
+        // 🔹 Clone full query for overall totals
+        $fullQuery = clone $query;
+
+        // 🔹 Paginated result
+        $vendors = $query->orderBy('id', 'desc')->paginate($limit);
+
+        /* ===============================
+            OVERALL TOTAL (ALL RECORDS)
+        =============================== */
+        $overallDueBalance = $fullQuery->get()->sum(function ($vendor) {
+            return ($vendor->total_debit ?? 0) - ($vendor->total_credit ?? 0);
+        });
+
+        /* ===============================
+            CURRENT PAGE TOTAL
+        =============================== */
+        $pageDueBalance = $vendors->getCollection()->sum(function ($vendor) {
+            return ($vendor->total_debit ?? 0) - ($vendor->total_credit ?? 0);
+        });
+
+        return view('product::vendor.index', compact(
+            'vendors',
+            'overallDueBalance',
+            'pageDueBalance'
+        ));
     }
 
     /**
@@ -297,7 +345,31 @@ class VendorController extends Controller
     {
         try {
             // Clear all media
-            $vendorAccount->delete();
+            DB::transaction(function () use ($vendorAccount) {
+                $order = $vendorAccount->order;
+                if ($order) {
+                    // Remove the amount from paid_amount
+                    $order->paid_amount = max(0, $order?->paid_amount - $vendorAccount?->amount);
+
+                    // Calculate due
+                    $due = ($order->total_amount - $order->total_discount_amount) - $order->paid_amount;
+
+                    // Update payment status
+                    if ($order->paid_amount <= 0) {
+                        $order->payment_status = 0; // Unpaid
+                        $order->paid_at = null;
+                    } elseif ($due > 0) {
+                        $order->payment_status = 1; // Partial
+                        $order->paid_at = null;
+                    } else {
+                        $order->payment_status = 2; // Paid
+                        $order->paid_at = now();
+                    }
+
+                    $order->save();
+                }
+                $vendorAccount->delete();
+            });
             return back()->with('success', 'Account deleted successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete account. Please try again.');
