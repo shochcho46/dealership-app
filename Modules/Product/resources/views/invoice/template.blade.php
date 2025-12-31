@@ -5,273 +5,309 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Invoice {{ $order->invoice_id }}</title>
-   <style>
-    @font-face {
-        font-family: 'kalpurush';
-        src: url("{{ storage_path('fonts/kalpurush.ttf') }}") format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        color: #000 !important;
-    }
-
-    body {
-        font-family: 'DejaVu Sans', 'kalpurush', Arial, sans-serif;
-        direction: ltr;
-        background: #fff;
-        font-size: 10pt;
-        line-height: 1.3;
-    }
-
-    .bangla-text {
-        font-family: 'kalpurush', 'DejaVu Sans', sans-serif;
-    }
-
-    @page {
-        size: A4;
-        margin: 5mm;
-    }
-
-    .page-wrap {
-        max-width: 190mm;
-        margin: auto;
-        background: #fff;
-    }
-
-    .copy {
-        border: 1px solid #000;
-        padding: 2mm;
-        margin-bottom: 1mm;
-        page-break-inside: auto;
-    }
-
-    /* HEADER */
-    .invoice-header {
-        display: table;
-        width: 100%;
-        border-bottom: 2px solid #000;
-        margin-bottom: 4px;
-        padding-bottom: 3px;
-    }
-
-    .company-info,
-    .invoice-info {
-        display: table-cell;
-        vertical-align: top;
-    }
-
-    .company-info { width: 60%; }
-    .invoice-info { width: 35%; text-align: right; }
-
-    .company-logo {
-        max-width: 70px;
-        margin-bottom: 3px;
-    }
-
-    .company-name {
-        font-size: 14pt;
-        font-weight: bold;
-    }
-
-    .company-details {
-        font-size: 9pt;
-        line-height: 1.2;
-    }
-
-    .invoice-title {
-        font-size: 16pt;
-        font-weight: bold;
-    }
-
-    .invoice-meta {
-        border: 1px solid #000;
-        padding: 4px;
-        font-size: 9pt;
-        display: inline-block;
-        text-align: left;
-    }
-
-    /* BILL / ACCOUNT */
-    .vendor-section {
-        display: table;
-        width: 100%;
-        margin: 5px 0;
-        border-spacing: 5px;
-    }
-
-    .bill-to,
-    .ship-to {
-        display: table-cell;
-        width: 50%;
-        border: 1px solid #000;
-        padding: 5px;
-        font-size: 9pt;
-        vertical-align: top;
-        background: none;
-    }
-
-    .section-title {
-        font-weight: bold;
-        border-bottom: 1px solid #000;
-        margin-bottom: 3px;
-        padding-bottom: 2px;
-    }
-
-    .vendor-name {
-        font-weight: bold;
-        font-size: 10pt;
-    }
-
-    /* TABLE */
-    .items-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 5px;
-        font-size: 9pt;
-        table-layout: fixed;
-    }
-
-    .items-table th,
-    .items-table td {
-        border: 1px solid #000;
-        padding: 2px;
-        vertical-align: top;
-    }
-
-    .items-table th {
-        font-weight: bold;
-        text-align: center;
-        background: none;
-    }
-
-    .items-table td {
-        font-size: 8.5pt;
-    }
-
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-
-    /* TOTALS */
-    .totals-section {
-        display: table;
-        width: 100%;
-        margin-top: 5px;
-    }
-
-    .totals-left,
-    .totals-right {
-        display: table-cell;
-        vertical-align: top;
-    }
-
-    .totals-left { width: 60%; padding-right: 5px; }
-    .totals-right { width: 40%; }
-
-    .payment-info {
-        border: 1px solid #000;
-        padding: 5px;
-        font-size: 9pt;
-    }
-
-    .totals-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 9pt;
-    }
-
-    .totals-table td {
-        border: 1px solid #000;
-        padding: 3px 4px;
-    }
-
-    .grand-total td {
-        font-weight: bold;
-        font-size: 10pt;
-    }
-
-    /* STATUS */
-    .status-badge {
-        border: 1px solid #000;
-        padding: 1px 4px;
-        font-weight: bold;
-        background: none;
-    }
-
-    /* DUPLICATE + FOOTER */
-    .duplicate-header {
-        text-align: center;
-        font-weight: bold;
-        border: 1px solid #000;
-        padding: 3px;
-        margin: 2px 0 4px;
-    }
-
-    .footer {
-        margin-top: 5px;
-        font-size: 8pt;
-        border-top: 1px solid #000;
-        padding-top: 4px;
-        text-align: center;
-    }
-
-    .separator-line {
-        border-top: 1px solid #000;
-        margin: 2mm 0;
-    }
-
-    /* SCREEN ONLY */
-    @media screen {
-        body { background: #f5f5f5; }
-        .page-wrap { box-shadow: none; }
-    }
-
-    /* PRINT */
-    @media print {
-       .page-wrap {
-            page-break-after: avoid;
-            page-break-before: avoid;
+    <style>
+        @font-face {
+            font-family: 'kalpurush';
+            src: url("{{ storage_path('fonts/kalpurush.ttf') }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
         }
 
-        section.copy {
-            page-break-before: avoid;
-            page-break-after: avoid;
+        /* RESET */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            color: #000 !important;
         }
 
+        body {
+            font-family: 'DejaVu Sans', 'kalpurush', Arial, sans-serif;
+            direction: ltr;
+            background: #fff;
+            font-size: 10pt;
+            line-height: 1.25;
+        }
+
+        .bangla-text {
+            font-family: 'kalpurush', 'DejaVu Sans', sans-serif;
+        }
+
+        /* PAGE */
+        @page {
+            size: A4;
+            margin: 3mm;
+        }
+
+        .page-wrap {
+            max-width: 190mm;
+            margin: auto;
+            background: #fff;
+        }
+
+        /* COPY */
+        .copy {
+            border: 1px solid #000;
+            padding: 2mm;
+            margin-bottom: 1mm;
+        }
+
+        /* HEADER */
         .invoice-header {
+            display: table;
+            width: 100%;
+            border-bottom: 2px solid #000;
             margin-bottom: 2px;
             padding-bottom: 2px;
         }
 
+        .company-info,
+        .invoice-info {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .company-info {
+            width: 60%;
+        }
+
+        .invoice-info {
+            width: 35%;
+            text-align: right;
+        }
+
+        .company-logo {
+            max-width: 65px;
+            margin-bottom: 2px;
+        }
+
+        .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+
+        .company-details {
+            font-size: 9pt;
+            line-height: 1.15;
+        }
+
+        .invoice-title {
+            font-size: 16pt;
+            font-weight: bold;
+        }
+
+        .invoice-meta {
+            border: 1px solid #000;
+            padding: 3px;
+            font-size: 9pt;
+            display: inline-block;
+            text-align: left;
+        }
+
+        /* BILL / ACCOUNT SUMMARY */
         .vendor-section {
-            margin: 3px 0;
-            border-spacing: 3px;
+            display: table;
+            width: 100%;
+            margin: 2px 0;
+            border-spacing: 4px;
+        }
+
+        .bill-to,
+        .ship-to {
+            display: table-cell;
+            width: 50%;
+            border: 1px solid #000;
+            padding: 4px;
+            font-size: 9pt;
+            vertical-align: top;
+        }
+
+        .section-title {
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            margin-bottom: 2px;
+            padding-bottom: 1px;
+        }
+
+        .vendor-name {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        /* ITEMS TABLE */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 3px;
+            font-size: 9pt;
+            table-layout: fixed;
+            line-height: 1.1;
         }
 
         .items-table th,
         .items-table td {
+            border: 1px solid #000;
             padding: 1.5px;
+            vertical-align: top;
         }
 
+        .items-table th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .items-table td {
+            font-size: 8.5pt;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* TOTALS */
         .totals-section {
-            margin-top: 3px;
+            display: table;
+            width: 100%;
+            margin-top: 2px;
         }
 
-        .footer {
-            margin-top: 3px;
-            padding-top: 2px;
+        .totals-left,
+        .totals-right {
+            display: table-cell;
+            vertical-align: top;
         }
 
+        .totals-left {
+            width: 60%;
+            padding-right: 4px;
+        }
+
+        .totals-right {
+            width: 40%;
+        }
+
+        .payment-info {
+            border: 1px solid #000;
+            padding: 4px;
+            font-size: 9pt;
+        }
+
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+
+        .totals-table td {
+            border: 1px solid #000;
+            padding: 3px;
+        }
+
+        .grand-total td {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        /* STATUS */
+        .status-badge {
+            border: 1px solid #000;
+            padding: 1px 4px;
+            font-weight: bold;
+        }
+
+        /* DUPLICATE */
         .duplicate-header {
-            margin: 1px 0 2px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #000;
             padding: 2px;
+            margin: 2px 0;
         }
-    }
-</style>
+
+        .separator-line {
+            border-top: 1px solid #000;
+            margin: 2mm 0;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 2px;
+            font-size: 8pt;
+            border-top: 1px solid #000;
+            padding-top: 2px;
+            text-align: center;
+        }
+
+        /* SCREEN ONLY */
+        @media screen {
+            body {
+                background: #f5f5f5;
+            }
+        }
+
+        /* PRINT — SPACING FIX (SAFE) */
+        @media print {
+            .ship-to div {
+                display: block !important;
+                height: auto !important;
+                line-height: 1 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            body {
+                font-size: 9.5pt;
+                line-height: 1.15;
+            }
+
+            .invoice-header {
+                margin-bottom: 2px;
+                padding-bottom: 2px;
+            }
+
+            .vendor-section {
+                margin: 2px 0;
+                border-spacing: 2px;
+            }
+
+            .totals-section {
+                margin-top: 1px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 1px;
+            }
+
+            .bill-to,
+            .ship-to,
+            .payment-info,
+            .invoice-meta {
+                padding: 3px;
+            }
+
+            .footer {
+                margin-top: 2px;
+                padding-top: 1px;
+            }
+
+            section.copy {
+                page-break-inside: auto;
+            }
+        }
+    </style>
+
+
+
+
+
+
+
 
 </head>
 
@@ -330,13 +366,16 @@
 
                 <div class="ship-to">
                     <div class="section-title">Account Summary:</div>
-                    <div> <b>All Time Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b></div>
+                    <div> <b>All Time Due:</b> ৳ <b>{{ number_format($vendorTotalDue, 2) }}</b>
+                    </div>
                     {{-- <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div> --}}
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
-                    <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
-                    <div>Current Invoice Due: ৳ {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}</div>
+                    <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}
+                    </div>
+                    <div>Current Invoice Due: ৳
+                        {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}</div>
                     <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
-                       {{-- <strong> New Balance Due: </strong>৳ --}}
+                        {{-- <strong> New Balance Due: </strong>৳ --}}
                         {{-- <strong class="price">{{ number_format($vendorTotalDue + $order->total_amount - $vendorPaidAmount, 2) }}</strong> --}}
                         {{-- <strong class="price">{{ number_format($vendorTotalDue, 2) }}</strong> --}}
                     </div>
@@ -368,13 +407,21 @@
                                     <br><small>{{ \Illuminate\Support\Str::limit($item->product->description, 60) }}</small>
                                 @endif
                             </td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
-                                <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($item->discount_price, 2) }}</span></td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity  + $item->lost_quantity  + $item->return_quantity )) - $item->discount_price, 2) }}</span></td>
+                            <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span>
+                            </td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
+                            <td class="text-right"> ৳ <span
+                                    class="price">{{ number_format($item->sell_price, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($item->discount_price, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity + $item->lost_quantity + $item->return_quantity)) - $item->discount_price, 2) }}</span>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -403,22 +450,26 @@
                         <tr>
                             <td class="total-label">Subtotal:</td>
                             <td class="text-right">
-                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return ($i->sell_price * $i->quantity)-(($i->damage_quantity + $i->lost_quantity + $i->return_quantity)*$i->sell_price);}),2) }}</span>
+                                ৳ <span
+                                    class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * $i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity) * $i->sell_price;}),2) }}</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="total-label">Total Discount:</td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($order->total_discount_amount, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($order->total_discount_amount, 2) }}</span></td>
                         </tr>
                         @if (($order->tax_amount ?? 0) > 0)
                             <tr>
                                 <td class="total-label">Tax:</td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($order->tax_amount, 2) }}</span></td>
+                                <td class="text-right">৳ <span
+                                        class="price">{{ number_format($order->tax_amount, 2) }}</span></td>
                             </tr>
                         @endif
                         <tr class="grand-total">
                             <td><strong>TOTAL AMOUNT:</strong></td>
-                            <td class="text-right"> ৳ <strong>{{ number_format($order->total_amount, 2) }}</strong></td>
+                            <td class="text-right"> ৳ <strong>{{ number_format($order->total_amount, 2) }}</strong>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -484,7 +535,8 @@
                     {{-- <div>Paid Amount: ৳ {{ number_format($vendorPaidAmount, 2) }}</div> --}}
                     <div>Current Invoice: ৳ {{ number_format($order->total_amount, 2) }}</div>
                     <div>Current Invoice Payment: ৳ {{ number_format($currentInvoicePayment, 2) }}</div>
-                    <div>Current Invoice Due: ৳ {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}</div>
+                    <div>Current Invoice Due: ৳ {{ number_format($order->total_amount - $currentInvoicePayment, 2) }}
+                    </div>
                     {{-- <div style="margin-top:4px;padding-top:3px;border-top:1px solid #ddd;">
                         <strong> New Balance Due: </strong> ৳
                         <strong>{{ number_format($vendorTotalDue, 2) }}</strong>
@@ -517,13 +569,21 @@
                                     <br><small>{{ \Illuminate\Support\Str::limit($item->product->description, 60) }}</small>
                                 @endif
                             </td>
-                             <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
-                                <td class="text-center"> <span class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
-                                <td class="text-right"> ৳ <span class="price">{{ number_format($item->sell_price, 2) }}</span></td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($item->discount_price, 2) }}</span></td>
-                                <td class="text-right">৳ <span class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity  + $item->lost_quantity  + $item->return_quantity )) - $item->discount_price, 2) }}</span></td>
+                            <td class="text-center"> <span class="price">{{ number_format($item->quantity) }}</span>
+                            </td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->damage_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->lost_quantity ?? 0) }}</span></td>
+                            <td class="text-center"> <span
+                                    class="price">{{ number_format($item->return_quantity ?? 0) }}</span></td>
+                            <td class="text-right"> ৳ <span
+                                    class="price">{{ number_format($item->sell_price, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($item->discount_price, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($item->sell_price * ($item->quantity - ($item->damage_quantity + $item->lost_quantity + $item->return_quantity)) - $item->discount_price, 2) }}</span>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -552,12 +612,14 @@
                         <tr>
                             <td class="total-label">Subtotal:</td>
                             <td class="text-right">
-                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * $i->quantity;}),2) }}</span>
+                                ৳ <span
+                                    class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * $i->quantity;}),2) }}</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="total-label">Total Discount:</td>
-                            <td class="text-right">৳ <span class="price">{{ number_format($order->total_discount_amount, 2) }}</span></td>
+                            <td class="text-right">৳ <span
+                                    class="price">{{ number_format($order->total_discount_amount, 2) }}</span></td>
                         </tr>
                         @if (($order->tax_amount ?? 0) > 0)
                             <tr>
@@ -567,7 +629,8 @@
                         @endif
                         <tr class="grand-total">
                             <td><strong>TOTAL AMOUNT:</strong></td>
-                            <td class="text-right">৳ <strong>{{ number_format($order->total_amount, 2) }}</strong></td>
+                            <td class="text-right">৳ <strong>{{ number_format($order->total_amount, 2) }}</strong>
+                            </td>
                         </tr>
                     </table>
                 </div>

@@ -70,7 +70,7 @@
                                 <tbody>
                                     @forelse($paymentMethods as $paymentMethod)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $paymentMethods->firstItem() + $loop->index }}</td>
                                             <td>{{ $paymentMethod->account_name }}</td>
                                             <td>{{ $paymentMethod->account_number }}</td>
                                             <td>{{ $paymentMethod->institute_name }}</td>

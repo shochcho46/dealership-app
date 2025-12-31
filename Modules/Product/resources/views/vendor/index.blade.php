@@ -88,7 +88,7 @@
                                 <tbody>
                                     @forelse($vendors as $vendor)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $vendors->firstItem() + $loop->index }}</td>
                                             <td>
                                                 <img src="{{ $vendor->vendor_image_thumb_url }}" alt="Vendor Image" class="vendor-image">
                                             </td>

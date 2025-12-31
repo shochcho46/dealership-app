@@ -128,7 +128,7 @@
                             <tbody>
                                 @forelse($orders as $order)
                                 <tr>
-                                    <td>{{ $order->order_number }}</td>
+                                    <td>{{  $orders->firstItem() + $loop->index }}</td>
                                     <td>{{ $order->company->name ?? 'N/A' }}</td>
                                     <td>৳{{ number_format($order->total_amount, 2) }}</td>
                                     <td>৳{{ number_format($order->paid_amount, 2) }}</td>

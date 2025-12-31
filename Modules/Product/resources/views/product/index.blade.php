@@ -90,7 +90,7 @@
                                 <tbody>
                                     @forelse($products as $product)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $products->firstItem() + $loop->index}}</td>
                                             <td>{{ $product?->company?->name ?? 'N/A' }}</td>
                                             <td>
                                                 <img src="{{ $product->product_image_thumb_url }}" alt="Product Image" class="product-image">
