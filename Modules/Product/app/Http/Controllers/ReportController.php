@@ -187,7 +187,7 @@ class ReportController extends Controller
                 }
 
                 // Only count sold items (shipped or delivered)
-                if (in_array($orderItem->order->order_status_id, [4, 5])) {
+                if (in_array($orderItem?->order?->order_status_id, [4, 5])) {
                     $totalSoldQty += ($orderItem->quantity - $orderItem->return_quantity);
                     $totalRevenue += $orderItem->sell_price * ($orderItem->quantity - $orderItem->return_quantity);
 
