@@ -68,7 +68,7 @@
                                 <tbody>
                                     @forelse($expenseHeads as $expenseHead)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $expenseHeads->firstItem() + $loop->index }}</td>
                                             <td><strong>{{ $expenseHead->title }}</strong></td>
                                             <td>৳{{ number_format($expenseHead->max_amount, 2) }}</td>
                                             <td>৳{{ number_format($expenseHead->total_expenses, 2) }}</td>

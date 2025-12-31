@@ -68,7 +68,7 @@
                                 <tbody>
                                     @forelse($orderStatuses as $orderStatus)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $orderStatuses->firstItem() + $loop->index }}</td>
                                             <td>{{ $orderStatus->name }}</td>
                                             <td>
                                                 @if($orderStatus->status)

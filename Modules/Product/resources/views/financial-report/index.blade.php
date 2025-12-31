@@ -185,7 +185,7 @@
                                 <tbody>
                                     @forelse($reports as $report)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{  $reports->firstItem() + $loop->index }}</td>
                                         <td>
                                             <strong>{{ $report->start_date->format('d M Y') }}</strong><br>
                                             <small class="text-muted">to</small><br>
