@@ -154,10 +154,10 @@
                                             </span>
 
                                         </td>
-                                        <td>{{ $item->order->created_at->format('d M Y') }}</td>
-                                        <td>{{ $item->order->vendor->shop_name ?? 'N/A' }}</td>
+                                        <td>{{ $item?->order?->created_at->format('d M Y') }}</td>
+                                        <td>{{ $item?->order?->vendor->shop_name ?? 'N/A' }}</td>
                                         <td>{{ $item?->product?->name }}</td>
-                                        <td>{{ $item->order->placeBy->name ?? 'N/A' }}</td>
+                                        <td>{{ $item?->order?->placeBy->name ?? 'N/A' }}</td>
                                         <td class="">
                                            Total: {{ number_format($item->quantity, 0) }}
 

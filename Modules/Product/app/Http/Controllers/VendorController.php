@@ -229,18 +229,22 @@ class VendorController extends Controller
         $vendor = Vendor::where('uuid', $uuid)->firstOrFail();
 
         // Get date range from request or default to current month
-        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->get('end_date', now()->endOfMonth()->format('Y-m-d'));
+        $startDate = $request->filled('start_date')
+            ? Carbon::parse($request->start_date)->startOfDay()
+            : now()->startOfMonth()->startOfDay();
+
+        $endDate = $request->filled('end_date')
+            ? Carbon::parse($request->end_date)->endOfDay()
+            : now()->endOfMonth()->endOfDay();
 
         // Build query for vendor accounts with eager loading
         $accountsQuery = VendorAccount::where('vendor_id', $vendor->id)
             ->with(['order', 'paymentMethod', 'depositeBy'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('id', 'desc');
-
         // Get period accounts
         $resulit = $accountsQuery->get();
-
+        
         // Calculate period totals
         $totalDebit = $resulit->where('type', 1)->sum('amount');
         $totalCredit = $resulit->where('type', 2)->sum('amount');
