@@ -361,7 +361,7 @@
                     @if ($vendor->email)
                         <div>{{ $vendor->email }}</div>
                     @endif
-                    <div>Sales Representative : {{ $order?->placeBy?->name }}</div>
+                    <div>Sales By : {{ $order?->placeBy?->name }}</div>
                 </div>
 
                 <div class="ship-to">
@@ -526,7 +526,7 @@
                     @if ($vendor->email)
                         <div>{{ $vendor->email }}</div>
                     @endif
-                    <div>Sales Representative : {{ $order?->placeBy?->name }}</div>
+                    <div>Sales By : {{ $order?->placeBy?->name }}</div>
                 </div>
 
                 <div class="ship-to">
