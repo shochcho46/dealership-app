@@ -68,7 +68,7 @@
                                 <tbody>
                                     @forelse($inspections as $inspection)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $inspections->firstItem() + $loop->index }}</td>
                                             <td>
                                                 <strong class="text-primary">{{ $inspection->inspection_number }}</strong>
                                             </td>

@@ -179,7 +179,7 @@
                         <tbody>
                             @forelse($details as $detail)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $details->firstItem() + $loop->index }}</td>
                                     <td>{{ $detail->transaction_date->format('d M Y') }}</td>
                                     <td>{{ $detail->bank->bank_name ?? 'N/A' }}</td>
                                     <td>{{ $detail->bank->account_number ?? 'N/A' }}</td>

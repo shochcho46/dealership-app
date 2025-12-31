@@ -135,7 +135,7 @@
                                     @forelse($expenseLists as $expenseList)
                                         <tr data-expense-head-id="{{ $expenseList->expense_head_id }}"
                                             data-expense-date="{{ $expenseList->expense_date->format('Y-m-d') }}">
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $expenseLists->firstItem() + $loop->index }}</td>
                                             <td>
                                                 <a href="{{ route('admin.expenseHeadEdit', $expenseList->expenseHead->id) }}"
                                                    class="text-decoration-none" title="View Expense Head">

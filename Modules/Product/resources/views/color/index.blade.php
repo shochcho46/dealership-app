@@ -80,7 +80,7 @@
                                 <tbody>
                                     @forelse($colors as $color)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{  $colors->firstItem() + $loop->index }}</td>
                                             <td>
                                                 <div class="color-preview" style="background-color: {{ $color->code }}"></div>
                                             </td>
