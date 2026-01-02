@@ -340,7 +340,8 @@
                     <div class="invoice-title">INVOICE</div>
                     <div class="invoice-meta">
                         <strong>Invoice #:</strong> {{ $order->invoice_id }}<br>
-                        <strong>Date:</strong> {{ $order->created_at->format('d M Y') }}<br>
+                        <strong>Order Date:</strong> {{ $order->created_at->format('d M Y') }}<br>
+                        <strong>Delivery Date: </strong><br>
                         <strong>Status:</strong>
                         <span
                             class="status-badge status-{{ $order->payment_status == 2 ? 'paid' : ($order->payment_status == 1 ? 'partial' : 'unpaid') }}">
@@ -433,7 +434,7 @@
                     <div class="payment-info">
                         <div class="section-title">Payment Information</div>
                         <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 1 days' }}</div>
-                        <div><strong>Due Date:</strong> {{ $order->created_at->addDays(5)->format('d M Y') }}</div>
+                        {{-- <div><strong>Due Date:</strong> {{ $order->created_at->addDays(5)->format('d M Y') }}</div> --}}
                         @if ($order->payment_status > 0)
                             <div style="margin-top:4px;">
                                 <strong>Payment Status:</strong>
@@ -505,7 +506,8 @@
                     <div class="invoice-title">INVOICE</div>
                     <div class="invoice-meta">
                         <strong>Invoice #:</strong> {{ $order->invoice_id }}<br>
-                        <strong>Date:</strong> {{ $order->created_at->format('d M Y') }}<br>
+                        <strong>Order Date:</strong> {{ $order->created_at->format('d M Y') }}<br>
+                        <strong>Delivery Date:</strong> <br>
                         <strong>Status:</strong>
                         <span
                             class="status-badge status-{{ $order->payment_status == 2 ? 'paid' : ($order->payment_status == 1 ? 'partial' : 'unpaid') }}">
@@ -595,7 +597,7 @@
                     <div class="payment-info">
                         <div class="section-title">Payment Information</div>
                         <div><strong>Payment Terms:</strong> {{ $vendor->payment_terms ?? 'Net 1 days' }}</div>
-                        <div><strong>Due Date:</strong> {{ $order->created_at->addDays(30)->format('d M Y') }}</div>
+                        {{-- <div><strong>Due Date:</strong> {{ $order->created_at->addDays(30)->format('d M Y') }}</div> --}}
                         @if ($order->payment_status > 0)
                             <div style="margin-top:4px;">
                                 <strong>Payment Status:</strong>
