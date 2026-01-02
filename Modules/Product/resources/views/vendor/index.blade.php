@@ -80,6 +80,7 @@
                                         <th>Mobile</th>
                                         <th>Email</th>
                                         <th>Country</th>
+                                        <th>Old Due</th>
                                         <th>Due Balance</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -97,6 +98,7 @@
                                             <td>{{ $vendor->mobile }}</td>
                                             <td>{{ $vendor->email ?? 'N/A' }}</td>
                                             <td>{{ $vendor->country->name ?? 'N/A' }}</td>
+                                            <td class="text-danger">{{ $vendor->old_due }}</td>
                                             <td class="text-danger"> ৳ {{ $vendor->due_balance }}</td>
                                             <td>
                                                 @if($vendor->status)
@@ -146,13 +148,13 @@
                                 <tfoot class="table-secondary">
 
                                     <tr>
-                                        <th colspan="7" class="text-end">Current Page Total:</th>
+                                        <th colspan="8" class="text-end">Current Page Total:</th>
                                         <th class="text-danger"> ৳ {{ $pageDueBalance }}</th>
 
                                     </tr>
 
                                     <tr>
-                                        <th colspan="7" class="text-end">All Page Total:</th>
+                                        <th colspan="8" class="text-end">All Page Total:</th>
                                         <th class="text-danger"> ৳ {{ $overallDueBalance }}</th>
                                     </tr>
 

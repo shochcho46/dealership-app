@@ -131,4 +131,19 @@ class Vendor extends Model implements HasMedia
         return $total_debit - $total_credit;
     }
 
+    public function getOldDueAttribute()
+{
+    $total_credit = $this->vendorAccounts()
+        ->where('type', 2)
+        ->whereNull('order_id')
+        ->sum('amount');
+
+    $total_debit = $this->vendorAccounts()
+        ->where('type', 1)
+        ->whereNull('order_id')
+        ->sum('amount');
+
+    return $total_credit - $total_debit;
+}
+
 }
