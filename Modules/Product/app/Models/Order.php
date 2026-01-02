@@ -161,7 +161,7 @@ class Order extends Model
 
     public function getOrderDueAttribute()
     {
-        return $this->total_amount - ($this->total_discount_amount + $this->paid_amount);
+        return (float)($this->total_amount  - $this->paid_amount);
     }
 
     /**
