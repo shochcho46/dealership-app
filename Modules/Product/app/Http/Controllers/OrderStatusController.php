@@ -13,7 +13,7 @@ class OrderStatusController extends Controller
      */
     public function index()
     {
-        $orderStatuses = OrderStatus::latest()->get();
+        $orderStatuses = OrderStatus::latest()->paginate(10);
         return view('product::order-status.index', compact('orderStatuses'));
     }
 
