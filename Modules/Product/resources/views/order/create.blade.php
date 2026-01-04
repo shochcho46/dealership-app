@@ -418,7 +418,7 @@
             <div class="col-md-3">
                 <div class="form-row">
                     <label>Sell Price (per unit)</label>
-                    <input type="number" name="items[][sell_price]" class="form-control sell-price" step="0.01" min="0" required readonly>
+                    <input type="number" name="items[][sell_price]" class="form-control sell-price" step="0.01" min="0" required >
                 </div>
             </div>
             <div class="col-md-3">
@@ -666,7 +666,16 @@ function selectProduct(productId, productName, element) {
     // Get product details and highest sell price
     $.get('{{ route("orders.getProductDetails") }}', {product_id: productId})
         .done(function(data) {
-            sellPriceInput.value = data.highest_sell_price || 0;
+
+            // sellPriceInput.value = data.highest_sell_price || 0;
+
+            const basePrice = parseFloat(data.highest_sell_price) || 0;
+            sellPriceInput.value = basePrice;
+
+            // 🔒 Store minimum allowed price
+            sellPriceInput.dataset.minPrice = basePrice;
+            sellPriceInput.min = basePrice;
+
             stockInfo.innerHTML = `Available: ${data.available_quantity} units`;
             updateItemTotal(container);
             updateSubmitButton();
@@ -686,14 +695,39 @@ function changeQuantity(button, change) {
     updateItemTotal(container);
 }
 
+// function setupPriceCalculation(container) {
+//     const inputs = container.querySelectorAll('.quantity-input, .sell-price, .discount-price');
+//     inputs.forEach(input => {
+//         input.addEventListener('input', function() {
+//             updateItemTotal(container);
+//         });
+//     });
+// }
+
+
 function setupPriceCalculation(container) {
-    const inputs = container.querySelectorAll('.quantity-input, .sell-price, .discount-price');
-    inputs.forEach(input => {
-        input.addEventListener('input', function() {
+    const sellPriceInput = container.querySelector('.sell-price');
+    const quantityInput = container.querySelector('.quantity-input');
+    const discountInput = container.querySelector('.discount-price');
+
+    [sellPriceInput, quantityInput, discountInput].forEach(input => {
+        input.addEventListener('input', function () {
+
+            // 🚫 Prevent lowering sell price
+            if (this.classList.contains('sell-price')) {
+                const minPrice = parseFloat(this.dataset.minPrice) || 0;
+                let currentValue = parseFloat(this.value) || 0;
+
+                if (currentValue < minPrice) {
+                    this.value = minPrice;
+                }
+            }
+
             updateItemTotal(container);
         });
     });
 }
+
 
 function updateItemTotal(container) {
     const quantity = parseFloat(container.querySelector('.quantity-input').value) || 0;

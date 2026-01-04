@@ -72,7 +72,7 @@ class OrderController extends Controller
             $query->where('place_by', $request->place_by_filter);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->paginate(15);
+        $orders = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
 
         // Summary data
         $totalOrders = Order::count();
