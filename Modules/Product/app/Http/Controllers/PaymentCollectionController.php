@@ -210,6 +210,7 @@ class PaymentCollectionController extends Controller
 
         $orders = Order::where('vendor_id', $vendorId)
             ->whereIn('payment_status', [0, 1])
+            ->whereIn('order_status_id', [4, 5])
             ->orderBy('created_at', 'asc')
             ->get(['id', 'invoice_id', 'total_amount', 'paid_amount', 'payment_status', 'created_at']);
 
