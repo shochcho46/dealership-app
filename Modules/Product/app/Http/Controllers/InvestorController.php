@@ -14,7 +14,7 @@ class InvestorController extends Controller
      */
     public function index()
     {
-        $limit = request()->get('limit', 30);
+        $limit = request()->get('limit', 50);
         $investors = Investor::withCount('investmentDetails')->latest()->paginate($limit);
         return view('product::investor.index', compact('investors'));
     }

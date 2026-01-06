@@ -414,6 +414,22 @@
                         @enderror
                     </div>
 
+                    <div class="form-group">
+                        <label for="deposite_by">Deposite By <span class="text-danger">*</span></label>
+                        <select name="deposite_by" id="deposite_by" class="form-control @error('deposite_by') is-invalid @enderror" required>
+                            <option value="">Select Admin</option>
+                            @foreach($admins as $admin)
+                                <option value="{{ $admin->id }}" {{ old('deposite_by', Auth::guard('admin')->id()) == $admin->id ? 'selected' : '' }}>
+                                    {{ $admin->name }} ({{ $admin->roles_string }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('deposite_by')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+
+                    </div>
+
                     <input type="hidden" name="vendor_id" value="{{ $vendor->id }}">
                 </div>
                 <div class="modal-footer">

@@ -218,7 +218,7 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 15;
+        $limit = $request->limit ?? 50;
 
        $query = Order::with(['vendor', 'orderStatus', 'orderItems', 'vendorAccounts'])
                 ->whereIn('order_status_id', [4, 5]); // Shipped or delivered only
@@ -242,6 +242,10 @@ class InvoiceController extends Controller
 
         if ($request->filled('place_by_filter')) {
             $query->where('place_by', $request->place_by_filter);
+        }
+
+        if ($request->filled('payment_status_filter')) {
+            $query->where('payment_status', $request->payment_status_filter);
         }
 
         $fullQuery = clone $query;

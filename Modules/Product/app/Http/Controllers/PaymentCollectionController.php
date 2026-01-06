@@ -15,6 +15,7 @@ class PaymentCollectionController extends Controller
 {
     public function index(Request $request)
     {
+        $limit = $request->get('limit', 50);
         $query = VendorAccount::with(['vendor', 'order', 'paymentMethod', 'createdBy', 'depositeBy']);
 
         // Only filter by credit type (2) if no type filter is applied
@@ -40,7 +41,7 @@ class PaymentCollectionController extends Controller
             $query->whereDate('collection_date', '<=', $request->date_to);
         }
 
-        $collections = $query->orderBy('collection_date', 'desc')->paginate(15);
+        $collections = $query->orderBy('collection_date', 'desc')->paginate($limit);
 
         $totalCollected = VendorAccount::where('type', 2)->sum('amount');
         $totalPending = VendorAccount::where('type', 1)->sum('amount');
