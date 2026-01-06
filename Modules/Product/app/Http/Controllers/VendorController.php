@@ -3,6 +3,7 @@
 namespace Modules\Product\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Vendor;
 use Modules\Product\Models\VendorAccount;
@@ -18,7 +19,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $limit = request()->get('limit', 35);
+        $limit = request()->get('limit', 50);
         $search = request()->get('search');
         $query = Vendor::with('country')
             ->withSum(
@@ -226,6 +227,7 @@ class VendorController extends Controller
      */
     public function account(Request $request, $uuid)
     {
+        $limit = $request->get('limit', 50);
         $vendor = Vendor::where('uuid', $uuid)->firstOrFail();
 
         // Get date range from request or default to current month
@@ -244,7 +246,7 @@ class VendorController extends Controller
             ->orderBy('id', 'desc');
         // Get period accounts
         $resulit = $accountsQuery->get();
-        
+
         // Calculate period totals
         $totalDebit = $resulit->where('type', 1)->sum('amount');
         $totalCredit = $resulit->where('type', 2)->sum('amount');
@@ -256,7 +258,8 @@ class VendorController extends Controller
         $allTimeCredit = $allTimeAccounts->where('type', 2)->sum('amount');
         $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
         $totalTransactions = $allTimeAccounts->count();
-        $accounts =  $accountsQuery->paginate(50);
+        $accounts =  $accountsQuery->paginate($limit);
+        $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
 
         return view('product::vendor.account', compact(
             'vendor',
@@ -269,7 +272,8 @@ class VendorController extends Controller
             'allTimeBalance',
             'totalTransactions',
             'startDate',
-            'endDate'
+            'endDate',
+            'admins',
         ));
     }
 
@@ -278,6 +282,7 @@ class VendorController extends Controller
      */
     public function vendorPublicAccount(Request $request, $uuid)
     {
+        $limit = $request->get('limit', 50);
         $vendor = Vendor::where('uuid', $uuid)->firstOrFail();
 
         // Get date range from request or default to current month
@@ -305,7 +310,7 @@ class VendorController extends Controller
         $allTimeBalance = VendorAccount::getVendorBalance($vendor->id);
         $totalTransactions = $allTimeAccounts->count();
         $businessDetail = Business::first();
-        $accounts =  $accountsQuery->paginate(50);
+        $accounts =  $accountsQuery->paginate($limit);
 
         return view('product::vendor.public-account', compact(
             'vendor',
@@ -330,13 +335,15 @@ class VendorController extends Controller
             'amount' => 'required|numeric|min:0',
             'vendor_id' => 'required',
             'type' => 'required|in:1,2',
+            'deposite_by' => 'required|exists:admins,id',
         ]);
 
         try {
             $investment = VendorAccount::create([
                 'vendor_id' => $request->vendor_id,
                 'amount' => $request->amount,
-                'type' => $request->type
+                'type' => $request->type,
+                'deposite_by' => $request->deposite_by,
             ]);
             return back()->with('success', 'Investment added successfully!');
         } catch (\Exception $e) {

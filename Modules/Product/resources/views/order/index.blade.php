@@ -164,7 +164,7 @@
                     </div>
 
                      <div class="col-md-2">
-                        <label class="form-label">Place By Filter</label>
+                        <label class="form-label">Place By</label>
                         <select name="place_by_filter" class="form-select">
                             <option value="">All Place By</option>
                             @foreach($placeBys as $placeBy)
