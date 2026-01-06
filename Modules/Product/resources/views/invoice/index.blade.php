@@ -113,7 +113,7 @@
                         <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Vendor Filter</label>
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
@@ -126,8 +126,8 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">Place By Filter</label>
+                    <div class="col-md-2">
+                        <label class="form-label">Place By</label>
                         <select name="place_by_filter" class="form-select">
                             <option value="">All Place By</option>
                             @foreach($placeBys as $placeBy)
@@ -138,6 +138,20 @@
                             @endforeach
                         </select>
                     </div>
+
+
+                     <div class="col-md-2">
+                                <label class="form-label">Payment Status</label>
+                                <select name="payment_status_filter" class="form-select">
+                                    <option value="" {{ request('payment_status_filter') === null || request('payment_status_filter') === '' ? 'selected' : '' }}>All Status</option>
+                                    <option value="0" {{ request('payment_status_filter') == '0' ? 'selected' : '' }}>unpaid</option>
+                                    <option value="1" {{ request('payment_status_filter') == '1' ? 'selected' : '' }}>partial paid</option>
+                                    <option value="2" {{ request('payment_status_filter') == '2' ? 'selected' : '' }}>paid</option>
+                                </select>
+                    </div>
+
+
+
 
                     <div class="col-md-2">
                         <label class="form-label">Date From</label>
@@ -155,6 +169,9 @@
                             </button>
                         </div>
                     </div> --}}
+
+
+
 
 
                     <div class="col-12">

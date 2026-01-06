@@ -89,8 +89,8 @@
                                 </select>
                             </div> --}}
 
-                             <div class="col-md-2">
-                                <label class="form-label">Payment Status Filter</label>
+                            <div class="col-md-2">
+                                <label class="form-label">Payment Status</label>
                                 <select name="payment_status_filter" class="form-select select2">
                                     <option value="" {{ request('payment_status_filter') === null || request('payment_status_filter') === '' ? 'selected' : '' }}>All Status</option>
                                     <option value="0" {{ request('payment_status_filter') == '0' ? 'selected' : '' }}>unpaid</option>
@@ -115,9 +115,9 @@
 
                     <!-- Export Button -->
                     <div class="mb-3">
-                        <button type="button" class="btn btn-success btn-sm" onclick="exportTableToExcel('orderReportTable', 'Order_Report')">
+                        {{-- <button type="button" class="btn btn-success btn-sm" onclick="exportTableToExcel('orderReportTable', 'Order_Report')">
                             <i class="mdi mdi-file-excel"></i> Export to Excel
-                        </button>
+                        </button> --}}
                     </div>
 
                     <!-- Report Table -->
@@ -148,8 +148,9 @@
                                         <td>
                                             <a href="{{ route('invoices.preview', $item->order_id) }}" target="_blank">
                                                {{ $item?->order?->invoice_id  }}
-                                            </a><br>
-                                            <span class="badge {{ $item?->order?->payment_status_badge_class }} status-badge">
+                                            </a>
+                                            <br>
+                                            <span class="mt-1 badge {{ $item?->order?->payment_status_badge_class }} status-badge">
                                                     {{ $item?->order?->payment_status_text }}
                                             </span>
 
@@ -235,14 +236,12 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 @endpush
 
 @push('scripts')
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
 <script>
@@ -251,19 +250,8 @@
             theme: 'bootstrap-5',
             width: '100%'
         });
-
-        $('#orderReportTable').DataTable({
-            pageLength: 25,
-            order: [[2, 'desc']],
-            columnDefs: [
-                { orderable: false, targets: [0] }
-            ]
-        });
     });
 
-    function exportTableToExcel(tableID, filename = '') {
-        var table2excel = new Table2Excel();
-        table2excel.export(document.getElementById(tableID), filename);
-    }
+
 </script>
 @endpush
