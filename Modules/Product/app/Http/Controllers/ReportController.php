@@ -134,6 +134,10 @@ class ReportController extends Controller
             });
         }
 
+        $query = $query->whereHas('order', function ($q) {
+            $q->where('order_status_id', '!=', 6); // Exclude cancelled orders
+        });
+
         $fullQuery = clone $query;
 
         $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
