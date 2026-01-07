@@ -619,7 +619,7 @@ class AdminController extends Controller
             $userRoles = $currentUser->getRoleNames();
             $isRestrictedUser = $userRoles->contains('dsr') || $userRoles->contains('sr');
 
-            $query = Order::with('placeBy')
+            $query = Order::with('placeBy')->where('order_status_id', '!=', 6) // Exclude cancelled orders
                 ->when($dateRange['start'], fn($q) => $q->whereDate('created_at', '>=', $dateRange['start']))
                 ->when($dateRange['end'], fn($q) => $q->whereDate('created_at', '<=', $dateRange['end']));
 

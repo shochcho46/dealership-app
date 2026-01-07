@@ -132,7 +132,6 @@
                                     <th>Product</th>
                                     <th>Order By</th>
                                     <th>Quantity</th>
-
                                     <th>Purchase Price</th>
                                     <th>Total Purchase</th>
                                     <th>Sell Price</th>
@@ -149,6 +148,7 @@
                                             <a href="{{ route('invoices.preview', $item->order_id) }}" target="_blank">
                                                {{ $item?->order?->invoice_id  }}
                                             </a>
+
                                             <br>
                                             <span class="mt-1 badge {{ $item?->order?->payment_status_badge_class }} status-badge">
                                                     {{ $item?->order?->payment_status_text }}
@@ -236,7 +236,7 @@
 @endsection
 
 @push('styles')
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 @endpush
