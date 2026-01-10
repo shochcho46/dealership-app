@@ -450,8 +450,8 @@
                         <tr>
                             <td class="total-label">Subtotal:</td>
                             <td class="text-right">
-                                ৳ <span
-                                    class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) - $i->discount_price;}),2) }}</span>
+                                {{-- ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) - $i->discount_price;}),2) }}</span> --}}
+                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) ;}),2) }}</span>
                             </td>
                         </tr>
                         <tr>
@@ -613,8 +613,8 @@
                         <tr>
                             <td class="total-label">Subtotal:</td>
                             <td class="text-right">
-                                ৳ <span
-                                    class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) - $i->discount_price;}),2) }}</span>
+                                {{-- ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) - $i->discount_price;}),2) }}</span> --}}
+                                ৳ <span class="price">{{ number_format($orderItems->sum(function ($i) {return $i->sell_price * ($i->quantity - ($i->damage_quantity + $i->lost_quantity + $i->return_quantity)) ;}),2) }}</span>
                             </td>
                         </tr>
                         <tr>
