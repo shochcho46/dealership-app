@@ -255,6 +255,7 @@ class Order extends Model
      */
     public function cancelOrder()
     {
+        $this->load('orderItems.orderItemStocks.stock');
         if (!$this->canBeCancelled()) {
             return false;
         }
