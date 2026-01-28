@@ -809,8 +809,17 @@ function updateOrderSummary() {
 }
 
 function updateSubmitButton() {
+    // const vendorSelected = document.getElementById('selected_vendor_id').value;
+    // const hasValidItems = document.querySelectorAll('.order-item-card .product-id[value!=""]').length > 0;
+
     const vendorSelected = document.getElementById('selected_vendor_id').value;
-    const hasValidItems = document.querySelectorAll('.order-item-card .product-id[value!=""]').length > 0;
+
+    // Count how many product-id inputs have a non-empty value
+    const filledProductIds = Array.from(
+        document.querySelectorAll('.order-item-card .product-id')
+    ).filter(input => input.value.trim() !== '');
+
+    const hasValidItems = filledProductIds.length > 0;
 
     document.getElementById('submit_order_btn').disabled = !(vendorSelected && hasValidItems);
 }
