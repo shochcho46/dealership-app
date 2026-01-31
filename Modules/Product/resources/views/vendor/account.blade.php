@@ -449,11 +449,6 @@
 @push('custome-js')
 <script>
     // Set max date to today for date inputs
-    document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('start_date').setAttribute('max', today);
-        document.getElementById('end_date').setAttribute('max', today);
-    });
 
     $(document).ready(function() {
      // Show modal if there are validation errors

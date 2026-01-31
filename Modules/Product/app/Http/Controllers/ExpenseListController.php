@@ -12,14 +12,37 @@ class ExpenseListController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $limit = request()->get('limit', 30);
+        $limit = $request->get('limit', 30);
         $expenseHeads = ExpenseHead::active()->get();
 
-        $expenseLists = ExpenseList::with('expenseHead')->latest()->paginate($limit);
+        $query = ExpenseList::with('expenseHead')->orderBy('id', 'desc');
 
-        return view('product::expense-list.index', compact('expenseLists', 'expenseHeads'));
+        if ($request->filled('expense_head_id')) {
+            $query = $query->where('expense_head_id', $request->expense_head_id);
+        }
+        if ($request->filled('date_from')) {
+            $query = $query->whereDate('expense_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query = $query->whereDate('expense_date', '<=', $request->date_to);
+        }
+
+        // Calculate total for all filtered records
+        $totalAll = (clone $query)->sum('amount');
+
+        // Paginate and calculate total for current page
+        $expenseLists = $query->paginate($limit);
+        $totalPage = $expenseLists->sum('amount');
+
+        $filters = [
+            'expense_head_id' => $request->expense_head_id,
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to,
+        ];
+
+        return view('product::expense-list.index', compact('expenseLists', 'expenseHeads', 'filters', 'totalPage', 'totalAll'));
     }
 
     /**
