@@ -90,31 +90,33 @@
                         <h3 class="card-title">All Expenses</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Filters -->
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="filterExpenseHead" class="form-label">Filter by Expense Head</label>
-                                <select id="filterExpenseHead" class="form-select form-select-sm">
-                                    <option value="">All Expense Heads</option>
-                                    @foreach($expenseHeads as $head)
-                                        <option value="{{ $head->id }}">{{ $head->title }}</option>
-                                    @endforeach
-                                </select>
+                        <!-- Filters (form submits to backend) -->
+                        <form method="GET" action="{{ route('admin.expenseListIndex') }}" class="mb-3">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="filterExpenseHead" class="form-label">Filter by Expense Head</label>
+                                    <select name="expense_head_id" id="filterExpenseHead" class="form-select form-select-sm">
+                                        <option value="">All Expense Heads</option>
+                                        @foreach($expenseHeads as $head)
+                                            <option value="{{ $head->id }}" {{ (isset($filters['expense_head_id']) && $filters['expense_head_id'] == $head->id) ? 'selected' : '' }}>{{ $head->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filterDateFrom" class="form-label">From Date</label>
+                                    <input type="date" name="date_from" id="filterDateFrom" class="form-control form-control-sm" value="{{ $filters['date_from'] ?? '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filterDateTo" class="form-label">To Date</label>
+                                    <input type="date" name="date_to" id="filterDateTo" class="form-control form-control-sm" value="{{ $filters['date_to'] ?? '' }}">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                                        <span class="mdi mdi-filter"></span> Filter
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="filterDateFrom" class="form-label">From Date</label>
-                                <input type="date" id="filterDateFrom" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filterDateTo" class="form-label">To Date</label>
-                                <input type="date" id="filterDateTo" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button type="button" id="filterSubmitBtn" class="btn btn-primary btn-sm w-100">
-                                    <span class="mdi mdi-filter"></span> Filter
-                                </button>
-                            </div>
-                        </div>
+                        </form>
 
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-hover" id="expenseListTable">
@@ -215,15 +217,18 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
-                                @if($expenseLists->isNotEmpty())
                                 <tfoot>
                                     <tr class="table-active">
-                                        <th colspan="4" class="text-end">Total:</th>
-                                        <th class="text-end" id="totalAmount">৳{{ number_format($expenseLists->sum('amount'), 2) }}</th>
+                                        <th colspan="4" class="text-end">Page Total:</th>
+                                        <th class="text-end">৳{{ number_format($totalPage, 2) }}</th>
+                                        <th colspan="4"></th>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <th colspan="4" class="text-end">All Filtered Total:</th>
+                                        <th class="text-end">৳{{ number_format($totalAll, 2) }}</th>
                                         <th colspan="4"></th>
                                     </tr>
                                 </tfoot>
-                                @endif
                             </table>
                         </div>
                         @if($expenseLists->hasPages())
@@ -238,55 +243,3 @@
     </div>
 </div>
 @endsection
-
-@push('custome-js')
-<script>
-    $(document).ready(function() {
-        // Filter submit button click
-        $('#filterSubmitBtn').on('click', function() {
-            filterTable();
-        });
-
-        // Allow Enter key to trigger filter
-        $('#filterDateFrom, #filterDateTo, #filterExpenseHead').on('keypress', function(e) {
-            if (e.which === 13) {
-                filterTable();
-            }
-        });
-
-        function filterTable() {
-            var expenseHeadId = $('#filterExpenseHead').val();
-            var dateFrom = $('#filterDateFrom').val();
-            var dateTo = $('#filterDateTo').val();
-
-            // Show/hide table rows based on filters
-            $('#expenseListTable tbody tr').each(function() {
-                var rowHeadId = $(this).data('expense-head-id');
-                var rowDate = $(this).data('expense-date');
-
-                var matchHead = !expenseHeadId || rowHeadId == expenseHeadId;
-                var matchDateFrom = !dateFrom || rowDate >= dateFrom;
-                var matchDateTo = !dateTo || rowDate <= dateTo;
-
-                if (matchHead && matchDateFrom && matchDateTo) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-
-            // Update total
-            updateTableTotal();
-        }
-
-        function updateTableTotal() {
-            var total = 0;
-            $('#expenseListTable tbody tr:visible').each(function() {
-                var amount = $(this).find('td:eq(4)').text().replace(/[^0-9.]/g, '');
-                total += parseFloat(amount) || 0;
-            });
-            $('#totalAmount').text('৳' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-        }
-    });
-</script>
-@endpush

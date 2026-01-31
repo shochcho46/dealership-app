@@ -260,7 +260,8 @@ class VendorController extends Controller
         $totalTransactions = $allTimeAccounts->count();
         $accounts =  $accountsQuery->paginate($limit);
         $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
-
+        $startDate = $startDate->format('Y-m-d');
+        $endDate = $endDate->format('Y-m-d');
         return view('product::vendor.account', compact(
             'vendor',
             'accounts',
@@ -331,6 +332,7 @@ class VendorController extends Controller
 
      public function storeVendorAccount(Request $request)
     {
+        // Validation
         $request->validate([
             'amount' => 'required|numeric|min:0',
             'vendor_id' => 'required',
@@ -338,12 +340,18 @@ class VendorController extends Controller
             'deposite_by' => 'required|exists:admins,id',
         ]);
 
+        $dateOfcollection = null;
+        if ($request->type == 2 ) {
+            $dateOfcollection = Carbon::now()->format('Y-m-d');
+        }
+
         try {
             $investment = VendorAccount::create([
                 'vendor_id' => $request->vendor_id,
                 'amount' => $request->amount,
                 'type' => $request->type,
                 'deposite_by' => $request->deposite_by,
+                'collection_date' => $dateOfcollection,
             ]);
             return back()->with('success', 'Investment added successfully!');
         } catch (\Exception $e) {
@@ -386,4 +394,5 @@ class VendorController extends Controller
             return back()->with('error', 'Failed to delete account. Please try again.');
         }
     }
+
 }
