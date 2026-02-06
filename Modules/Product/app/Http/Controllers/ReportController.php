@@ -255,7 +255,7 @@ class ReportController extends Controller
         $fullQuery = clone $query;
 
         // Paginate results
-        $accounts = $query->orderBy('collection_date', 'desc')->paginate($limit)->withQueryString();
+        $accounts = $query->orderBy('id', 'desc')->paginate($limit)->withQueryString();
 
         // Calculate totals
         $filteredTotal = $fullQuery->sum('amount');
