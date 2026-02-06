@@ -81,6 +81,15 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <div class="info-box bg-secondary text-white">
+                            <span class="info-box-icon"><i class="mdi mdi-sale"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Discount Amount</span>
+                                <span class="info-box-number">৳{{ number_format($financialReport->discount_amount, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="info-box bg-dark text-white">
                             <span class="info-box-icon"><i class="mdi mdi-currency-usd-off"></i></span>
                             <div class="info-box-content">

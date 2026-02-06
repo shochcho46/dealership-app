@@ -126,6 +126,17 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
+                        <div class="small-box text-bg-secondary">
+                            <div class="inner">
+                                <h3>৳{{ number_format($totals->sum_discount ?? 0, 2) }}</h3>
+                                <p>Total Discount</p>
+                            </div>
+                            <div class="small-box-icon">
+                                <i class="mdi mdi-sale"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
                         <div class="small-box text-bg-dark">
                             <div class="inner">
                                 <h3>৳{{ number_format($totals->sum_damage ?? 0, 2) }}</h3>
@@ -175,6 +186,7 @@
                                         <th class="text-end">Sales</th>
                                         <th class="text-end">Purchase</th>
                                         <th class="text-end">Expense</th>
+                                        <th class="text-end">Discount</th>
                                         <th class="text-end">Damage</th>
                                         <th class="text-end">Lost</th>
                                         <th class="text-end">Profit</th>
@@ -194,6 +206,7 @@
                                         <td class="text-end text-info">৳{{ number_format($report->total_sales, 2) }}</td>
                                         <td class="text-end text-warning">৳{{ number_format($report->total_purchase, 2) }}</td>
                                         <td class="text-end text-danger">৳{{ number_format($report->total_expense, 2) }}</td>
+                                        <td class="text-end text-secondary">৳{{ number_format($report->discount_amount, 2) }}</td>
                                         <td class="text-end text-danger">৳{{ number_format($report->total_damage, 2) }}</td>
                                         <td class="text-end text-danger">৳{{ number_format($report->total_lost_amount, 2) }}</td>
                                         <td class="text-end text-success"><strong>৳{{ number_format($report->total_profit, 2) }}</strong></td>
@@ -226,7 +239,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">No financial reports found</td>
+                                        <td colspan="11" class="text-center">No financial reports found</td>
                                     </tr>
                                     @endforelse
                                     @include('components.delete')
@@ -238,6 +251,7 @@
                                         <th class="text-end text-info">৳{{ number_format($totals->sum_sales ?? 0, 2) }}</th>
                                         <th class="text-end text-warning">৳{{ number_format($totals->sum_purchase ?? 0, 2) }}</th>
                                         <th class="text-end text-danger">৳{{ number_format($totals->sum_expense ?? 0, 2) }}</th>
+                                        <th class="text-end text-secondary">৳{{ number_format($totals->sum_discount ?? 0, 2) }}</th>
                                         <th class="text-end text-danger">৳{{ number_format($totals->sum_damage ?? 0, 2) }}</th>
                                         <th class="text-end text-danger">৳{{ number_format($totals->sum_lost ?? 0, 2) }}</th>
                                         <th class="text-end text-success"><strong>৳{{ number_format($totals->sum_profit ?? 0, 2) }}</strong></th>
