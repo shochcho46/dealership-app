@@ -16,6 +16,7 @@ class FinancialReport extends Model
         'total_sales',
         'total_purchase',
         'total_expense',
+        'discount_amount',
         'total_lost_amount',
         'total_damage_amount',
         'total_profit',
@@ -32,6 +33,7 @@ class FinancialReport extends Model
         'total_sales' => 'decimal:2',
         'total_purchase' => 'decimal:2',
         'total_expense' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'total_lost_amount' => 'decimal:2',
         'total_damage_amount' => 'decimal:2',
         'total_profit' => 'decimal:2',
@@ -64,7 +66,7 @@ class FinancialReport extends Model
      */
     public function getNetProfitAttribute()
     {
-        return $this->total_sales - $this->total_purchase - $this->total_expense - $this->total_lost_amount - $this->total_damage_amount;
+        return $this->total_sales - $this->total_purchase - $this->total_expense - $this->discount_amount - $this->total_lost_amount - $this->total_damage_amount;
     }
 
     /**

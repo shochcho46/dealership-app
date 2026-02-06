@@ -128,6 +128,21 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
+                                <label for="discount_amount">Discount Amount</label>
+                                <input type="number"
+                                       class="form-control @error('discount_amount') is-invalid @enderror"
+                                       id="discount_amount"
+                                       name="discount_amount"
+                                       step="0.01"
+                                       value="{{ old('discount_amount', $financialReport->discount_amount) }}"
+                                       placeholder="0.00">
+                                @error('discount_amount')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 <label for="total_lost_amount">Total Lost Amount</label>
                                 <input type="number"
                                        class="form-control @error('total_lost_amount') is-invalid @enderror"
@@ -277,15 +292,16 @@ $(document).ready(function() {
         const sales = parseFloat($('#total_sales').val()) || 0;
         const purchase = parseFloat($('#total_purchase').val()) || 0;
         const expense = parseFloat($('#total_expense').val()) || 0;
+        const discount = parseFloat($('#discount_amount').val()) || 0;
         const lost = parseFloat($('#total_lost_amount').val()) || 0;
         const damage = parseFloat($('#total_damage_amount').val()) || 0;
 
-        const profit = sales - purchase - expense - lost - damage;
+        const profit = sales - purchase - expense - discount - lost - damage;
         $('#total_profit').val(profit.toFixed(2));
     }
 
     // Attach event listeners
-    $('#total_sales, #total_purchase, #total_expense, #total_lost_amount, #total_damage_amount').on('input', calculateProfit);
+    $('#total_sales, #total_purchase, #total_expense, #discount_amount, #total_lost_amount, #total_damage_amount').on('input', calculateProfit);
 
     // Calculate on page load
     calculateProfit();
