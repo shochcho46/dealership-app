@@ -104,6 +104,28 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
+                        <div class="small-box text-bg-success">
+                            <div class="inner">
+                                <h3>৳{{ number_format($totals->sum_collected ?? 0, 2) }}</h3>
+                                <p>Collected Amount</p>
+                            </div>
+                            <div class="small-box-icon">
+                                <i class="mdi mdi-cash-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box text-bg-warning">
+                            <div class="inner">
+                                <h3>৳{{ number_format($totals->sum_outstanding ?? 0, 2) }}</h3>
+                                <p>Amount to Collect</p>
+                            </div>
+                            <div class="small-box-icon">
+                                <i class="mdi mdi-clock-alert"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
                         <div class="small-box text-bg-warning">
                             <div class="inner">
                                 <h3>৳{{ number_format($totals->sum_purchase ?? 0, 2) }}</h3>
@@ -162,10 +184,21 @@
                         <div class="small-box text-bg-success">
                             <div class="inner">
                                 <h3>৳{{ number_format($totals->sum_profit ?? 0, 2) }}</h3>
-                                <p>Total Profit</p>
+                                <p>Current Profit</p>
                             </div>
                             <div class="small-box-icon">
                                 <i class="mdi mdi-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box text-bg-primary">
+                            <div class="inner">
+                                <h3>৳{{ number_format($totals->sum_expected_profit ?? 0, 2) }}</h3>
+                                <p>Expected Profit</p>
+                            </div>
+                            <div class="small-box-icon">
+                                <i class="mdi mdi-cash-check"></i>
                             </div>
                         </div>
                     </div>
@@ -184,12 +217,12 @@
                                         <th>#</th>
                                         <th>Period</th>
                                         <th class="text-end">Sales</th>
+                                        <th class="text-end">Collected</th>
+                                        <th class="text-end">To Collect</th>
                                         <th class="text-end">Purchase</th>
                                         <th class="text-end">Expense</th>
-                                        <th class="text-end">Discount</th>
-                                        <th class="text-end">Damage</th>
-                                        <th class="text-end">Lost</th>
-                                        <th class="text-end">Profit</th>
+                                        <th class="text-end">Current Profit</th>
+                                        <th class="text-end">Expected Profit</th>
                                         <th>Created By</th>
                                         <th class="text-center">Actions</th>
                                     </tr>
@@ -204,12 +237,12 @@
                                             <strong>{{ $report->end_date->format('d M Y') }}</strong>
                                         </td>
                                         <td class="text-end text-info">৳{{ number_format($report->total_sales, 2) }}</td>
-                                        <td class="text-end text-warning">৳{{ number_format($report->total_purchase, 2) }}</td>
+                                        <td class="text-end text-success">৳{{ number_format($report->actual_collected_amount, 2) }}</td>
+                                        <td class="text-end text-warning">৳{{ number_format($report->outstanding_amount, 2) }}</td>
+                                        <td class="text-end text-danger">৳{{ number_format($report->total_purchase, 2) }}</td>
                                         <td class="text-end text-danger">৳{{ number_format($report->total_expense, 2) }}</td>
-                                        <td class="text-end text-secondary">৳{{ number_format($report->discount_amount, 2) }}</td>
-                                        <td class="text-end text-danger">৳{{ number_format($report->total_damage, 2) }}</td>
-                                        <td class="text-end text-danger">৳{{ number_format($report->total_lost_amount, 2) }}</td>
                                         <td class="text-end text-success"><strong>৳{{ number_format($report->total_profit, 2) }}</strong></td>
+                                        <td class="text-end text-primary"><strong>৳{{ number_format($report->expected_profit, 2) }}</strong></td>
                                         <td>
                                             {{ $report->creator->name ?? 'N/A' }}<br>
                                             <small class="text-muted">{{ $report->created_at->format('d M Y') }}</small>
@@ -249,12 +282,12 @@
                                     <tr>
                                         <th colspan="2">Total</th>
                                         <th class="text-end text-info">৳{{ number_format($totals->sum_sales ?? 0, 2) }}</th>
-                                        <th class="text-end text-warning">৳{{ number_format($totals->sum_purchase ?? 0, 2) }}</th>
+                                        <th class="text-end text-success">৳{{ number_format($totals->sum_collected ?? 0, 2) }}</th>
+                                        <th class="text-end text-warning">৳{{ number_format($totals->sum_outstanding ?? 0, 2) }}</th>
+                                        <th class="text-end text-danger">৳{{ number_format($totals->sum_purchase ?? 0, 2) }}</th>
                                         <th class="text-end text-danger">৳{{ number_format($totals->sum_expense ?? 0, 2) }}</th>
-                                        <th class="text-end text-secondary">৳{{ number_format($totals->sum_discount ?? 0, 2) }}</th>
-                                        <th class="text-end text-danger">৳{{ number_format($totals->sum_damage ?? 0, 2) }}</th>
-                                        <th class="text-end text-danger">৳{{ number_format($totals->sum_lost ?? 0, 2) }}</th>
                                         <th class="text-end text-success"><strong>৳{{ number_format($totals->sum_profit ?? 0, 2) }}</strong></th>
+                                        <th class="text-end text-primary"><strong>৳{{ number_format($totals->sum_expected_profit ?? 0, 2) }}</strong></th>
                                         <th colspan="2"></th>
                                     </tr>
                                 </tfoot>

@@ -250,7 +250,7 @@ class InvoiceController extends Controller
 
         $fullQuery = clone $query;
 
-        $orders = $query->orderBy('id', 'desc')->paginate($limit);
+        $orders = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());
 
 
 

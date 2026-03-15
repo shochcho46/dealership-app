@@ -32,12 +32,16 @@ class FinancialReportController extends Controller
 
         $totals = $totalsQuery->selectRaw('
             SUM(total_sales) as sum_sales,
+            SUM(actual_collected_amount) as sum_collected,
             SUM(total_purchase) as sum_purchase,
             SUM(total_expense) as sum_expense,
             SUM(discount_amount) as sum_discount,
             SUM(total_lost_amount) as sum_lost,
             SUM(total_damage_amount) as sum_damage,
             SUM(total_profit) as sum_profit,
+            SUM(total_sales - actual_collected_amount) as sum_outstanding,
+            SUM(actual_collected_amount - total_purchase - total_expense - discount_amount - total_lost_amount - total_damage_amount) as sum_actual_profit,
+            SUM(total_sales - total_purchase - total_expense - discount_amount - total_lost_amount - total_damage_amount) as sum_expected_profit,
             SUM(profit_for_shareholders) as sum_shareholders,
             SUM(profit_for_sadaqah) as sum_sadaqah,
             SUM(profit_to_retain) as sum_retain
@@ -63,6 +67,7 @@ class FinancialReportController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'total_sales' => 'required|numeric|min:0',
+            'actual_collected_amount' => 'nullable|numeric|min:0',
             'total_purchase' => 'required|numeric|min:0',
             'total_expense' => 'required|numeric|min:0',
             'discount_amount' => 'nullable|numeric|min:0',
@@ -107,6 +112,7 @@ class FinancialReportController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'total_sales' => 'required|numeric|min:0',
+            'actual_collected_amount' => 'nullable|numeric|min:0',
             'total_purchase' => 'required|numeric|min:0',
             'total_expense' => 'required|numeric|min:0',
             'discount_amount' => 'nullable|numeric|min:0',

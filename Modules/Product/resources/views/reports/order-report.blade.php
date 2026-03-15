@@ -44,10 +44,9 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Vendor</label>
-                                <select name="vendor_id" class="form-select select2">
-                                    <option value="">All Vendors</option>
+                                <select name="vendor_id[]" class="form-select select2" multiple>
                                     @foreach($vendors as $vendor)
-                                        <option value="{{ $vendor->id }}" {{ request('vendor_id') == $vendor->id ? 'selected' : '' }}>
+                                        <option value="{{ $vendor->id }}" {{ collect(request('vendor_id'))->contains($vendor->id) ? 'selected' : '' }}>
                                             {{ $vendor->shop_name }}
                                         </option>
                                     @endforeach
@@ -55,10 +54,9 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Product</label>
-                                <select name="product_id" class="form-select select2">
-                                    <option value="">All Products</option>
+                                <select name="product_id[]" class="form-select select2" multiple>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                        <option value="{{ $product->id }}" {{ collect(request('product_id'))->contains($product->id) ? 'selected' : '' }}>
                                             {{ $product->name }}
                                         </option>
                                     @endforeach
@@ -66,36 +64,32 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Placed By</label>
-                                <select name="place_by" class="form-select select2">
-                                    <option value="">All Users</option>
+                                <select name="place_by[]" class="form-select select2" multiple>
                                     @foreach($admins as $admin)
-                                        <option value="{{ $admin->id }}" {{ request('place_by') == $admin->id ? 'selected' : '' }}>
+                                        <option value="{{ $admin->id }}" {{ collect(request('place_by'))->contains($admin->id) ? 'selected' : '' }}>
                                             {{ $admin->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            {{-- <div class="col-md-2">
+                            <div class="col-md-2">
                                 <label class="form-label">Status Filter</label>
-                                <select name="status_filter" class="form-select select2">
-                                    <option value="all" {{ request('status_filter') === null ? 'selected' : '' }}>All Status</option>
+                                <select name="status_filter[]" class="form-select select2" multiple>
                                     @foreach($filterorderStatuses as $status)
-                                        <option value="{{ $status->id }}"
-                                            {{ request('status_filter') == $status->id ? 'selected' : '' }}>
+                                        <option value="{{ $status->id }}" {{ collect(request('status_filter'))->contains($status->id) ? 'selected' : '' }}>
                                             {{ $status->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
 
                             <div class="col-md-2">
                                 <label class="form-label">Payment Status</label>
-                                <select name="payment_status_filter" class="form-select select2">
-                                    <option value="" {{ request('payment_status_filter') === null || request('payment_status_filter') === '' ? 'selected' : '' }}>All Status</option>
-                                    <option value="0" {{ request('payment_status_filter') == '0' ? 'selected' : '' }}>unpaid</option>
-                                    <option value="1" {{ request('payment_status_filter') == '1' ? 'selected' : '' }}>partial paid</option>
-                                    <option value="2" {{ request('payment_status_filter') == '2' ? 'selected' : '' }}>paid</option>
+                                <select name="payment_status_filter[]" class="form-select select2" multiple>
+                                    <option value="0" {{ collect(request('payment_status_filter'))->contains('0') ? 'selected' : '' }}>unpaid</option>
+                                    <option value="1" {{ collect(request('payment_status_filter'))->contains('1') ? 'selected' : '' }}>partial paid</option>
+                                    <option value="2" {{ collect(request('payment_status_filter'))->contains('2') ? 'selected' : '' }}>paid</option>
                                 </select>
                             </div>
 
@@ -248,7 +242,9 @@
     $(document).ready(function() {
         $('.select2').select2({
             theme: 'bootstrap-5',
-            width: '100%'
+            width: '100%',
+            placeholder: 'Select',
+            allowClear: true
         });
     });
 

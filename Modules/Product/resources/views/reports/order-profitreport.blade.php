@@ -44,10 +44,9 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Vendor</label>
-                                <select name="vendor_id" class="form-select select2">
-                                    <option value="">All Vendors</option>
+                                <select name="vendor_id[]" class="form-select select2" multiple>
                                     @foreach($vendors as $vendor)
-                                        <option value="{{ $vendor->id }}" {{ request('vendor_id') == $vendor->id ? 'selected' : '' }}>
+                                        <option value="{{ $vendor->id }}" {{ collect(request('vendor_id'))->contains($vendor->id) ? 'selected' : '' }}>
                                             {{ $vendor->shop_name }}
                                         </option>
                                     @endforeach
@@ -55,10 +54,9 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Product</label>
-                                <select name="product_id" class="form-select select2">
-                                    <option value="">All Products</option>
+                                <select name="product_id[]" class="form-select select2" multiple>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                        <option value="{{ $product->id }}" {{ collect(request('product_id'))->contains($product->id) ? 'selected' : '' }}>
                                             {{ $product->name }}
                                         </option>
                                     @endforeach
@@ -66,10 +64,9 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Placed By</label>
-                                <select name="place_by" class="form-select select2">
-                                    <option value="">All Users</option>
+                                <select name="place_by[]" class="form-select select2" multiple>
                                     @foreach($admins as $admin)
-                                        <option value="{{ $admin->id }}" {{ request('place_by') == $admin->id ? 'selected' : '' }}>
+                                        <option value="{{ $admin->id }}" {{ collect(request('place_by'))->contains($admin->id) ? 'selected' : '' }}>
                                             {{ $admin->name }}
                                         </option>
                                     @endforeach
@@ -229,16 +226,11 @@
     $(document).ready(function() {
         $('.select2').select2({
             theme: 'bootstrap-5',
-            width: '100%'
+            width: '100%',
+            placeholder: 'Select',
+            allowClear: true
         });
 
-        $('#orderReportTable').DataTable({
-            pageLength: 25,
-            order: [[2, 'desc']],
-            columnDefs: [
-                { orderable: false, targets: [0] }
-            ]
-        });
     });
 
     function exportTableToExcel(tableID, filename = '') {
