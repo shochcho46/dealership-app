@@ -14,6 +14,7 @@ class FinancialReport extends Model
         'start_date',
         'end_date',
         'total_sales',
+        'actual_collected_amount',
         'total_purchase',
         'total_expense',
         'discount_amount',
@@ -31,6 +32,7 @@ class FinancialReport extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'total_sales' => 'decimal:2',
+        'actual_collected_amount' => 'decimal:2',
         'total_purchase' => 'decimal:2',
         'total_expense' => 'decimal:2',
         'discount_amount' => 'decimal:2',
@@ -62,11 +64,44 @@ class FinancialReport extends Model
     }
 
     /**
-     * Get the net profit (total profit minus distributions).
+     * Get the net profit (based on actual collected amount).
+     * Formula: actual_collected_amount - (total_purchase + total_expense + discount_amount + total_lost_amount + total_damage_amount)
      */
     public function getNetProfitAttribute()
     {
+        return $this->actual_collected_amount - $this->total_purchase - $this->total_expense - $this->discount_amount - $this->total_lost_amount - $this->total_damage_amount;
+    }
+
+    /**
+     * Get the outstanding amount (not yet collected).
+     */
+    public function getOutstandingAmountAttribute()
+    {
+        return $this->total_sales - $this->actual_collected_amount;
+    }
+
+    /**
+     * Get the actual profit (same as net profit - based on collected amount).
+     */
+    public function getActualProfitAttribute()
+    {
+        return $this->actual_collected_amount - $this->total_purchase - $this->total_expense - $this->discount_amount - $this->total_lost_amount - $this->total_damage_amount;
+    }
+
+    /**
+     * Get the expected profit (based on total sales if all collected).
+     */
+    public function getExpectedProfitAttribute()
+    {
         return $this->total_sales - $this->total_purchase - $this->total_expense - $this->discount_amount - $this->total_lost_amount - $this->total_damage_amount;
+    }
+
+    /**
+     * Get the collection percentage.
+     */
+    public function getCollectionPercentageAttribute()
+    {
+        return $this->total_sales > 0 ? ($this->actual_collected_amount / $this->total_sales) * 100 : 0;
     }
 
     /**
