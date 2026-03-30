@@ -47,7 +47,7 @@ class StockController extends Controller
             $query->where('status', $request->status);
         }
 
-        $stocks = $query->latest()->paginate( $limit);
+        $stocks = $query->latest()->paginate( $limit)->appends($request->query());
 
         return view('product::stock.index', compact('stocks'));
     }

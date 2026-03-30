@@ -33,7 +33,7 @@ class ExpenseListController extends Controller
         $totalAll = (clone $query)->sum('amount');
 
         // Paginate and calculate total for current page
-        $expenseLists = $query->paginate($limit);
+        $expenseLists = $query->paginate($limit)->appends($request->query());
         $totalPage = $expenseLists->sum('amount');
 
         $filters = [

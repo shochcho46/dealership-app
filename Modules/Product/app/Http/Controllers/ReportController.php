@@ -29,8 +29,10 @@ class ReportController extends Controller
         $productName = Product::orderBy('name')->get();
         $query = Product::with(['stocks']);
 
+        // Filter by product (multi)
         if ($request->filled('product_id')) {
-            $query->where('id', $request->product_id);
+            $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
+            $query->whereIn('id', $productIds);
         }
 
         $products = $query->get()->map(function ($product) {
@@ -104,33 +106,39 @@ class ReportController extends Controller
             });
         }
 
-        // Filter by vendor
+        // Filter by vendor (multi)
         if ($request->filled('vendor_id')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('vendor_id', $request->vendor_id);
+            $vendorIds = is_array($request->vendor_id) ? $request->vendor_id : [$request->vendor_id];
+            $query->whereHas('order', function ($q) use ($vendorIds) {
+                $q->whereIn('vendor_id', $vendorIds);
             });
         }
 
-        // Filter by product
+        // Filter by product (multi)
         if ($request->filled('product_id')) {
-            $query->where('product_id', $request->product_id);
+            $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
+            $query->whereIn('product_id', $productIds);
         }
 
-        // Filter by place_by
+        // Filter by place_by (multi)
         if ($request->filled('place_by')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('place_by', $request->place_by);
+            $placeByIds = is_array($request->place_by) ? $request->place_by : [$request->place_by];
+            $query->whereHas('order', function ($q) use ($placeByIds) {
+                $q->whereIn('place_by', $placeByIds);
             });
         }
 
-
+        // Filter by status (multi)
         if ($request->filled('status_filter')) {
-            $query->where('order_status_id', $request->status_filter);
+            $statusIds = is_array($request->status_filter) ? $request->status_filter : [$request->status_filter];
+            $query->whereIn('order_status_id', $statusIds);
         }
 
+        // Filter by payment status (multi)
         if ($request->filled('payment_status_filter')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('payment_status', $request->payment_status_filter);
+            $paymentStatusIds = is_array($request->payment_status_filter) ? $request->payment_status_filter : [$request->payment_status_filter];
+            $query->whereHas('order', function ($q) use ($paymentStatusIds) {
+                $q->whereIn('payment_status', $paymentStatusIds);
             });
         }
 
@@ -140,7 +148,7 @@ class ReportController extends Controller
 
         $fullQuery = clone $query;
 
-        $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
+        $orderItems = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());;
 
 
         $totalQuantity = $fullQuery->get()->sum('quantity') - $fullQuery->get()->sum('return_quantity');
@@ -449,28 +457,31 @@ class ReportController extends Controller
             });
         }
 
-        // Filter by vendor
+        // Filter by vendor (multi)
         if ($request->filled('vendor_id')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('vendor_id', $request->vendor_id);
+            $vendorIds = is_array($request->vendor_id) ? $request->vendor_id : [$request->vendor_id];
+            $query->whereHas('order', function ($q) use ($vendorIds) {
+                $q->whereIn('vendor_id', $vendorIds);
             });
         }
 
-        // Filter by product
+        // Filter by product (multi)
         if ($request->filled('product_id')) {
-            $query->where('product_id', $request->product_id);
+            $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
+            $query->whereIn('product_id', $productIds);
         }
 
-        // Filter by place_by
+        // Filter by place_by (multi)
         if ($request->filled('place_by')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('place_by', $request->place_by);
+            $placeByIds = is_array($request->place_by) ? $request->place_by : [$request->place_by];
+            $query->whereHas('order', function ($q) use ($placeByIds) {
+                $q->whereIn('place_by', $placeByIds);
             });
         }
 
         $fullQuery = clone $query;
 
-        $orderItems = $query->orderBy('id', 'desc')->paginate($limit);
+        $orderItems = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());
 
 
         $totalQuantity = $fullQuery->get()->sum('quantity') - $fullQuery->get()->sum('return_quantity');

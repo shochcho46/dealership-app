@@ -63,6 +63,33 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <div class="info-box bg-success text-white">
+                            <span class="info-box-icon"><i class="mdi mdi-cash-check"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Actual Collected</span>
+                                <span class="info-box-number">৳{{ number_format($financialReport->actual_collected_amount, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box bg-warning text-white">
+                            <span class="info-box-icon"><i class="mdi mdi-clock-alert"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Amount to Collect</span>
+                                <span class="info-box-number">৳{{ number_format($financialReport->outstanding_amount, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box bg-primary text-white">
+                            <span class="info-box-icon"><i class="mdi mdi-percent"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Collection %</span>
+                                <span class="info-box-number">{{ number_format($financialReport->collection_percentage, 2) }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="info-box bg-warning text-white">
                             <span class="info-box-icon"><i class="mdi mdi-cart"></i></span>
                             <div class="info-box-content">
@@ -129,12 +156,23 @@
                     <div class="col-md-12">
                         <h5 class="border-bottom pb-2 mb-3">Profit Summary</h5>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="info-box bg-success">
                             <span class="info-box-icon"><i class="mdi mdi-chart-line"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Total Profit</span>
+                                <span class="info-box-text">Current Profit (Based on Collected)</span>
                                 <span class="info-box-number">৳{{ number_format($financialReport->total_profit, 2) }}</span>
+                                <small class="text-muted">Actual collected - all expenses</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-box bg-primary">
+                            <span class="info-box-icon"><i class="mdi mdi-cash-check"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Expected Profit (If All Collected)</span>
+                                <span class="info-box-number">৳{{ number_format($financialReport->expected_profit, 2) }}</span>
+                                <small class="text-muted">Total sales - all expenses</small>
                             </div>
                         </div>
                     </div>

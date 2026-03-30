@@ -93,6 +93,35 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                <label for="actual_collected_amount">Actual Collected Amount</label>
+                                <input type="number"
+                                       class="form-control @error('actual_collected_amount') is-invalid @enderror"
+                                       id="actual_collected_amount"
+                                       name="actual_collected_amount"
+                                       step="0.01"
+                                       value="{{ old('actual_collected_amount', $financialReport->actual_collected_amount) }}"
+                                       placeholder="0.00">
+                                @error('actual_collected_amount')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                                <small class="text-muted">Amount actually received from customers</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amount_to_collect">Amount to Collect</label>
+                                <input type="number"
+                                       class="form-control bg-light"
+                                       id="amount_to_collect"
+                                       step="0.01"
+                                       value="{{ $financialReport->outstanding_amount }}"
+                                       placeholder="0.00"
+                                       readonly>
+                                <small class="text-muted">Outstanding amount (auto-calculated)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 <label for="total_purchase">Total Purchase <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('total_purchase') is-invalid @enderror"
@@ -173,7 +202,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="total_profit">Total Profit <span class="text-danger">*</span></label>
+                                <label for="total_profit">Current Profit <span class="text-danger">*</span></label>
                                 <input type="number"
                                        class="form-control @error('total_profit') is-invalid @enderror"
                                        id="total_profit"
@@ -185,7 +214,7 @@
                                 @error('total_profit')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
-                                <small class="text-muted">Calculated automatically</small>
+                                <small class="text-muted">Collected - all expenses (auto-calculated)</small>
                             </div>
                         </div>
                     </div>
@@ -287,24 +316,35 @@
 @push('custome-js')
 <script>
 $(document).ready(function() {
-    // Calculate total profit automatically
+    // Calculate total profit automatically based on actual collected amount
     function calculateProfit() {
-        const sales = parseFloat($('#total_sales').val()) || 0;
+        const actualCollected = parseFloat($('#actual_collected_amount').val()) || 0;
         const purchase = parseFloat($('#total_purchase').val()) || 0;
         const expense = parseFloat($('#total_expense').val()) || 0;
         const discount = parseFloat($('#discount_amount').val()) || 0;
         const lost = parseFloat($('#total_lost_amount').val()) || 0;
         const damage = parseFloat($('#total_damage_amount').val()) || 0;
 
-        const profit = sales - purchase - expense - discount - lost - damage;
+        const profit = actualCollected - purchase - expense - discount - lost - damage;
         $('#total_profit').val(profit.toFixed(2));
     }
 
+    // Calculate amount to collect
+    function calculateAmountToCollect() {
+        const totalSales = parseFloat($('#total_sales').val()) || 0;
+        const actualCollected = parseFloat($('#actual_collected_amount').val()) || 0;
+
+        const toCollect = totalSales - actualCollected;
+        $('#amount_to_collect').val(toCollect.toFixed(2));
+    }
+
     // Attach event listeners
-    $('#total_sales, #total_purchase, #total_expense, #discount_amount, #total_lost_amount, #total_damage_amount').on('input', calculateProfit);
+    $('#actual_collected_amount, #total_purchase, #total_expense, #discount_amount, #total_lost_amount, #total_damage_amount').on('input', calculateProfit);
+    $('#total_sales, #actual_collected_amount').on('input', calculateAmountToCollect);
 
     // Calculate on page load
     calculateProfit();
+    calculateAmountToCollect();
 });
 </script>
 @endpush
