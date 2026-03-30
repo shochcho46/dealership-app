@@ -29,8 +29,10 @@ class ReportController extends Controller
         $productName = Product::orderBy('name')->get();
         $query = Product::with(['stocks']);
 
+        // Filter by product (multi)
         if ($request->filled('product_id')) {
-            $query->where('id', $request->product_id);
+            $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
+            $query->whereIn('id', $productIds);
         }
 
         $products = $query->get()->map(function ($product) {
