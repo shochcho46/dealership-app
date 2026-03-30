@@ -41,7 +41,7 @@ class PaymentCollectionController extends Controller
             $query->whereDate('collection_date', '<=', $request->date_to);
         }
 
-        $collections = $query->orderBy('id', 'desc')->paginate($limit);
+        $collections = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());
 
         $totalCollected = VendorAccount::where('type', 2)->sum('amount');
         $totalPending = VendorAccount::where('type', 1)->sum('amount');

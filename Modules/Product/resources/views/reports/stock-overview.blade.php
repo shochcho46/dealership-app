@@ -43,11 +43,10 @@
                                         <!-- Product Filter -->
                                         <div class="col-md-3">
                                             <label class="form-label">Product</label>
-                                            <select name="product_id" class="form-select select2">
-                                                <option value="">All Products</option>
+                                            <select name="product_id[]" class="form-select select2" multiple>
                                                 @foreach ($productName as $nameproduct)
                                                     <option value="{{ $nameproduct->id }}"
-                                                        {{ request('product_id') == $nameproduct->id ? 'selected' : '' }}>
+                                                        {{ collect(request('product_id'))->contains($nameproduct->id) ? 'selected' : '' }}>
                                                         {{ $nameproduct->name }}
                                                     </option>
                                                 @endforeach
