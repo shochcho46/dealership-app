@@ -179,21 +179,42 @@
     }
 
     .place-by-item {
-        padding: 4px 8px;
-        margin: 2px 0;
-        background: #f8f9fa;
-        border-radius: 5px;
+        padding: 6px 10px;
+        margin: 3px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
         font-size: 0.85rem;
+        border-left: 4px solid #28a745;
+        transition: all 0.2s ease;
+    }
+
+    .place-by-item:hover {
+        transform: translateX(3px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .place-by-name {
         color: #495057;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 0.85rem;
     }
 
     .place-by-count {
         color: #007bff;
         font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .place-by-amount {
+        color: #28a745;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .place-by-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
     }
 </style>
 @endpush
@@ -361,7 +382,7 @@
                                 <th colspan="2" class="text-center bg-warning">Order Amount</th>
                                 <th colspan="2" class="text-center bg-success text-white">Collected</th>
                                 <th colspan="2" class="text-center bg-danger text-white">Due Amount</th>
-                                <th rowspan="2" class="text-center align-middle" style="vertical-align: middle; width: 180px;">Place By<br><small>(Current Period)</small></th>
+                                <th rowspan="2" class="text-center align-middle" style="vertical-align: middle; width: 220px;">Order & Collection<br><small>(Current Period)</small></th>
                                 <th rowspan="2" class="text-center align-middle" style="vertical-align: middle; width: 200px;">All-Time Stats</th>
                             </tr>
                             <tr>
@@ -484,24 +505,65 @@
                                         </div>
                                     </td>
 
-                                    <!-- Place By Breakdown -->
+                                    <!-- Order & Collection Breakdown -->
                                     <td>
-                                        @if($analysis['place_by_breakdown']->count() > 0)
-                                            <div class="d-flex flex-column gap-1">
-                                                @foreach($analysis['place_by_breakdown'] as $placeBy)
-                                                    <div class="place-by-item d-flex justify-content-between align-items-center">
-                                                        <span class="place-by-name">
-                                                            <i class="mdi mdi-account-tie"></i> {{ $placeBy['admin']->name ?? 'N/A' }}
-                                                        </span>
-                                                        <span class="place-by-count">
-                                                            {{ $placeBy['count'] }} <small class="text-muted">orders</small>
-                                                        </span>
+                                        <div class="d-flex flex-column gap-2">
+                                            @if($analysis['place_by_breakdown']->count() > 0)
+                                                <div>
+                                                    <div class="text-primary fw-bold mb-2" style="font-size: 0.85rem;">
+                                                        <i class="mdi mdi-cart"></i> Orders Placed:
                                                     </div>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <span class="text-muted">No orders</span>
-                                        @endif
+                                                    @foreach($analysis['place_by_breakdown'] as $placer)
+                                                        <div class="place-by-item" style="border-left-color: #007bff;">
+                                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                <span class="place-by-name">
+                                                                    <i class="mdi mdi-account-tie"></i> {{ $placer['admin']->name ?? 'N/A' }}
+                                                                </span>
+                                                                <span class="place-by-count">
+                                                                    {{ $placer['order_count'] }} <small class="text-muted">orders</small>
+                                                                </span>
+                                                            </div>
+                                                            <div class="text-end">
+                                                                <small class="text-muted">Amount:</small>
+                                                                <strong class="text-warning">৳{{ number_format($placer['amount'], 0) }}</strong>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            @if($analysis['collection_breakdown']->count() > 0)
+                                                <div>
+                                                    <div class="text-success fw-bold mb-2 mt-2" style="font-size: 0.85rem;">
+                                                        <i class="mdi mdi-cash-multiple"></i> Collections:
+                                                    </div>
+                                                    @foreach($analysis['collection_breakdown'] as $collector)
+                                                        <div class="place-by-item">
+                                                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                                                <span class="place-by-name">
+                                                                    <i class="mdi mdi-account-cash"></i> {{ $collector['admin']->name ?? 'N/A' }}
+                                                                </span>
+                                                                <span class="place-by-count">
+                                                                    {{ $collector['order_count'] }} <small class="text-muted">orders</small>
+                                                                </span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-muted">
+                                                                    <i class="mdi mdi-swap-horizontal"></i> {{ $collector['transaction_count'] }} transactions
+                                                                </small>
+                                                                <span class="place-by-amount">
+                                                                    ৳{{ number_format($collector['collected'], 0) }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            @if($analysis['place_by_breakdown']->count() == 0 && $analysis['collection_breakdown']->count() == 0)
+                                                <span class="text-muted">No activity</span>
+                                            @endif
+                                        </div>
                                     </td>
 
                                     <!-- All-Time Stats -->
@@ -592,7 +654,9 @@
                                 <div class="mini-progress"><div class="mini-progress-bar progress-success" style="width: 70%"></div></div>
                                 Visual comparison bars for amounts
                             </li>
-                            <li class="mb-2"><strong>Place By:</strong> Shows who placed orders for each vendor</li>
+                            <li class="mb-2"><strong>Order & Collection:</strong> Shows both order placement and collection activity for each vendor</li>
+                            <li class="mb-2 text-muted"><small>- Orders Placed: Who placed orders, count, and total amount</small></li>
+                            <li class="mb-2 text-muted"><small>- Collections: Who collected payments, number of transactions, and total collected</small></li>
                         </ul>
                     </div>
                 </div>

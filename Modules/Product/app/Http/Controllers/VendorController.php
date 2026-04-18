@@ -517,17 +517,40 @@ class VendorController extends Controller
 
             $allTimeDue = $allTimeTotalAmount - $allTimeCollected;
 
-            // Get place_by breakdown for current period
+            // Get place_by breakdown (who placed orders) for current period
             $placeByBreakdown = $currentVendorOrders->groupBy('place_by')
                 ->map(function ($orders, $placeById) {
                     $admin = Admin::find($placeById);
                     return [
                         'admin' => $admin,
-                        'count' => $orders->count(),
+                        'order_count' => $orders->count(),
                         'amount' => $orders->sum('total_amount'),
                     ];
                 })
-                ->sortByDesc('count')
+                ->sortByDesc('order_count')
+                ->values();
+
+            // Get collection breakdown by deposite_by (who collected money) for current period
+            $collectionBreakdown = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 2) // Credit/Payment
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereNotNull('deposite_by')
+                ->with('depositeBy')
+                ->get()
+                ->groupBy('deposite_by')
+                ->map(function ($accounts, $depositeById) {
+                    $admin = Admin::find($depositeById);
+                    return [
+                        'admin' => $admin,
+                        'order_count' => $accounts->whereNotNull('order_id')->pluck('order_id')->unique()->count(),
+                        'collected' => $accounts->sum('amount'),
+                        'transaction_count' => $accounts->count(),
+                    ];
+                })
+                ->filter(function ($item) {
+                    return $item['collected'] > 0;
+                })
+                ->sortByDesc('collected')
                 ->values();
 
             return [
@@ -557,6 +580,7 @@ class VendorController extends Controller
                     'due' => $allTimeDue,
                 ],
                 'place_by_breakdown' => $placeByBreakdown,
+                'collection_breakdown' => $collectionBreakdown,
             ];
         });
 
