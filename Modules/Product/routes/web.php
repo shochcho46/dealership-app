@@ -98,6 +98,7 @@ Route::prefix('admin')->group(function () {
             Route::post('vendor/add/money', 'storeVendorAccount')->name('admin.storeVendorAccount');
             Route::delete('vendor/delete/{vendorAccount}/money', 'destroyVendorAccount')->name('admin.destroyVendorAccount');
             Route::get('vendor/all-fixed', 'getVendorallFixed')->name('admin.getVendorallFixed');
+            Route::get('vendor/analysis', 'vendorAnalysis')->name('admin.vendorAnalysis');
         });
 
         // Order Status routes
