@@ -143,16 +143,38 @@
                     </li>
                 @endcanany
 
-                @can('vendor_list')
+                @canany(['vendor_list', 'vendor_analysis'])
                     <li class="nav-header">VENDOR MANAGEMENT</li>
                     <!-- Vendors -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->is('admin/vendor/*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->is('admin/vendor/*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->is('admin/vendor/*') ? 'active' : '' }}">
                             <i class="nav-icon mdi mdi-account-group"></i>
-                            <p>Vendors</p>
+                            <p>
+                                Vendors
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            @can('vendor_list')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->is('admin/vendor/index') || request()->is('admin/vendor/*/edit') || request()->is('admin/vendor/create') || request()->is('admin/vendor/*/account') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-format-list-bulleted"></i>
+                                        <p>Vendor List</p>
+                                    </a>
+                                </li>
+                             @endcan
+
+                            @can('vendor_analysis')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.vendorAnalysis') }}" class="nav-link {{ request()->is('admin/vendor/analysis') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-chart-line"></i>
+                                        <p>Vendor Analysis</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
                     </li>
-                @endcan
+                @endcanany
 
 
                 @canany(['stock_list', 'stock_overview_list', 'warehouse_list'])
