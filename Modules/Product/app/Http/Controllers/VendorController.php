@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Vendor;
 use Modules\Product\Models\VendorAccount;
+use Modules\Product\Models\Order;
 use App\Models\Country;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -393,6 +394,219 @@ class VendorController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete account. Please try again.');
         }
+    }
+
+    /**
+     * Vendor Analysis Report - Compare date ranges with vendor performance
+     */
+    public function vendorAnalysis(Request $request)
+    {
+        $limit = $request->get('limit', 50);
+
+        // Set default date range - last 7 days if no dates provided
+        $endDate = $request->filled('end_date')
+            ? Carbon::parse($request->end_date)->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        $startDate = $request->filled('start_date')
+            ? Carbon::parse($request->start_date)->startOfDay()
+            : Carbon::parse($endDate)->subDays(6)->startOfDay();
+
+        // Calculate previous period (same length) - round to whole number
+        $daysDiff = round($startDate->diffInDays($endDate) + 1);
+        $previousStartDate = Carbon::parse($startDate)->subDays($daysDiff)->startOfDay();
+        $previousEndDate = Carbon::parse($startDate)->subDay()->endOfDay();
+
+        // Build base query for vendors
+        $vendorQuery = Vendor::query()->with('country');
+
+        // Filter by vendor (multiple selection)
+        if ($request->filled('vendor_id')) {
+            $vendorIds = is_array($request->vendor_id) ? $request->vendor_id : [$request->vendor_id];
+            $vendorQuery->whereIn('id', $vendorIds);
+        }
+
+        // Get vendors
+        $vendors = $vendorQuery->get();
+
+        // Build query for current period orders
+        $currentOrdersQuery = Order::with(['vendor', 'placeBy', 'orderItems'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('order_status_id', '!=', 6); // Exclude cancelled
+
+        // Build query for previous period orders
+        $previousOrdersQuery = Order::with(['vendor', 'placeBy', 'orderItems'])
+            ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
+            ->where('order_status_id', '!=', 6); // Exclude cancelled
+
+        // Filter by place_by (multiple selection)
+        if ($request->filled('place_by')) {
+            $placeByIds = is_array($request->place_by) ? $request->place_by : [$request->place_by];
+            $currentOrdersQuery->whereIn('place_by', $placeByIds);
+            $previousOrdersQuery->whereIn('place_by', $placeByIds);
+        }
+
+        // Filter by vendor in orders
+        if ($request->filled('vendor_id')) {
+            $vendorIds = is_array($request->vendor_id) ? $request->vendor_id : [$request->vendor_id];
+            $currentOrdersQuery->whereIn('vendor_id', $vendorIds);
+            $previousOrdersQuery->whereIn('vendor_id', $vendorIds);
+        }
+
+        $currentOrders = $currentOrdersQuery->get();
+        $previousOrders = $previousOrdersQuery->get();
+
+        // Build vendor analysis data
+        $vendorAnalysisCollection = $vendors->map(function ($vendor) use ($currentOrders, $previousOrders, $startDate, $endDate, $previousStartDate, $previousEndDate) {
+            // Current Period Data
+            $currentVendorOrders = $currentOrders->where('vendor_id', $vendor->id);
+            $currentOrderCount = $currentVendorOrders->count();
+            $currentTotalAmount = $currentVendorOrders->sum('total_amount');
+
+            // Get collections (payments) for current period
+            $currentCollected = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 2) // Credit/Payment
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('amount');
+
+            // Calculate current due (orders amount - collected)
+            $currentDue = $currentTotalAmount - $currentCollected;
+
+            // Previous Period Data
+            $previousVendorOrders = $previousOrders->where('vendor_id', $vendor->id);
+            $previousOrderCount = $previousVendorOrders->count();
+            $previousTotalAmount = $previousVendorOrders->sum('total_amount');
+
+            // Get collections for previous period
+            $previousCollected = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 2)
+                ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
+                ->sum('amount');
+
+            $previousDue = $previousTotalAmount - $previousCollected;
+
+            // Calculate percentage changes
+            $orderCountChange = $previousOrderCount > 0
+                ? (($currentOrderCount - $previousOrderCount) / $previousOrderCount) * 100
+                : ($currentOrderCount > 0 ? 100 : 0);
+
+            $amountChange = $previousTotalAmount > 0
+                ? (($currentTotalAmount - $previousTotalAmount) / $previousTotalAmount) * 100
+                : ($currentTotalAmount > 0 ? 100 : 0);
+
+            $collectionChange = $previousCollected > 0
+                ? (($currentCollected - $previousCollected) / $previousCollected) * 100
+                : ($currentCollected > 0 ? 100 : 0);
+
+            $dueChange = $previousDue > 0
+                ? (($currentDue - $previousDue) / $previousDue) * 100
+                : ($currentDue > 0 ? 100 : 0);
+
+            // All-time statistics
+            $allTimeOrders = Order::where('vendor_id', $vendor->id)
+                ->where('order_status_id', '!=', 6)
+                ->count();
+
+            $allTimeTotalAmount = Order::where('vendor_id', $vendor->id)
+                ->where('order_status_id', '!=', 6)
+                ->sum('total_amount');
+
+            $allTimeCollected = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 2)
+                ->sum('amount');
+
+            $allTimeDue = $allTimeTotalAmount - $allTimeCollected;
+
+            // Get place_by breakdown for current period
+            $placeByBreakdown = $currentVendorOrders->groupBy('place_by')
+                ->map(function ($orders, $placeById) {
+                    $admin = Admin::find($placeById);
+                    return [
+                        'admin' => $admin,
+                        'count' => $orders->count(),
+                        'amount' => $orders->sum('total_amount'),
+                    ];
+                })
+                ->sortByDesc('count')
+                ->values();
+
+            return [
+                'vendor' => $vendor,
+                'current' => [
+                    'order_count' => $currentOrderCount,
+                    'total_amount' => $currentTotalAmount,
+                    'collected' => $currentCollected,
+                    'due' => $currentDue,
+                ],
+                'previous' => [
+                    'order_count' => $previousOrderCount,
+                    'total_amount' => $previousTotalAmount,
+                    'collected' => $previousCollected,
+                    'due' => $previousDue,
+                ],
+                'changes' => [
+                    'order_count' => $orderCountChange,
+                    'amount' => $amountChange,
+                    'collection' => $collectionChange,
+                    'due' => $dueChange,
+                ],
+                'all_time' => [
+                    'order_count' => $allTimeOrders,
+                    'total_amount' => $allTimeTotalAmount,
+                    'collected' => $allTimeCollected,
+                    'due' => $allTimeDue,
+                ],
+                'place_by_breakdown' => $placeByBreakdown,
+            ];
+        });
+
+        // Sort by current due amount (descending)
+        $vendorAnalysisCollection = $vendorAnalysisCollection->sortByDesc('current.due');
+
+        // Calculate totals for the filtered results
+        $totals = [
+            'current' => [
+                'order_count' => $vendorAnalysisCollection->sum('current.order_count'),
+                'total_amount' => $vendorAnalysisCollection->sum('current.total_amount'),
+                'collected' => $vendorAnalysisCollection->sum('current.collected'),
+                'due' => $vendorAnalysisCollection->sum('current.due'),
+            ],
+            'previous' => [
+                'order_count' => $vendorAnalysisCollection->sum('previous.order_count'),
+                'total_amount' => $vendorAnalysisCollection->sum('previous.total_amount'),
+                'collected' => $vendorAnalysisCollection->sum('previous.collected'),
+                'due' => $vendorAnalysisCollection->sum('previous.due'),
+            ],
+        ];
+
+        // Paginate the collection
+        $currentPage = $request->get('page', 1);
+        $vendorAnalysisPaginated = new \Illuminate\Pagination\LengthAwarePaginator(
+            $vendorAnalysisCollection->forPage($currentPage, $limit),
+            $vendorAnalysisCollection->count(),
+            $limit,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $vendorAnalysis = $vendorAnalysisPaginated;
+
+        // Get filter data
+        $allVendors = Vendor::orderBy('shop_name')->get();
+        $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
+
+        return view('product::vendor.analysis', compact(
+            'vendorAnalysis',
+            'totals',
+            'allVendors',
+            'admins',
+            'startDate',
+            'endDate',
+            'previousStartDate',
+            'previousEndDate',
+            'daysDiff',
+            'limit'
+        ));
     }
 
 }
