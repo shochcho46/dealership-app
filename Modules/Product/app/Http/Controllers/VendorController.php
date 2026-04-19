@@ -23,27 +23,40 @@ class VendorController extends Controller
         $limit = request()->get('limit', 50);
         $search = request()->get('search');
         $query = Vendor::with('country')
+            // Old Due (manual entries without order_id)
+            ->withSum(
+                ['vendorAccounts as old_debit' => function ($q) {
+                    $q->where('type', 1)->whereNull('order_id');
+                }],
+                'amount'
+            )
+            ->withSum(
+                ['vendorAccounts as old_credit' => function ($q) {
+                    $q->where('type', 2)->whereNull('order_id');
+                }],
+                'amount'
+            )
+            // Total Due (all entries)
             ->withSum(
                 ['vendorAccounts as total_debit' => function ($q) {
                     $q->where('type', 1);
                 }],
                 'amount'
-            )->withSum(
+            )
+            ->withSum(
                 ['vendorAccounts as total_credit' => function ($q) {
                     $q->where('type', 2);
                 }],
                 'amount'
             )
-
-        ->when($search, function ($q) use ($search) {
-            $q->where(function ($sub) use ($search) {
-                $sub->where('email', 'like', "%{$search}%")
-                    ->orWhere('mobile', 'like', "%{$search}%")
-                    ->orWhere('shop_name', 'like', "%{$search}%")
-                    ->orWhere('contact_person', 'like', "%{$search}%");
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('email', 'like', "%{$search}%")
+                        ->orWhere('mobile', 'like', "%{$search}%")
+                        ->orWhere('shop_name', 'like', "%{$search}%")
+                        ->orWhere('contact_person', 'like', "%{$search}%");
+                });
             });
-        });
-
 
         // 🔹 Clone full query for overall totals
         $fullQuery = clone $query;
@@ -51,23 +64,35 @@ class VendorController extends Controller
         // 🔹 Paginated result
         $vendors = $query->orderBy('id', 'desc')->paginate($limit);
 
+        // Calculate old_due and due_balance for each vendor
+        $vendors->getCollection()->transform(function ($vendor) {
+            $vendor->old_due = ($vendor->old_debit ?? 0) - ($vendor->old_credit ?? 0);
+            $vendor->due_balance = ($vendor->total_debit ?? 0) - ($vendor->total_credit ?? 0);
+            return $vendor;
+        });
+
         /* ===============================
             OVERALL TOTAL (ALL RECORDS)
         =============================== */
-        $overallDueBalance = $fullQuery->get()->sum(function ($vendor) {
+        $allVendors = $fullQuery->get();
+        $overallOldDue = $allVendors->sum(function ($vendor) {
+            return ($vendor->old_debit ?? 0) - ($vendor->old_credit ?? 0);
+        });
+        $overallDueBalance = $allVendors->sum(function ($vendor) {
             return ($vendor->total_debit ?? 0) - ($vendor->total_credit ?? 0);
         });
 
         /* ===============================
             CURRENT PAGE TOTAL
         =============================== */
-        $pageDueBalance = $vendors->getCollection()->sum(function ($vendor) {
-            return ($vendor->total_debit ?? 0) - ($vendor->total_credit ?? 0);
-        });
+        $pageOldDue = $vendors->getCollection()->sum('old_due');
+        $pageDueBalance = $vendors->getCollection()->sum('due_balance');
 
         return view('product::vendor.index', compact(
             'vendors',
+            'overallOldDue',
             'overallDueBalance',
+            'pageOldDue',
             'pageDueBalance'
         ));
     }
@@ -458,32 +483,50 @@ class VendorController extends Controller
 
         // Build vendor analysis data
         $vendorAnalysisCollection = $vendors->map(function ($vendor) use ($currentOrders, $previousOrders, $startDate, $endDate, $previousStartDate, $previousEndDate) {
+            // Get old due (manual entries without order_id) - these are balances from before the software
+            $oldDueDebit = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 1)
+                ->whereNull('order_id')
+                ->sum('amount');
+
+            $oldDueCredit = VendorAccount::where('vendor_id', $vendor->id)
+                ->where('type', 2)
+                ->whereNull('order_id')
+                ->sum('amount');
+
+            $oldDue = $oldDueDebit - $oldDueCredit;
+
             // Current Period Data
             $currentVendorOrders = $currentOrders->where('vendor_id', $vendor->id);
             $currentOrderCount = $currentVendorOrders->count();
             $currentTotalAmount = $currentVendorOrders->sum('total_amount');
 
-            // Get collections (payments) for current period
+            // Get collections (payments) for current period - only those linked to orders
             $currentCollected = VendorAccount::where('vendor_id', $vendor->id)
                 ->where('type', 2) // Credit/Payment
+                ->whereNotNull('order_id') // Only order-related payments
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->sum('amount');
 
-            // Calculate current due (orders amount - collected)
-            $currentDue = $currentTotalAmount - $currentCollected;
+            // Calculate current period due (orders in period - collections in period)
+            $currentPeriodDue = $currentTotalAmount - $currentCollected;
+            $currentDue = $currentPeriodDue; // For Due Amount column
 
             // Previous Period Data
             $previousVendorOrders = $previousOrders->where('vendor_id', $vendor->id);
             $previousOrderCount = $previousVendorOrders->count();
             $previousTotalAmount = $previousVendorOrders->sum('total_amount');
 
-            // Get collections for previous period
+            // Get collections for previous period - only those linked to orders
             $previousCollected = VendorAccount::where('vendor_id', $vendor->id)
                 ->where('type', 2)
+                ->whereNotNull('order_id') // Only order-related payments
                 ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
                 ->sum('amount');
 
-            $previousDue = $previousTotalAmount - $previousCollected;
+            // Calculate previous period due (orders in period - collections in period)
+            $previousPeriodDue = $previousTotalAmount - $previousCollected;
+            $previousDue = $previousPeriodDue; // For Due Amount column
 
             // Calculate percentage changes
             $orderCountChange = $previousOrderCount > 0
@@ -511,11 +554,13 @@ class VendorController extends Controller
                 ->where('order_status_id', '!=', 6)
                 ->sum('total_amount');
 
+            // All-time collected (only order-related payments)
             $allTimeCollected = VendorAccount::where('vendor_id', $vendor->id)
                 ->where('type', 2)
+                ->whereNotNull('order_id')
                 ->sum('amount');
 
-            $allTimeDue = $allTimeTotalAmount - $allTimeCollected;
+            $allTimeDue = ($allTimeTotalAmount - $allTimeCollected) + $oldDue;
 
             // Get place_by breakdown (who placed orders) for current period
             $placeByBreakdown = $currentVendorOrders->groupBy('place_by')
@@ -555,17 +600,20 @@ class VendorController extends Controller
 
             return [
                 'vendor' => $vendor,
+                'old_due' => $oldDue,
                 'current' => [
                     'order_count' => $currentOrderCount,
                     'total_amount' => $currentTotalAmount,
                     'collected' => $currentCollected,
-                    'due' => $currentDue,
+                    'period_due' => $currentPeriodDue, // Due for this period only
+                    'due' => $currentDue, // Total due including old due
                 ],
                 'previous' => [
                     'order_count' => $previousOrderCount,
                     'total_amount' => $previousTotalAmount,
                     'collected' => $previousCollected,
-                    'due' => $previousDue,
+                    'period_due' => $previousPeriodDue, // Due for this period only
+                    'due' => $previousDue, // Total due including old due
                 ],
                 'changes' => [
                     'order_count' => $orderCountChange,
@@ -585,21 +633,45 @@ class VendorController extends Controller
         });
 
         // Sort by current due amount (descending)
-        $vendorAnalysisCollection = $vendorAnalysisCollection->sortByDesc('current.due');
+        $vendorAnalysisCollection = $vendorAnalysisCollection->sortByDesc(function ($item) {
+            return $item['current']['due'];
+        });
 
         // Calculate totals for the filtered results
         $totals = [
             'current' => [
-                'order_count' => $vendorAnalysisCollection->sum('current.order_count'),
-                'total_amount' => $vendorAnalysisCollection->sum('current.total_amount'),
-                'collected' => $vendorAnalysisCollection->sum('current.collected'),
-                'due' => $vendorAnalysisCollection->sum('current.due'),
+                'order_count' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['current']['order_count'];
+                }),
+                'total_amount' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['current']['total_amount'];
+                }),
+                'collected' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['current']['collected'];
+                }),
+                'period_due' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['current']['period_due'];
+                }),
+                'due' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['current']['due'];
+                }),
             ],
             'previous' => [
-                'order_count' => $vendorAnalysisCollection->sum('previous.order_count'),
-                'total_amount' => $vendorAnalysisCollection->sum('previous.total_amount'),
-                'collected' => $vendorAnalysisCollection->sum('previous.collected'),
-                'due' => $vendorAnalysisCollection->sum('previous.due'),
+                'order_count' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['previous']['order_count'];
+                }),
+                'total_amount' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['previous']['total_amount'];
+                }),
+                'collected' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['previous']['collected'];
+                }),
+                'period_due' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['previous']['period_due'];
+                }),
+                'due' => $vendorAnalysisCollection->sum(function ($item) {
+                    return $item['previous']['due'];
+                }),
             ],
         ];
 
