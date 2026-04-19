@@ -71,14 +71,25 @@
     }
 
     .vendor-name-cell {
-        font-weight: 600;
         color: #2c3e50;
-        font-size: 1.05rem;
+        min-width: 150px;
     }
 
     .table-responsive {
         border-radius: 10px;
-        overflow: hidden;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 768px) {
+        .table {
+            font-size: 0.85rem;
+        }
+
+        .percentage-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+        }
     }
 
     .filter-section {
@@ -147,35 +158,19 @@
         font-weight: 600;
     }
 
-    /* Visual Progress Bars */
-    .mini-progress {
-        height: 6px;
-        background-color: #e9ecef;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-top: 5px;
+    /* Compact table styling for small screens */
+    .table-responsive {
+        font-size: 0.9rem;
     }
 
-    .mini-progress-bar {
-        height: 100%;
-        border-radius: 10px;
-        transition: width 0.4s ease;
-    }
-
-    .progress-success {
-        background: linear-gradient(90deg, #56ab2f 0%, #a8e063 100%);
-    }
-
-    .progress-info {
-        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-    }
-
-    .progress-warning {
-        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-    }
-
-    .progress-danger {
-        background: linear-gradient(90deg, #eb3349 0%, #f45c43 100%);
+    @media (max-width: 1400px) {
+        .table-responsive {
+            font-size: 0.85rem;
+        }
+        .percentage-badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+        }
     }
 
     .place-by-item {
@@ -359,8 +354,8 @@
                 <div class="col-md-3">
                     <div class="text-center">
                         <div class="period-label text-white">Current Period</div>
-                        <div class="metric-value">৳{{ number_format($totals['current']['due'], 2) }}</div>
-                        <div class="metric-label">Due Amount</div>
+                        <div class="metric-value">৳{{ number_format($totals['current']['period_due'], 2) }}</div>
+                        <div class="metric-label">Period Due Amount</div>
                     </div>
                 </div>
             </div>
@@ -376,24 +371,24 @@
                     <table class="table table-hover table-bordered mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th rowspan="2" class="align-middle text-center" style="vertical-align: middle; width: 50px;">SL</th>
-                                <th rowspan="2" class="align-middle" style="vertical-align: middle; width: 150px;">Vendor Name</th>
+                                <th rowspan="2" class="align-middle text-center">SL</th>
+                                <th rowspan="2" class="align-middle">Vendor Details</th>
                                 <th colspan="2" class="text-center bg-info text-white">Orders</th>
                                 <th colspan="2" class="text-center bg-warning">Order Amount</th>
                                 <th colspan="2" class="text-center bg-success text-white">Collected</th>
                                 <th colspan="2" class="text-center bg-danger text-white">Due Amount</th>
-                                <th rowspan="2" class="text-center align-middle" style="vertical-align: middle; width: 220px;">Order & Collection<br><small>(Current Period)</small></th>
-                                <th rowspan="2" class="text-center align-middle" style="vertical-align: middle; width: 200px;">All-Time Stats</th>
+                                <th rowspan="2" class="text-center align-middle">Order & Collection<br><small>(Current Period)</small></th>
+                                <th rowspan="2" class="text-center align-middle">All-Time Stats</th>
                             </tr>
                             <tr>
-                                <th class="text-center" style="font-size: 0.75rem;">Current</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Previous</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Current</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Previous</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Current</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Previous</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Current</th>
-                                <th class="text-center" style="font-size: 0.75rem;">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Previous</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -401,11 +396,17 @@
                                 <tr>
                                     <td class="text-center">{{ ($vendorAnalysis->currentPage() - 1) * $vendorAnalysis->perPage() + $key + 1 }}</td>
                                     <td class="vendor-name-cell">
-                                        <i class="mdi mdi-domain"></i> {{ Str::limit($analysis['vendor']->shop_name, 100) }}
-                                        <br>
-                                        <small class="text-muted">
+                                        <div class="fw-bold">
+                                            <i class="mdi mdi-domain"></i> {{ $analysis['vendor']->shop_name }}
+                                        </div>
+                                        <small class="text-muted d-block">
                                             <i class="mdi mdi-phone"></i> {{ $analysis['vendor']->mobile }}
                                         </small>
+                                        @if($analysis['vendor']->full_address)
+                                            <small class="text-muted d-block">
+                                                <i class="mdi mdi-map-marker"></i> {{ $analysis['vendor']->full_address }}
+                                            </small>
+                                        @endif
                                     </td>
 
                                     <!-- Orders -->
@@ -431,22 +432,9 @@
                                                 {{ number_format(abs($analysis['changes']['amount']), 1) }}%
                                             </span>
                                         @endif
-                                        @php
-                                            $maxAmount = max($analysis['current']['total_amount'], $analysis['previous']['total_amount'], 1);
-                                            $currentWidthAmount = ($analysis['current']['total_amount'] / $maxAmount) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-warning" style="width: {{ $currentWidthAmount }}%"></div>
-                                        </div>
                                     </td>
                                     <td class="text-end text-muted">
                                         ৳{{ number_format($analysis['previous']['total_amount'], 2) }}
-                                        @php
-                                            $previousWidthAmount = ($analysis['previous']['total_amount'] / $maxAmount) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-info" style="width: {{ $previousWidthAmount }}%"></div>
-                                        </div>
                                     </td>
 
                                     <!-- Collected -->
@@ -459,22 +447,9 @@
                                                 {{ number_format(abs($analysis['changes']['collection']), 1) }}%
                                             </span>
                                         @endif
-                                        @php
-                                            $maxCollected = max($analysis['current']['collected'], $analysis['previous']['collected'], 1);
-                                            $currentWidthCollected = ($analysis['current']['collected'] / $maxCollected) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-success" style="width: {{ $currentWidthCollected }}%"></div>
-                                        </div>
                                     </td>
                                     <td class="text-end text-muted">
                                         ৳{{ number_format($analysis['previous']['collected'], 2) }}
-                                        @php
-                                            $previousWidthCollected = ($analysis['previous']['collected'] / $maxCollected) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-info" style="width: {{ $previousWidthCollected }}%"></div>
-                                        </div>
                                     </td>
 
                                     <!-- Due -->
@@ -487,22 +462,9 @@
                                                 {{ number_format(abs($analysis['changes']['due']), 1) }}%
                                             </span>
                                         @endif
-                                        @php
-                                            $maxDue = max($analysis['current']['due'], $analysis['previous']['due'], 1);
-                                            $currentWidthDue = ($analysis['current']['due'] / $maxDue) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-danger" style="width: {{ $currentWidthDue }}%"></div>
-                                        </div>
                                     </td>
                                     <td class="text-end text-muted">
                                         ৳{{ number_format($analysis['previous']['due'], 2) }}
-                                        @php
-                                            $previousWidthDue = ($analysis['previous']['due'] / $maxDue) * 100;
-                                        @endphp
-                                        <div class="mini-progress">
-                                            <div class="mini-progress-bar progress-danger" style="width: {{ $previousWidthDue }}%"></div>
-                                        </div>
                                     </td>
 
                                     <!-- Order & Collection Breakdown -->
@@ -569,6 +531,11 @@
                                     <!-- All-Time Stats -->
                                     <td class="text-center">
                                         <div class="d-flex flex-column gap-1">
+                                            @if($analysis['old_due'] > 0)
+                                                <span class="badge badge-metric bg-warning text-dark" title="Old Due (Before Software)">
+                                                    <i class="mdi mdi-history icon-metric"></i>৳{{ number_format($analysis['old_due'], 0) }} Old Due
+                                                </span>
+                                            @endif
                                             <span class="badge badge-metric bg-primary">
                                                 <i class="mdi mdi-cart icon-metric"></i>{{ $analysis['all_time']['order_count'] }} Orders
                                             </span>
@@ -579,7 +546,7 @@
                                                 <i class="mdi mdi-cash-check icon-metric"></i>৳{{ number_format($analysis['all_time']['collected'], 0) }}
                                             </span>
                                             <span class="badge badge-metric bg-danger">
-                                                <i class="mdi mdi-alert-circle icon-metric"></i>৳{{ number_format($analysis['all_time']['due'], 0) }}
+                                                <i class="mdi mdi-alert-circle icon-metric"></i>৳{{ number_format($analysis['all_time']['due'], 0) }} Total Due
                                             </span>
                                         </div>
                                     </td>
@@ -645,15 +612,19 @@
                             <li class="mb-2"><strong>Current Period:</strong> Selected date range</li>
                             <li class="mb-2"><strong>Previous Period:</strong> Same duration before current period</li>
                             <li class="mb-2"><strong>All-Time Stats:</strong> Lifetime vendor performance</li>
+                            <li class="mb-2"><strong>Old Due:</strong> Balance from before software implementation (manual entries)</li>
                         </ul>
                     </div>
                     <div class="col-md-4">
                         <h6 class="text-primary mb-2">Visual Features</h6>
                         <ul class="list-unstyled">
                             <li class="mb-2">
-                                <div class="mini-progress"><div class="mini-progress-bar progress-success" style="width: 70%"></div></div>
-                                Visual comparison bars for amounts
+                                <span class="percentage-badge percentage-up"><i class="mdi mdi-arrow-up"></i> 25%</span>
+                                Percentage badges showing change from previous to current period
                             </li>
+                            <li class="mb-2"><span class="percentage-badge percentage-up"><i class="mdi mdi-arrow-up"></i></span> <strong>Green:</strong> Positive trend (increase in orders/collections, decrease in due)</li>
+                            <li class="mb-2"><span class="percentage-badge percentage-down"><i class="mdi mdi-arrow-down"></i></span> <strong>Red:</strong> Negative trend (decrease in orders/collections, increase in due)</li>
+                            <li class="mb-2"><strong>Responsive Design:</strong> Optimized for all screen sizes</li>
                             <li class="mb-2"><strong>Order & Collection:</strong> Shows both order placement and collection activity for each vendor</li>
                             <li class="mb-2 text-muted"><small>- Orders Placed: Who placed orders, count, and total amount</small></li>
                             <li class="mb-2 text-muted"><small>- Collections: Who collected payments, number of transactions, and total collected</small></li>
