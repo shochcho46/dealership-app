@@ -148,14 +148,17 @@
                                 <tfoot class="table-secondary">
 
                                     <tr>
-                                        <th colspan="8" class="text-end">Current Page Total:</th>
-                                        <th class="text-danger"> ৳ {{ $pageDueBalance }}</th>
-
+                                        <th colspan="7" class="text-end">Current Page Total:</th>
+                                        <th class="text-danger"> ৳ {{ number_format($pageOldDue, 2) }}</th>
+                                        <th class="text-danger"> ৳ {{ number_format($pageDueBalance, 2) }}</th>
+                                        <th colspan="2"></th>
                                     </tr>
 
                                     <tr>
-                                        <th colspan="8" class="text-end">All Page Total:</th>
-                                        <th class="text-danger"> ৳ {{ $overallDueBalance }}</th>
+                                        <th colspan="7" class="text-end">All Page Total:</th>
+                                        <th class="text-danger"> ৳ {{ number_format($overallOldDue, 2) }}</th>
+                                        <th class="text-danger"> ৳ {{ number_format($overallDueBalance, 2) }}</th>
+                                        <th colspan="2"></th>
                                     </tr>
 
                             </tfoot>

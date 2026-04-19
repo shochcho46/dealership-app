@@ -143,7 +143,7 @@ class Vendor extends Model implements HasMedia
         ->whereNull('order_id')
         ->sum('amount');
 
-    return $total_credit - $total_debit;
+    return $total_debit - $total_credit;
 }
 
 }
