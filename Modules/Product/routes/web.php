@@ -89,6 +89,7 @@ Route::prefix('admin')->group(function () {
         // Vendor routes
         Route::controller(VendorController::class)->group(function () {
             Route::get('vendor/index', 'index')->name('admin.vendorIndex');
+            Route::get('vendor/export', 'export')->name('admin.vendorExport');
             Route::get('vendor/create', 'create')->name('admin.vendorCreate');
             Route::post('vendor/store', 'store')->name('admin.vendorStore');
             Route::get('vendor/{vendor}/edit', 'edit')->name('admin.vendorEdit');
