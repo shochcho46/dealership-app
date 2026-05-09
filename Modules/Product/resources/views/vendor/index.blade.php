@@ -37,6 +37,9 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h1 class="mt-3">Vendor List</h1>
                     <div class="text-end">
+                        <a href="{{ route('admin.vendorExport') }}" class="btn btn-success me-2">
+                            <span class="mdi mdi-file-excel"></span> Export Excel
+                        </a>
                         <a href="{{ route('admin.vendorCreate') }}" class="btn btn-primary">
                             <span class="mdi mdi-plus"></span> Add New Vendor
                         </a>

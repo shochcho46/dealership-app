@@ -12,6 +12,8 @@ use App\Models\Country;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\Admin\Entities\Business;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\Product\Exports\VendorExport;
 
 class VendorController extends Controller
 {
@@ -245,6 +247,18 @@ class VendorController extends Controller
             return redirect()->route('admin.vendorIndex')->with('success', 'Vendor deleted successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete vendor. Please try again.');
+        }
+    }
+
+    /**
+     * Export vendors to Excel
+     */
+    public function export()
+    {
+        try {
+            return Excel::download(new VendorExport, 'vendors_' . date('Y-m-d_His') . '.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to export vendors. Please try again.');
         }
     }
 
