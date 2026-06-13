@@ -163,15 +163,26 @@ class OrderItem extends Model
     public function getItemTotalProfitAttribute()
     {
         return $this->orderItemStocks->sum(function ($itemStock) {
-            $actualProfit = $itemStock->actual_profit - $itemStock->discount_amount;
-            $deductibleAmount = ($itemStock->damage_quantity + $itemStock->lost_quantity) * $itemStock->purchase_price;
-            $returnTotal = $itemStock->return_quantity;
-            $totalQuantity = $itemStock->quantity;
-            $perPieceProfit = $actualProfit / $totalQuantity;
-            $adjustedProfit = $actualProfit - (($perPieceProfit * $returnTotal) + $deductibleAmount);
-            return $adjustedProfit;
+            return $itemStock->actual_profit - $itemStock->discount_amount;
         });
     }
+
+
+
+
+    //  return $this->orderItemStocks->sum(function ($itemStock) {
+    //         $actualProfit = $itemStock->actual_profit - $itemStock->discount_amount;
+    //         // this line will work for if product dont take by the company
+    //         // $deductibleAmount = ($itemStock->damage_quantity + $itemStock->lost_quantity) * $itemStock->purchase_price;
+            
+    //         // this line will work for if product take by the company
+    //         $deductibleAmount = ($itemStock->damage_quantity + $itemStock->lost_quantity) * $perPieceProfit;
+    //         $returnTotal = $itemStock->return_quantity;
+    //         $totalQuantity = $itemStock->quantity;
+    //         $perPieceProfit = $actualProfit / $totalQuantity;
+    //         $adjustedProfit = $actualProfit - (($perPieceProfit * $returnTotal) + $deductibleAmount);
+    //         return $adjustedProfit;
+    //     });
 
 
 }
