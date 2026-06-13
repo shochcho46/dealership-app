@@ -149,4 +149,42 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Stock::class);
     }
+
+    /**
+     * Scope to load only available stocks
+     */
+    public function scopeWithAvailableStocks($query)
+    {
+        return $query->with(['stocks' => function ($q) {
+            $q->whereRaw('quantity > (sold_quantity + damage_quantity + stolen_quantity + transfer_quantity + froze_quantity)')
+              ->orderBy('sell_price', 'desc');
+        }]);
+    }
+
+    /**
+     * Get total available quantity from all stocks
+     */
+    public function getTotalAvailableQuantityAttribute()
+    {
+        return $this->stocks->sum(function ($stock) {
+            return $stock->quantity - $stock->sold_quantity - $stock->damage_quantity 
+                   - $stock->stolen_quantity - $stock->transfer_quantity - $stock->froze_quantity;
+        });
+    }
+
+    /**
+     * Get highest sell price from available stocks
+     */
+    public function getHighestSellPriceAttribute()
+    {
+        $availableStocks = $this->stocks->filter(function ($stock) {
+            $available = $stock->quantity - $stock->sold_quantity - $stock->damage_quantity 
+                        - $stock->stolen_quantity - $stock->transfer_quantity - $stock->froze_quantity;
+            return $available > 0;
+        });
+
+        return $availableStocks->isNotEmpty() 
+            ? $availableStocks->sortByDesc('sell_price')->first()->sell_price 
+            : 0;
+    }
 }

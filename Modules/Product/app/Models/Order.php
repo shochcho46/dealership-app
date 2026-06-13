@@ -27,6 +27,8 @@ class Order extends Model
         'total_lost_quantity',
         'vendor_id',
         'paid_at',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [
@@ -38,6 +40,8 @@ class Order extends Model
         'payment_status' => 'integer',
         'total_damage_quantity' => 'integer',
         'total_lost_quantity' => 'integer',
+        'latitude' => 'string',
+        'longitude' => 'string',
     ];
 
     /**
