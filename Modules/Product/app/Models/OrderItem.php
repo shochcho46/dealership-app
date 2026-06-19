@@ -163,7 +163,12 @@ class OrderItem extends Model
     public function getItemTotalProfitAttribute()
     {
         return $this->orderItemStocks->sum(function ($itemStock) {
-            return $itemStock->actual_profit - $itemStock->discount_amount;
+            $effectiveQty = $itemStock->quantity - $itemStock->return_quantity
+                          - $itemStock->damage_quantity - $itemStock->lost_quantity;
+            $proportionalDiscount = $itemStock->quantity > 0
+                ? $itemStock->discount_amount * ($effectiveQty / $itemStock->quantity)
+                : 0;
+            return $itemStock->actual_profit - $proportionalDiscount;
         });
     }
 
