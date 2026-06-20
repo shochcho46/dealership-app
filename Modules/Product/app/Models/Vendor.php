@@ -33,6 +33,8 @@ class Vendor extends Model implements HasMedia
         'long' => 'decimal:8',
     ];
 
+     protected $appends = ['due_balance'];
+
     /**
      * Boot method to auto-generate UUID
      */

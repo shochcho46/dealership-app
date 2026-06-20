@@ -220,11 +220,11 @@
                 @endcanany
 
 
-            @canany(['company_order_list', 'order_status_list', 'add_order', 'order_list'])
+            @canany(['company_order_list', 'order_status_list', 'add_order', 'order_list', 'dsr_collection'])
                 <li class="nav-header">ORDER MANAGEMENT</li>
                 <!-- Orders Section -->
-                <li class="nav-item {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') || request()->is('admin/dsr-collection/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/order/*') || request()->is('order/*') || request()->is('admin/order-status/*') || request()->is('admin/company-order/*') || request()->is('admin/dsr-collection/*') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-cart"></i>
                         <p>
                             Orders
@@ -259,6 +259,16 @@
                                 </a>
                             </li>
                         @endcan
+
+                        @can('dsr_collection')
+                            <li class="nav-item">
+                                <a href="{{ route('dsr-collections.index') }}" class="nav-link {{ request()->is('admin/dsr-collection/*') ? 'active' : '' }}">
+                                    <i class="nav-icon mdi mdi-account-cash"></i>
+                                    <p>Vendor Collection</p>
+                                </a>
+                            </li>
+                        @endcan
+
                         @can('order_list')
                             <li class="nav-item">
                                 <a href="{{ route('orders.index') }}" class="nav-link {{ request()->is('admin/order/index') ? 'active' : '' }}">
