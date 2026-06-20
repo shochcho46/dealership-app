@@ -253,6 +253,7 @@
                                 <td>
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order->vendor->mobile ?? 'N/A' }}</small>
+                                    <br><small class="text-danger">Total Due: ৳{{ number_format($order?->vendor?->due_balance, 2) ?? 'N/A' }}</small>
                                 </td>
                                 <td>
                                     <span class="badge {{ $order->status_badge_class }} status-badge">

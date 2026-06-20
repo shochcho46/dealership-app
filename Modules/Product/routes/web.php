@@ -11,6 +11,7 @@ use Modules\Product\Http\Controllers\OrderController;
 use Modules\Product\Http\Controllers\WarehouseController;
 use Modules\Product\Http\Controllers\PaymentMethodController;
 use Modules\Product\Http\Controllers\PaymentCollectionController;
+use Modules\Product\Http\Controllers\DsrCollectionController;
 use Modules\Product\Http\Controllers\InvoiceController;
 use Modules\Product\Http\Controllers\DamageReturnLostController;
 use Modules\Product\Http\Controllers\ExpenseHeadController;
@@ -185,6 +186,16 @@ Route::prefix('admin')->group(function () {
             Route::delete('payment-collection/{paymentCollection}', 'destroy')->name('payment-collections.destroy');
             Route::get('payment-collection/search-vendors', 'searchVendors')->name('admin.vendors.search');
             Route::get('payment-collection/pending-orders', 'getVendorPendingOrders')->name('admin.vendors.pending-orders');
+        });
+
+        // DSR / Vendor Collection routes
+        Route::controller(DsrCollectionController::class)->group(function () {
+            Route::get('dsr-collection/search-vendors', 'searchVendors')->name('dsr.vendors.search');
+            Route::get('dsr-collection/index', 'index')->name('dsr-collections.index');
+            Route::get('dsr-collection/create', 'create')->name('dsr-collections.create');
+            Route::post('dsr-collection/store', 'store')->name('dsr-collections.store');
+            Route::get('dsr-collection/{dsrCollection}/show', 'show')->name('dsr-collections.show');
+            Route::delete('dsr-collection/{dsrCollection}', 'destroy')->name('dsr-collections.destroy');
         });
 
         // Damage/Return/Lost routes

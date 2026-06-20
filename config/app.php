@@ -67,6 +67,7 @@ return [
 
     'timezone' => env('APP_TIMEZONE', 'Asia/Dhaka'),
     'otp_time_count' => env('OTP_TIME_COUNT', 150),
+    'collection_sms' => env('COLLECTION_SMS', 0),
 
     /*
     |--------------------------------------------------------------------------
