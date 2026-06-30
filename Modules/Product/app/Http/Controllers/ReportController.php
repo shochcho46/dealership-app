@@ -17,6 +17,7 @@ use Modules\Product\Models\ExpenseList;
 use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Modules\Product\Models\Company;
 use Modules\Product\Models\OrderStatus;
 
 class ReportController extends Controller
@@ -27,6 +28,7 @@ class ReportController extends Controller
     public function stockOverview(Request $request)
     {
         $productName = Product::orderBy('name')->get();
+        $companyName = Company::orderBy('name')->get();
         $query = Product::with(['stocks']);
 
         // Filter by product (multi)
@@ -34,6 +36,13 @@ class ReportController extends Controller
             $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
             $query->whereIn('id', $productIds);
         }
+
+         if ($request->filled('company_id')) {
+            $companyIds = is_array($request->company_id) ? $request->company_id : [$request->company_id];
+
+            $query->whereIn('company_id', $companyIds);
+        }
+
 
         $products = $query->get()->map(function ($product) {
             $totalPurchaseQty = 0;
@@ -82,7 +91,7 @@ class ReportController extends Controller
             ];
         });
 
-        return view('product::reports.stock-overview', compact('products', 'productName'));
+        return view('product::reports.stock-overview', compact('products', 'productName', 'companyName'));
     }
 
     /**

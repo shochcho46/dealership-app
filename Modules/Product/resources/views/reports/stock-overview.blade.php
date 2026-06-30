@@ -53,6 +53,20 @@
                                             </select>
                                         </div>
 
+                                        <!-- Company Filter -->
+
+                                        <div class="col-md-3">
+                                            <label class="form-label">Company</label>
+                                            <select name="company_id[]" class="form-select select2" multiple>
+                                                @foreach ($companyName as $namecompany)
+                                                    <option value="{{ $namecompany->id }}"
+                                                        {{ collect(request('company_id'))->contains($namecompany->id) ? 'selected' : '' }}>
+                                                        {{ $namecompany->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
                                         <!-- Filter + Reset Buttons -->
                                         <div class="col-md-3">
                                             <label class="form-label">Actions</label>
@@ -69,7 +83,7 @@
                                         </div>
 
                                         <!-- Export Button (Right Aligned) -->
-                                        <div class="col-md-6 text-end">
+                                        <div class="col-md-3 text-end">
                                             <label class="form-label d-block text-end">Export</label>
                                             <button type="button" class="btn btn-success btn-sm"
                                                 onclick="exportTableToExcel('stockOverviewTable', 'Stock_Overview')">
