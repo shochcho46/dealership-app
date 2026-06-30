@@ -108,12 +108,13 @@
         <div class="card-body">
             <form method="GET" action="{{ route('invoices.index') }}">
                 <div class="row g-3">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Invoice Search</label>
                         <input type="text" name="invoice_search" class="form-control"
                                value="{{ request('invoice_search') }}" placeholder="Search by invoice ID">
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-3">
                         <label class="form-label">Vendor Filter</label>
                         <select name="vendor_filter" class="form-select">
                             <option value="">All Vendors</option>
@@ -126,7 +127,20 @@
                         </select>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Company Filter</label>
+                        <select name="company_filter" class="form-select">
+                            <option value="">All Companies</option>
+                            @foreach($companyName as $company)
+                                <option value="{{ $company->id }}"
+                                    {{ request('company_filter') == $company->id ? 'selected' : '' }}>
+                                    {{ $company->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
                         <label class="form-label">Place By</label>
                         <select name="place_by_filter" class="form-select">
                             <option value="">All Place By</option>
@@ -140,7 +154,7 @@
                     </div>
 
 
-                     <div class="col-md-2">
+                     <div class="col-md-3">
                                 <label class="form-label">Payment Status</label>
                                 <select name="payment_status_filter" class="form-select">
                                     <option value="" {{ request('payment_status_filter') === null || request('payment_status_filter') === '' ? 'selected' : '' }}>All Status</option>
@@ -153,11 +167,11 @@
 
 
 
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Date From</label>
                         <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Date To</label>
                         <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                     </div>
