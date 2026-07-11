@@ -169,6 +169,7 @@ Route::prefix('admin')->group(function () {
         // Invoice routes
         Route::controller(InvoiceController::class)->group(function () {
             Route::get('invoice/index', 'index')->name('invoices.index');
+            Route::get('invoice/export', 'export')->name('invoices.export');
             Route::get('invoice/{order}/generate', 'generateInvoice')->name('invoices.generate');
             Route::get('invoice/{order}/preview', 'previewInvoice')->name('invoices.preview');
             Route::post('invoice/bulk-download', 'bulkInvoices')->name('invoices.bulk');

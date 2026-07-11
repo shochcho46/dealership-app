@@ -11,6 +11,8 @@ use Modules\Product\Models\Vendor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Modules\Admin\Entities\Business;
 use setasign\Fpdi\Fpdi;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\Product\Exports\InvoiceExport;
 
 class InvoiceController extends Controller
 {
@@ -293,6 +295,18 @@ class InvoiceController extends Controller
             'pageTotalDueAmount',
             'filteredTotalDueAmount'
         ));
+    }
+
+    /**
+     * Export invoices to Excel with filters
+     */
+    public function export(Request $request)
+    {
+        try {
+            return Excel::download(new InvoiceExport($request), 'invoices_' . date('Y-m-d_His') . '.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to export invoices. Please try again.');
+        }
     }
 
     /**

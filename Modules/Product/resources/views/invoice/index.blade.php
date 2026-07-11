@@ -178,10 +178,12 @@
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="mdi mdi-magnify"></i> Filter
                         </button>
-                        <a href="{{ route('invoices.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('invoices.index') }}" class="btn btn-secondary me-2">
                             <i class="mdi mdi-refresh"></i> Reset
                         </a>
-
+                        <a href="{{ route('invoices.export', request()->query()) }}" class="btn btn-success">
+                            <span class="mdi mdi-file-excel"></span> Export Excel
+                        </a>
                     </div>
                 </div>
 
