@@ -10,6 +10,7 @@ use Modules\Product\Models\VendorAccount;
 use Modules\Product\Models\Vendor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Modules\Admin\Entities\Business;
+use Modules\Product\Models\Company;
 use setasign\Fpdi\Fpdi;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Product\Exports\InvoiceExport;
@@ -222,6 +223,7 @@ class InvoiceController extends Controller
     {
         $limit = $request->limit ?? 50;
 
+
        $query = Order::with(['vendor', 'orderStatus', 'orderItems', 'vendorAccounts'])
                 ->whereIn('order_status_id', [4, 5]); // Shipped or delivered only
 
@@ -248,6 +250,11 @@ class InvoiceController extends Controller
 
         if ($request->filled('payment_status_filter')) {
             $query->where('payment_status', $request->payment_status_filter);
+        }
+        if ($request->filled('company_filter')) {
+            $query->whereHas('orderItems.product', function ($q) use ($request) {
+                $q->where('company_id', $request->company_filter);
+            });
         }
 
         $fullQuery = clone $query;
@@ -279,6 +286,7 @@ class InvoiceController extends Controller
 
         // Get vendors for filter
         $vendors = Vendor::orderBy('shop_name')->get();
+        $companyName = Company::orderBy('name')->get();
         $placeBys  = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
         return view('product::invoice.index', compact(
             'orders',
@@ -287,6 +295,7 @@ class InvoiceController extends Controller
             'paidInvoices',
             'unpaidInvoices',
             'vendors',
+            'companyName',
             'placeBys',
             'pageTotalAmount',
             'filteredTotalAmount',

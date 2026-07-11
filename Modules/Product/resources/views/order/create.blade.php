@@ -524,7 +524,8 @@ function searchVendors(query) {
                         <strong>${vendor.shop_name || 'N/A'}</strong>
                         <div class="vendor-info">
                             Mobile: ${vendor.mobile || 'N/A'} | Contact: ${vendor.contact_person || 'N/A'}<br>
-                            Address: ${vendor.full_address || 'N/A'}
+                            Address: ${vendor.full_address || 'N/A'}<br>
+                            <strong class="text-danger">Total Due: ৳${vendor.due_balance ? vendor.due_balance.toFixed(2) : 'N/A'}</strong>
                         </div>
                     </div>
                 `;

@@ -37,6 +37,9 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h1 class="mt-3">Vendor List</h1>
                     <div class="text-end">
+                        <button type="button" id="printAllQrBtn" class="btn btn-outline-dark me-2">
+                            <span class="mdi mdi-qrcode"></span> Print All QR
+                        </button>
                         <a href="{{ route('admin.vendorExport') }}" class="btn btn-success me-2">
                             <span class="mdi mdi-file-excel"></span> Export Excel
                         </a>
@@ -131,6 +134,16 @@
                                                         <span class="mdi mdi-pencil"></span>
                                                     </a>
                                                     <button type="button"
+                                                            class="btn btn-sm btn-outline-success qr-btn"
+                                                            data-uuid="{{ $vendor->uuid }}"
+                                                            data-name="{{ $vendor->shop_name }}"
+                                                            data-mobile="{{ $vendor->mobile }}"
+                                                            data-contact="{{ $vendor->contact_person ?? 'N/A' }}"
+                                                            data-address="{{ $vendor->full_address ?? 'N/A' }}"
+                                                            title="QR Code">
+                                                        <span class="mdi mdi-qrcode"></span>
+                                                    </button>
+                                                    <button type="button"
                                                             class="btn btn-sm btn-outline-danger delete-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#deleteModal"
@@ -177,8 +190,127 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vendor QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <canvas id="qrCanvas"></canvas>
+                <h6 class="mt-3 mb-0" id="qrVendorName"></h6>
+                <small class="text-muted d-block" id="qrBusinessInfo"></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="qrPrintBtn">
+                    <span class="mdi mdi-printer"></span> Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
-@push('custome-js')
+@php
+    $vendorsQrData = $vendors->map(function ($vendor) {
+        return [
+            'uuid' => $vendor->uuid,
+            'name' => $vendor->shop_name,
+            'mobile' => $vendor->mobile,
+            'contact' => $vendor->contact_person ?? 'N/A',
+            'address' => $vendor->full_address ?? 'N/A',
+        ];
+    });
 
+    $businessQrData = [
+        'name' => $businessDetail->company_name ?? 'N/A',
+        'mobileOne' => $businessDetail->mobile_one ?? 'N/A',
+        'mobileTwo' => $businessDetail->mobile_two ?? 'N/A',
+    ];
+@endphp
+
+@push('custome-js')
+<script src="{{ asset('vendor/qrcode/qrcode.min.js') }}"></script>
+<script>
+    const allVendorsQrData = @json($vendorsQrData);
+    const businessInfo = @json($businessQrData);
+
+    function buildBusinessLine() {
+        return businessInfo.name + ' | Hotline: ' + businessInfo.mobileOne + ' / ' + businessInfo.mobileTwo;
+    }
+
+    function buildQrText(d) {
+        return 'Vendor ID: ' + d.uuid
+            + '\nName: ' + d.name
+            + '\nMobile: ' + d.mobile
+            + '\nContact Person: ' + d.contact
+            + '\nAddress: ' + d.address
+            + '\nCompany: ' + businessInfo.name
+            + '\nHotline: ' + businessInfo.mobileOne + ' / ' + businessInfo.mobileTwo;
+    }
+
+    async function openQrPrintWindow(vendorList) {
+        const win = window.open('', '_blank');
+        win.document.write(
+            '<!DOCTYPE html><html><head><title>Vendor QR Codes</title><style>'
+            + '@page { size: A4; margin: 10mm; }'
+            + 'body { font-family: Arial, sans-serif; margin: 0; }'
+            + '.qr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 10px; }'
+            + '.qr-item { text-align: center; border: 1px solid #ccc; border-radius: 6px; padding: 8px; page-break-inside: avoid; }'
+            + '.qr-item img { width: 100%; max-width: 140px; height: auto; }'
+            + '.qr-item h6 { margin: 6px 0 0; font-size: 12px; word-break: break-word; }'
+            + '.qr-item small { display: block; font-size: 10px; color: #666; word-break: break-word; }'
+            + '</style></head><body><div class="qr-grid" id="qrGrid"></div></body></html>'
+        );
+        win.document.close();
+
+        const grid = win.document.getElementById('qrGrid');
+
+        for (const v of vendorList) {
+            const dataUrl = await QRCode.toDataURL(buildQrText(v), { width: 220, margin: 1 });
+            const item = win.document.createElement('div');
+            item.className = 'qr-item';
+            item.innerHTML = '<img src="' + dataUrl + '" alt="QR code"><h6>' + v.name + '</h6>'
+                + '<small>' + buildBusinessLine() + '</small>';
+            grid.appendChild(item);
+        }
+
+        setTimeout(function () {
+            win.focus();
+            win.print();
+        }, 300);
+    }
+
+    document.querySelectorAll('.qr-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const d = this.dataset;
+            document.getElementById('qrVendorName').textContent = d.name;
+            document.getElementById('qrBusinessInfo').textContent = buildBusinessLine();
+
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, buildQrText(d), { width: 220, margin: 1 }, function (error) {
+                if (error) console.error(error);
+            });
+
+            document.getElementById('qrPrintBtn').onclick = function () {
+                openQrPrintWindow([{
+                    uuid: d.uuid,
+                    name: d.name,
+                    mobile: d.mobile,
+                    contact: d.contact,
+                    address: d.address,
+                }]);
+            };
+
+            new bootstrap.Modal(document.getElementById('qrModal')).show();
+        });
+    });
+
+    document.getElementById('printAllQrBtn')?.addEventListener('click', function () {
+        openQrPrintWindow(allVendorsQrData);
+    });
+</script>
 @endpush

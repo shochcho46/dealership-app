@@ -22,7 +22,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $limit = request()->get('limit', 50);
+        $limit = request()->get('limit', 64);
         $search = request()->get('search');
         $query = Vendor::with('country')
             // Old Due (manual entries without order_id)
@@ -90,12 +90,15 @@ class VendorController extends Controller
         $pageOldDue = $vendors->getCollection()->sum('old_due');
         $pageDueBalance = $vendors->getCollection()->sum('due_balance');
 
+        $businessDetail = Business::first();
+
         return view('product::vendor.index', compact(
             'vendors',
             'overallOldDue',
             'overallDueBalance',
             'pageOldDue',
-            'pageDueBalance'
+            'pageDueBalance',
+            'businessDetail'
         ));
     }
 
