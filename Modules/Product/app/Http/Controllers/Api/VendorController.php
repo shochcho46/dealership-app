@@ -32,7 +32,8 @@ class VendorController extends Controller
 
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('shop_name', 'like', '%' . $search . '%')
+                    $q->where('uuid', $search)
+                    ->orWhere('shop_name', 'like', '%' . $search . '%')
                       ->orWhere('contact_person', 'like', '%' . $search . '%')
                       ->orWhere('email', 'like', '%' . $search . '%')
                       ->orWhere('mobile', 'like', '%' . $search . '%');
