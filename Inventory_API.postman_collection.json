@@ -717,6 +717,234 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "DSR Collections",
+			"item": [
+				{
+					"name": "List DSR Collections",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/dsr-collections?page=1&per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"dsr-collections"
+							],
+							"query": [
+								{
+									"key": "vendor_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "payment_method_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "date_from",
+									"value": "2026-01-01",
+									"disabled": true
+								},
+								{
+									"key": "date_to",
+									"value": "2026-12-31",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create DSR Collection",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vendor_id\": 1,\n    \"payment_method_id\": 1,\n    \"amount\": 5000.00,\n    \"collection_date\": \"2026-07-21\",\n    \"note\": \"Cash collection from vendor\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/dsr-collections",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"dsr-collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DSR Collection Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/dsr-collections/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"dsr-collections",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete DSR Collection",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/dsr-collections/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"dsr-collections",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Vendors",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/dsr-collections/vendors/search?search=ABC&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"dsr-collections",
+								"vendors",
+								"search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "ABC"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

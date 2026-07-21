@@ -55,10 +55,25 @@ Complete API implementation for Inventory Management System with Laravel Passpor
   - Order items with products
   - Vendor and admin information
 
+#### DSR Collection Management
+- **Controller:** `Modules/Product/app/Http/Controllers/Api/DsrCollectionController.php`
+  - List collections with filters (vendor, payment method, date range)
+  - Create new collection with SMS notification
+  - Get collection details by ID
+  - Delete collection (role-based permission)
+  - Search vendors for collection form
+  
+- **Resource:** `Modules/Product/app/Http/Resources/DsrCollectionResource.php`
+  - Collection with vendor details
+  - Payment method information
+  - Created by and deposited by admin info
+  - Formatted amounts and dates
+
 - **Routes:** `Modules/Product/routes/api.php` (Updated)
   - Product routes
   - Vendor routes
   - Order routes
+  - DSR Collection routes
 
 ### 3. Model Updates
 - **File:** `app/Models/Admin.php`
@@ -101,6 +116,15 @@ Complete API implementation for Inventory Management System with Laravel Passpor
 | GET | `/api/v1/orders/{id}` | Yes | Get order details |
 | GET | `/api/v1/orders/by-placed-by` | Yes | Get orders by placed_by user |
 | POST | `/api/v1/orders/{id}/cancel` | Yes | Cancel order |
+
+### DSR Collections (Product Module)
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/dsr-collections` | Yes | List collections with filters |
+| POST | `/api/v1/dsr-collections` | Yes | Create new collection |
+| GET | `/api/v1/dsr-collections/{id}` | Yes | Get collection details |
+| DELETE | `/api/v1/dsr-collections/{id}` | Yes | Delete collection (SuperAdmin/admin only) |
+| GET | `/api/v1/dsr-collections/vendors/search` | Yes | Search vendors for collection |
 
 ---
 
@@ -166,6 +190,44 @@ Complete API implementation for Inventory Management System with Laravel Passpor
 - [x] Pagination support
 - [x] Sort by latest first
 
+### 5. DSR Collection Management API ✓
+
+#### List Collections
+- [x] List collections with filters (vendor, payment method, date range)
+- [x] Pagination support (default 15 per page, max 100)
+- [x] Calculate filtered total amount
+- [x] Calculate all-time total amount
+- [x] Eager load relationships (vendor, payment method, admins)
+- [x] Sort by latest first
+
+#### Create Collection
+- [x] Validate vendor and payment method
+- [x] Record amount and collection date
+- [x] Optional note field (max 1000 characters)
+- [x] Auto-assign deposite_by from authenticated admin
+- [x] Auto-assign created_by via model boot method
+- [x] SMS notification if configured
+- [x] Non-blocking SMS sending with error logging
+
+#### Show Collection
+- [x] Get collection details by ID
+- [x] Include vendor details with due balance
+- [x] Include payment method information
+- [x] Show created_by and deposite_by admin info
+- [x] Format amounts and dates
+
+#### Delete Collection
+- [x] Check user role (SuperAdmin or admin only)
+- [x] Return 403 if unauthorized
+- [x] Soft delete if model configured
+- [x] Return success message
+
+#### Search Vendors
+- [x] Search by shop name or mobile
+- [x] Limit results (default 10, max 50)
+- [x] Include due balance in results
+- [x] Return minimal vendor fields for quick search
+
 ---
 
 ## Data Flow
@@ -214,6 +276,8 @@ Return OrderResource
 - `stocks` - Product stock with batches
 - `vendors` - Vendors
 - `vendor_accounts` - Vendor transactions
+- `dsr_collections` - DSR collections (vendor payments without invoices)
+- `payment_methods` - Payment methods (Cash, Bank, etc.)
 - `orders` - Customer orders
 - `order_items` - Order line items
 - `order_item_stocks` - Stock allocation details
@@ -224,6 +288,7 @@ Return OrderResource
 
 ### Key Relationships
 - Admin hasMany Orders
+- Admin hasMany DsrCollections (created_by, deposite_by)
 - Order belongsTo Admin (admin_id)
 - Order belongsTo Admin (place_by)
 - Order belongsTo Vendor
@@ -234,6 +299,11 @@ Return OrderResource
 - OrderItemStock belongsTo Stock
 - Product hasMany Stocks
 - Vendor hasMany VendorAccounts
+- Vendor hasMany DsrCollections
+- DsrCollection belongsTo Vendor
+- DsrCollection belongsTo PaymentMethod
+- DsrCollection belongsTo Admin (created_by)
+- DsrCollection belongsTo Admin (deposite_by)
 
 ---
 
@@ -318,6 +388,31 @@ Return OrderResource
 
 ### Authentication
 - [ ] Login with email
+
+### DSR Collections
+- [ ] List collections without filters
+- [ ] List collections filtered by vendor
+- [ ] List collections filtered by payment method
+- [ ] List collections filtered by date range
+- [ ] List collections with pagination
+- [ ] Verify filtered total calculation
+- [ ] Verify all-time total calculation
+- [ ] Create collection with all required fields
+- [ ] Create collection with optional note
+- [ ] Create collection without note
+- [ ] Create collection with invalid vendor (should fail)
+- [ ] Create collection with invalid payment method (should fail)
+- [ ] Create collection with amount 0 (should fail)
+- [ ] Verify SMS notification sent (if configured)
+- [ ] Get collection by valid ID
+- [ ] Get collection by invalid ID (should fail)
+- [ ] Delete collection as SuperAdmin
+- [ ] Delete collection as admin
+- [ ] Delete collection as regular user (should fail with 403)
+- [ ] Search vendors without search term
+- [ ] Search vendors with shop name
+- [ ] Search vendors with mobile number
+- [ ] Verify vendor search limit parameter
 - [ ] Login with phone
 - [ ] Login with wrong password (should fail)
 - [ ] Login with blacklisted account (should fail)

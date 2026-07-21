@@ -818,6 +818,341 @@ GET /v1/orders/by-placed-by?place_by=2&status_filter=2&page=1&per_page=10
 
 ---
 
+## 5. DSR Collection APIs
+
+### 5.1 List DSR Collections
+**Endpoint:** `GET /v1/dsr-collections`
+
+**Description:** Get a paginated list of DSR collections with optional filters
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+```
+
+**Query Parameters:**
+- `vendor_id` (optional): Filter by vendor ID
+- `payment_method_id` (optional): Filter by payment method ID
+- `date_from` (optional): Start date (YYYY-MM-DD)
+- `date_to` (optional): End date (YYYY-MM-DD)
+- `page` (optional): Page number (default: 1)
+- `per_page` (optional): Items per page (default: 15, max: 100)
+
+**Example Request:**
+```
+GET /v1/dsr-collections?vendor_id=1&date_from=2026-07-01&date_to=2026-07-31&page=1&per_page=15
+```
+
+**Success Response (200):**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "vendor": {
+                "id": 1,
+                "shop_name": "ABC Trading",
+                "contact_person": "John Doe",
+                "mobile": "+8801712345678",
+                "email": "abc@example.com",
+                "full_address": "123 Main Street, Dhaka",
+                "due_balance": "25000.00"
+            },
+            "payment_method": {
+                "id": 1,
+                "name": "Cash",
+                "account_name": null
+            },
+            "amount": "5000.00",
+            "collection_date": "2026-07-21",
+            "note": "Cash collection from vendor",
+            "created_by": {
+                "id": 1,
+                "name": "Admin User",
+                "email": "admin@example.com"
+            },
+            "deposite_by": {
+                "id": 2,
+                "name": "Sales Rep",
+                "email": "sales@example.com"
+            },
+            "created_at": "2026-07-21 14:30:00",
+            "updated_at": "2026-07-21 14:30:00"
+        }
+    ],
+    "meta": {
+        "current_page": 1,
+        "last_page": 3,
+        "per_page": 15,
+        "total": 42,
+        "filtered_total_amount": "125000.00",
+        "total_all_time": "350000.00"
+    }
+}
+```
+
+**Error Response (422):**
+```json
+{
+    "success": false,
+    "message": "Validation error",
+    "errors": {
+        "vendor_id": ["The vendor id must be a valid vendor."]
+    }
+}
+```
+
+---
+
+### 5.2 Create DSR Collection
+**Endpoint:** `POST /v1/dsr-collections`
+
+**Description:** Create a new DSR collection record (vendor payment without invoice)
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "vendor_id": 1,
+    "payment_method_id": 1,
+    "amount": 5000.00,
+    "collection_date": "2026-07-21",
+    "note": "Cash collection from vendor"
+}
+```
+
+**Field Descriptions:**
+- `vendor_id` (required): ID of the vendor making the payment
+- `payment_method_id` (required): ID of payment method (Cash, Bank, etc.)
+- `amount` (required): Payment amount (minimum: 0.01)
+- `collection_date` (required): Date of collection (YYYY-MM-DD)
+- `note` (optional): Additional notes (max: 1000 characters)
+
+**Success Response (201):**
+```json
+{
+    "success": true,
+    "message": "Collection recorded successfully",
+    "data": {
+        "id": 1,
+        "vendor": {
+            "id": 1,
+            "shop_name": "ABC Trading",
+            "contact_person": "John Doe",
+            "mobile": "+8801712345678",
+            "email": "abc@example.com",
+            "full_address": "123 Main Street, Dhaka",
+            "due_balance": "20000.00"
+        },
+        "payment_method": {
+            "id": 1,
+            "name": "Cash",
+            "account_name": null
+        },
+        "amount": "5000.00",
+        "collection_date": "2026-07-21",
+        "note": "Cash collection from vendor",
+        "created_by": {
+            "id": 1,
+            "name": "Admin User",
+            "email": "admin@example.com"
+        },
+        "deposite_by": {
+            "id": 1,
+            "name": "Admin User",
+            "email": "admin@example.com"
+        },
+        "created_at": "2026-07-21 14:30:00",
+        "updated_at": "2026-07-21 14:30:00"
+    }
+}
+```
+
+**Note:** If SMS notifications are enabled (`config('app.collection_sms') == 1`), an SMS will be sent to the vendor's mobile number.
+
+**Error Response (422):**
+```json
+{
+    "success": false,
+    "message": "Validation error",
+    "errors": {
+        "vendor_id": ["The vendor id field is required."],
+        "amount": ["The amount must be at least 0.01."]
+    }
+}
+```
+
+---
+
+### 5.3 Get DSR Collection Details
+**Endpoint:** `GET /v1/dsr-collections/{id}`
+
+**Description:** Get detailed information about a specific DSR collection
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+```
+
+**Example Request:**
+```
+GET /v1/dsr-collections/1
+```
+
+**Success Response (200):**
+```json
+{
+    "success": true,
+    "data": {
+        "id": 1,
+        "vendor": {
+            "id": 1,
+            "shop_name": "ABC Trading",
+            "contact_person": "John Doe",
+            "mobile": "+8801712345678",
+            "email": "abc@example.com",
+            "full_address": "123 Main Street, Dhaka",
+            "due_balance": "20000.00"
+        },
+        "payment_method": {
+            "id": 1,
+            "name": "Cash",
+            "account_name": null
+        },
+        "amount": "5000.00",
+        "collection_date": "2026-07-21",
+        "note": "Cash collection from vendor",
+        "created_by": {
+            "id": 1,
+            "name": "Admin User",
+            "email": "admin@example.com"
+        },
+        "deposite_by": {
+            "id": 1,
+            "name": "Admin User",
+            "email": "admin@example.com"
+        },
+        "created_at": "2026-07-21 14:30:00",
+        "updated_at": "2026-07-21 14:30:00"
+    }
+}
+```
+
+**Error Response (404):**
+```json
+{
+    "success": false,
+    "message": "Collection not found"
+}
+```
+
+---
+
+### 5.4 Delete DSR Collection
+**Endpoint:** `DELETE /v1/dsr-collections/{id}`
+
+**Description:** Delete a DSR collection record (SuperAdmin/admin only)
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+```
+
+**Example Request:**
+```
+DELETE /v1/dsr-collections/1
+```
+
+**Success Response (200):**
+```json
+{
+    "success": true,
+    "message": "Collection deleted successfully"
+}
+```
+
+**Error Response (403):**
+```json
+{
+    "success": false,
+    "message": "You do not have permission to delete this collection"
+}
+```
+
+**Error Response (404):**
+```json
+{
+    "success": false,
+    "message": "Collection not found"
+}
+```
+
+---
+
+### 5.5 Search Vendors
+**Endpoint:** `GET /v1/dsr-collections/vendors/search`
+
+**Description:** Search vendors by shop name or mobile for collection form
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+```
+
+**Query Parameters:**
+- `search` (optional): Search term (shop name or mobile)
+- `limit` (optional): Maximum results (default: 10, max: 50)
+
+**Example Request:**
+```
+GET /v1/dsr-collections/vendors/search?search=ABC&limit=10
+```
+
+**Success Response (200):**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "shop_name": "ABC Trading",
+            "mobile": "+8801712345678",
+            "full_address": "123 Main Street, Dhaka",
+            "contact_person": "John Doe",
+            "due_balance": "25000.00"
+        },
+        {
+            "id": 2,
+            "shop_name": "ABC Traders",
+            "mobile": "+8801798765432",
+            "full_address": "456 Commerce St, Dhaka",
+            "contact_person": "Jane Smith",
+            "due_balance": "15000.00"
+        }
+    ],
+    "count": 2
+}
+```
+
+**Error Response (422):**
+```json
+{
+    "success": false,
+    "message": "Validation error",
+    "errors": {
+        "limit": ["The limit must not be greater than 50."]
+    }
+}
+```
+
+---
+
 ## Error Responses
 
 All endpoints may return the following error responses:
