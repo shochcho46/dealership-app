@@ -5,6 +5,7 @@ use Modules\Product\Http\Controllers\ProductController;
 use Modules\Product\Http\Controllers\Api\ProductController as ApiProductController;
 use Modules\Product\Http\Controllers\Api\VendorController as ApiVendorController;
 use Modules\Product\Http\Controllers\Api\OrderController as ApiOrderController;
+use Modules\Product\Http\Controllers\Api\DsrCollectionController as ApiDsrCollectionController;
 
 // Protected API routes requiring authentication
 Route::middleware(['auth:api'])->prefix('v1')->group(function () {
@@ -27,6 +28,13 @@ Route::middleware(['auth:api'])->prefix('v1')->group(function () {
     Route::put('orders/{id}', [ApiOrderController::class, 'update']);
     Route::post('orders/{id}', [ApiOrderController::class, 'update']); // For form-data with _method=PUT
     Route::post('orders/{id}/cancel', [ApiOrderController::class, 'cancel']);
+    
+    // DSR Collection management
+    Route::get('dsr-collections/vendors/search', [ApiDsrCollectionController::class, 'searchVendors']);
+    Route::get('dsr-collections', [ApiDsrCollectionController::class, 'index']);
+    Route::post('dsr-collections', [ApiDsrCollectionController::class, 'store']);
+    Route::get('dsr-collections/{id}', [ApiDsrCollectionController::class, 'show']);
+    Route::delete('dsr-collections/{id}', [ApiDsrCollectionController::class, 'destroy']);
     
     // Legacy routes
     Route::apiResource('products', ProductController::class)->names('product');
