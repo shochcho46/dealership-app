@@ -23,7 +23,8 @@ class Admin extends Authenticatable implements HasMedia
         'password',
         'phone',
         'otp',
-        'status'
+        'status',
+        'sales_target'
     ];
 
     protected $hidden = [
@@ -32,6 +33,7 @@ class Admin extends Authenticatable implements HasMedia
 
     protected $casts = [
         'status' => 'boolean',
+        'sales_target' => 'decimal:2',
     ];
 
     /**

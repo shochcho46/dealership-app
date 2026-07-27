@@ -75,6 +75,20 @@ Complete API implementation for Inventory Management System with Laravel Passpor
   - Order routes
   - DSR Collection routes
 
+#### Sales Performance
+- **Controller:** `Modules/Admin/app/Http/Controllers/Api/SalesPerformanceController.php`
+  - Get performance metrics for SR and DSR users
+  - Filter by date range (defaults to current month)
+  - Calculate sales, collections, and target completion
+  - Distinguish between current period and previous period collections
+  
+- **Resource:** `Modules/Admin/app/Http/Resources/SalesPerformanceResource.php`
+  - User with role and profile image
+  - Sales metrics (amount, count, collections, due, percentage)
+  - Individual collections breakdown
+  - DSR collections (separate entity)
+  - Target metrics for SR users
+
 ### 3. Model Updates
 - **File:** `app/Models/Admin.php`
   - Added `HasApiTokens` trait for Laravel Passport
@@ -95,6 +109,7 @@ Complete API implementation for Inventory Management System with Laravel Passpor
 | POST | `/api/v1/admin/login` | No | Login admin user |
 | POST | `/api/v1/admin/logout` | Yes | Logout admin user |
 | GET | `/api/v1/admin/profile` | Yes | Get authenticated user |
+| GET | `/api/v1/admin/sales-performance` | Yes | Get SR/DSR performance metrics |
 
 ### Products (Product Module)
 | Method | Endpoint | Auth | Description |
@@ -198,6 +213,35 @@ Complete API implementation for Inventory Management System with Laravel Passpor
 - [x] Calculate filtered total amount
 - [x] Calculate all-time total amount
 - [x] Eager load relationships (vendor, payment method, admins)
+
+### 6. Sales Performance API ✓
+
+**Purpose:** Track sales and collection performance for SR and DSR users
+
+**Key Features:**
+- **Date Range Filtering:** Optional date_from/date_to (defaults to current month, max 1 year)
+- **Role-Based Calculations:**
+  - SR: Collects only from own orders
+  - DSR: Collects from ALL orders (any user)
+- **Sales Tracking:** Orders created by user, collections received (by anyone), due amount, collection %
+- **Individual Collections:** Separated into current period orders and previous period orders
+- **DSR Collections:** Shown separately (not added to collection totals)
+- **Target Metrics:** For SR users only - completion %, amount remaining, status
+- **System-Wide Totals:** Total sales, collections, due amount, and percentages in meta
+
+**Endpoints:**
+- `GET /api/v1/admin/sales-performance` - Get performance data with filters
+
+**Business Logic:**
+- Collections from current period orders: Orders created IN the date range
+- Collections from previous period orders: Old orders collected DURING the date range
+- DSR collections are independent (confirmation purpose only)
+- Target metrics only for SR role with sales_target set
+- Zero division handling for percentages
+
+**Response Includes:**
+- Per user: sales, individual_collections, dsr_collections, target_metrics
+- Meta: System-wide totals and percentages
 - [x] Sort by latest first
 
 #### Create Collection
@@ -448,6 +492,16 @@ Return OrderResource
 - [ ] Get order by ID
 - [ ] Get orders by placed_by user
 - [ ] Filter orders by status
+
+### Sales Performance
+- [ ] GET /api/v1/admin/sales-performance - No date params (should default to current month)
+- [ ] GET with date_from and date_to - Should return filtered data
+- [ ] Date range > 1 year - Should return 422 error
+- [ ] SR user data - Should show target_metrics
+- [ ] DSR user data - Should show collections from all orders
+- [ ] System totals in meta - Should match sum of individual users
+- [ ] User with no orders - Should return zero values
+- [ ] User without sales_target - Should show "No Target Set" status
 - [ ] Filter orders by date range
 - [ ] Cancel order before confirmation
 - [ ] Cancel confirmed order (should fail)

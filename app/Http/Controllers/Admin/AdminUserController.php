@@ -54,7 +54,8 @@ class AdminUserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|exists:roles,id',
-            'status' => 'nullable|boolean'
+            'status' => 'nullable|boolean',
+            'sales_target' => 'nullable|numeric|min:0'
         ]);
 
         try {
@@ -63,7 +64,8 @@ class AdminUserController extends Controller
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
                 'phone' => $validated['phone'] ?? null,
-                'status' => $request->has('status') ? 1 : 0
+                'status' => $request->has('status') ? 1 : 0,
+                'sales_target' => $validated['sales_target'] ?? null
             ]);
 
             // Assign role to admin
@@ -98,7 +100,8 @@ class AdminUserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|exists:roles,id',
-            'status' => 'nullable|boolean'
+            'status' => 'nullable|boolean',
+            'sales_target' => 'nullable|numeric|min:0'
         ]);
 
         try {
@@ -106,7 +109,8 @@ class AdminUserController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'] ?? null,
-                'status' => $request->has('status') ? 1 : 0
+                'status' => $request->has('status') ? 1 : 0,
+                'sales_target' => $validated['sales_target'] ?? null
             ];
 
             // Only update password if provided
