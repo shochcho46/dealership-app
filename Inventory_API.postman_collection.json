@@ -945,6 +945,59 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Sales Performance",
+			"item": [
+				{
+					"name": "Get Sales Performance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/admin/sales-performance?date_from=2026-07-01&date_to=2026-07-31",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"admin",
+								"sales-performance"
+							],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2026-07-01",
+									"description": "Start date (optional, defaults to current month start)"
+								},
+								{
+									"key": "date_to",
+									"value": "2026-07-31",
+									"description": "End date (optional, defaults to current month end)"
+								}
+							]
+						},
+						"description": "Get sales performance metrics for SR and DSR users including sales, collections, and target completion"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

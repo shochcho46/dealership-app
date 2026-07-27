@@ -69,9 +69,11 @@ Modules/Admin/
 │   └── Http/
 │       ├── Controllers/
 │       │   └── Api/
-│       │       └── AuthController.php
+│       │       ├── AuthController.php
+│       │       └── SalesPerformanceController.php
 │       └── Resources/
-│           └── AdminResource.php
+│           ├── AdminResource.php
+│           └── SalesPerformanceResource.php
 └── routes/
     └── api.php (updated)
 ```
@@ -259,6 +261,33 @@ php artisan passport:install --force
 
 ### Issue: "Insufficient stock" error
 **Solution:** This is a business logic protection. Check available stock quantity before placing order.
+
+## Testing the Sales Performance API
+
+### 6. Test Sales Performance API
+
+```bash
+# Get current month performance
+GET http://your-domain.com/api/v1/admin/sales-performance
+Authorization: Bearer YOUR_TOKEN_HERE
+
+# Get specific date range
+GET http://your-domain.com/api/v1/admin/sales-performance?date_from=2026-07-01&date_to=2026-07-31
+Authorization: Bearer YOUR_TOKEN_HERE
+```
+
+**Expected Response:**
+- List of SR/DSR users with their performance metrics
+- Each user shows: sales, collections breakdown, DSR collections, target metrics (SR only)
+- Meta section with system-wide totals and percentages
+
+**Verification:**
+✅ SR users show individual_collections only from their own orders  
+✅ DSR users show individual_collections from ALL orders  
+✅ DSR collections are shown separately (not added to totals)  
+✅ Target metrics only appear for SR users  
+✅ Meta totals match sum of individual user data  
+✅ Date range validation works (max 1 year)  
 
 ## Next Steps
 

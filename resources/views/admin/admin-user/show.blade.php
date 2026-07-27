@@ -100,6 +100,18 @@
                                 <label class="form-label fw-bold">Last Updated</label>
                                 <div class="p-2 bg-light rounded">{{ $admin->updated_at->format('d M Y, H:i A') }}</div>
                             </div>
+
+                            <!-- Sales Target -->
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <label class="form-label fw-bold">Sales Target</label>
+                                <div class="p-2 bg-light rounded">
+                                    @if($admin->sales_target)
+                                        ৳{{ number_format($admin->sales_target, 2) }}
+                                    @else
+                                        <span class="text-muted">Not set</span>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
