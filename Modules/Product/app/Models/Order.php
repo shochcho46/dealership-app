@@ -358,4 +358,26 @@ class Order extends Model
                !empty($this->vendor->lat) && 
                !empty($this->vendor->long);
     }
+
+    /**
+     * Get Google Maps directions URL
+     * Returns URL to show route between vendor and order location with markers and distance
+     * 
+     * @return string|null
+     */
+    public function getGoogleMapsUrl()
+    {
+        if (!$this->hasLocationData()) {
+            return null;
+        }
+
+        // Origin: Vendor location (starting point)
+        $origin = $this->vendor->lat . ',' . $this->vendor->long;
+        
+        // Destination: Order placement location (end point)
+        $destination = $this->latitude . ',' . $this->longitude;
+
+        // Google Maps Directions API URL (no API key required)
+        return 'https://www.google.com/maps/dir/?api=1&origin=' . urlencode($origin) . '&destination=' . urlencode($destination);
+    }
 }

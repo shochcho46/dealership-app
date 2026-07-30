@@ -39,6 +39,7 @@ class OrderResource extends JsonResource
                 'has_location_data' => $this->hasLocationData(),
                 'distance_from_vendor' => $this->getFormattedDistance(),
                 'distance_in_meters' => $this->getDistanceFromVendor(),
+                'google_maps_url' => $this->getGoogleMapsUrl(),
             ],
             'placed_by' => [
                 'id' => $this->placeBy?->id,
