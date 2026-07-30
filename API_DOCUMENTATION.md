@@ -1226,3 +1226,110 @@ if (pm.response.code === 200) {
 4. Orders can only be updated/cancelled before confirmation
 5. Stock is automatically allocated from available inventory
 6. The system uses smart stock allocation (highest sell price first)
+
+---
+
+## 6. Sales Performance APIs
+
+### 6.1 Get Sales Performance
+**Endpoint:** `GET /v1/admin/sales-performance`
+
+**Description:** Get sales performance metrics for SR and DSR users including their sales, collections (current period and previous period), DSR collections, and target completion status.
+
+**Headers:** 
+```
+Authorization: Bearer {token}
+```
+
+**Query Parameters:**
+- `date_from` (optional) - Start date (YYYY-MM-DD). Defaults to current month start.
+- `date_to` (optional) - End date (YYYY-MM-DD). Defaults to current month end.
+- Maximum date range: 1 year
+
+**Example Request:**
+```
+GET /v1/admin/sales-performance?date_from=2026-07-01&date_to=2026-07-31
+```
+
+**Success Response (200):**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "role": "sr",
+            "image": "https://example.com/images/profile.jpg",
+            "sales_target": "100000.00",
+            "sales": {
+                "amount": "80000.00",
+                "order_count": 15,
+                "collections_received": "60000.00",
+                "due_amount": "20000.00",
+                "collection_percentage": "75.00"
+            },
+            "individual_collections": {
+                "from_current_period_orders": "50000.00",
+                "from_previous_period_orders": "10000.00"
+            },
+            "dsr_collections": "5000.00",
+            "target_metrics": {
+                "completion_percentage": "80.00",
+                "amount_remaining": "20000.00",
+                "status": "In Progress"
+            }
+        }
+    ],
+    "meta": {
+        "date_from": "2026-07-01",
+        "date_to": "2026-07-31",
+        "total_users": 5,
+        "total_orders_amount": "423926.00",
+        "total_collections_current_period": "334560.00",
+        "total_collections_previous_period": "56418.00",
+        "total_due_amount": "89366.00",
+        "collection_percentage_current_period": "78.92",
+        "due_percentage": "21.08"
+    }
+}
+```
+
+**Error Response (422):**
+```json
+{
+    "success": false,
+    "message": "Date range cannot exceed 1 year"
+}
+```
+
+**Response Fields Explanation:**
+
+**Per User:**
+- `sales` - Orders created by this user
+  - `amount` - Total sales amount
+  - `order_count` - Number of orders
+  - `collections_received` - Total collected against their orders (by anyone)
+  - `due_amount` - Remaining amount on their orders
+  - `collection_percentage` - % collected against their sales
+  
+- `individual_collections` - Money they collected
+  - `from_current_period_orders` - Collections from orders created in date range
+  - `from_previous_period_orders` - Collections from old orders during date range
+  
+- `dsr_collections` - Standalone DSR collections (separate entity, not added to totals)
+
+- `target_metrics` - SR users only
+  - `completion_percentage` - Sales vs target percentage
+  - `amount_remaining` - Amount needed to reach target
+  - `status` - "Achieved", "In Progress", or "No Target Set"
+
+**Meta (System-wide):**
+- `total_orders_amount` - Sum of all sales
+- `total_collections_current_period` - Sum of current period collections
+- `total_collections_previous_period` - Sum of previous period collections
+- `total_due_amount` - Total outstanding from current period orders
+- `collection_percentage_current_period` - Overall collection rate
+- `due_percentage` - Overall outstanding percentage
+
+---

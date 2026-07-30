@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Admin\Http\Controllers\AdminController;
 use Modules\Admin\Http\Controllers\Api\AuthController;
+use Modules\Admin\Http\Controllers\Api\SalesPerformanceController;
 
 /*
  *--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::prefix('v1/admin')->group(function () {
 Route::middleware(['auth:api'])->prefix('v1/admin')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile', [AuthController::class, 'profile']);
-    
+
+    // Sales Performance API
+    Route::get('sales-performance', [SalesPerformanceController::class, 'index']);
+
     Route::apiResource('admin', AdminController::class)->names('admin');
 });

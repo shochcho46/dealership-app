@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Modules\Product\Models\Company;
 use Modules\Product\Models\OrderStatus;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\Product\Exports\OrderReportExport;
 
 class ReportController extends Controller
 {
@@ -100,7 +102,7 @@ class ReportController extends Controller
     public function orderReport(Request $request)
     {
         $limit = $request->limit ?? 50;
-        $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'orderItemStocks.stock']);
+        $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'product.company', 'orderItemStocks.stock']);
 
         // Filter by date range
         if ($request->filled('date_from')) {
@@ -127,6 +129,14 @@ class ReportController extends Controller
         if ($request->filled('product_id')) {
             $productIds = is_array($request->product_id) ? $request->product_id : [$request->product_id];
             $query->whereIn('product_id', $productIds);
+        }
+
+        // Filter by company (multi)
+        if ($request->filled('company_id')) {
+            $companyIds = is_array($request->company_id) ? $request->company_id : [$request->company_id];
+            $query->whereHas('product', function ($q) use ($companyIds) {
+                $q->whereIn('company_id', $companyIds);
+            });
         }
 
         // Filter by place_by (multi)
@@ -157,7 +167,20 @@ class ReportController extends Controller
 
         $fullQuery = clone $query;
 
-        $orderItems = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());;
+        // Handle pagination based on limit
+        if ($request->limit === 'all') {
+            $orderItems = $query->orderBy('id', 'desc')->get();
+            // Convert to a paginator-like object for view compatibility
+            $orderItems = new \Illuminate\Pagination\LengthAwarePaginator(
+                $orderItems,
+                $orderItems->count(),
+                $orderItems->count(),
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $orderItems = $query->orderBy('id', 'desc')->paginate($limit)->appends($request->query());
+        }
 
 
         $totalQuantity = $fullQuery->get()->sum('quantity') - $fullQuery->get()->sum('return_quantity');
@@ -176,9 +199,22 @@ class ReportController extends Controller
         // Get filter data
         $vendors = Vendor::orderBy('shop_name')->get();
         $products = Product::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
         $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
         $filterorderStatuses = OrderStatus::orderBy('id')->get();
-        return view('product::reports.order-report', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage', 'filterorderStatuses'));
+        return view('product::reports.order-report', compact('orderItems', 'vendors', 'products', 'companies', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage', 'filterorderStatuses'));
+    }
+
+    /**
+     * Export Order Report to Excel
+     */
+    public function orderReportExport(Request $request)
+    {
+        try {
+            return Excel::download(new OrderReportExport($request), 'order_report_' . date('Y-m-d_His') . '.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to export order report. Please try again.');
+        }
     }
 
     /**
@@ -448,7 +484,7 @@ class ReportController extends Controller
     public function orderProfitReport(Request $request)
     {
         $limit = $request->limit ?? 50;
-        $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'orderItemStocks.stock'])
+        $query = OrderItem::with(['order.vendor', 'order.placeBy', 'product', 'product.company', 'orderItemStocks.stock'])
                 ->whereHas('order', function ($q) use ($request) {
                         $q->where('payment_status', 2);
                     });
@@ -480,6 +516,14 @@ class ReportController extends Controller
             $query->whereIn('product_id', $productIds);
         }
 
+        // Filter by company (multi)
+        if ($request->filled('company_id')) {
+            $companyIds = is_array($request->company_id) ? $request->company_id : [$request->company_id];
+            $query->whereHas('product', function ($q) use ($companyIds) {
+                $q->whereIn('company_id', $companyIds);
+            });
+        }
+
         // Filter by place_by (multi)
         if ($request->filled('place_by')) {
             $placeByIds = is_array($request->place_by) ? $request->place_by : [$request->place_by];
@@ -509,8 +553,9 @@ class ReportController extends Controller
         // Get filter data
         $vendors = Vendor::orderBy('shop_name')->get();
         $products = Product::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
         $admins = Admin::role(['admin', 'subadmin', 'dsr', 'sr'])->orderBy('name')->get();
 
-        return view('product::reports.order-profitreport', compact('orderItems', 'vendors', 'products', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage'));
+        return view('product::reports.order-profitreport', compact('orderItems', 'vendors', 'products', 'companies', 'admins', 'totalQuantity', 'totalPurchase', 'totalSellPrice', 'totalDiscount', 'totalProfit', 'currentQuantityPage', 'currentPurchasePage', 'currentSellPricePage', 'currentDiscountPage', 'currentProfitPage'));
     }
 }

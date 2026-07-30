@@ -113,6 +113,17 @@
                                     @enderror
                                 </div>
 
+                                <!-- Sales Target Field -->
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <label for="sales_target" class="form-label">Sales Target</label>
+                                    <input type="number" step="0.01" class="form-control @error('sales_target') is-invalid @enderror"
+                                           id="sales_target" name="sales_target" placeholder="Enter sales target (optional)"
+                                           value="{{ old('sales_target') }}">
+                                    @error('sales_target')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <!-- Status Field -->
                                 <div class="col-md-3 col-sm-6 mb-3">
                                     <label class="form-label">Status</label>
