@@ -55,6 +55,8 @@ class OrderController extends Controller
                 'total_amount' => 0,
                 'total_quantity' => 0,
                 'total_discount_amount' => 0,
+                'latitude' => $request->latitude ?? null,
+                'longitude' => $request->longitude ?? null,
             ]);
 
             $totalAmount = 0;
