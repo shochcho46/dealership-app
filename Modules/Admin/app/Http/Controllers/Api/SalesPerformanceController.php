@@ -47,19 +47,15 @@ class SalesPerformanceController extends Controller
                 ], 422);
             }
 
-            // Get ALL SR and DSR users (always needed for meta calculations)
+            // Get ALL active admin users (always needed for meta calculations)
             $allUsers = Admin::with(['roles', 'media'])
-                ->whereHas('roles', function($q) {
-                    $q->whereIn('name', ['sr', 'dsr'])
-                      ->where('guard_name', 'admin');
-                })
                 ->where('status', 1)
                 ->get();
 
             if ($allUsers->isEmpty()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'No SR or DSR users found',
+                    'message' => 'No active admin users found',
                     'data' => [],
                     'meta' => [
                         'date_from' => $dateFrom->format('Y-m-d'),
@@ -77,7 +73,7 @@ class SalesPerformanceController extends Controller
                 if ($usersForData->isEmpty()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Admin not found, inactive, or does not have SR/DSR role'
+                        'message' => 'Admin not found or inactive'
                     ], 422);
                 }
             } else {
