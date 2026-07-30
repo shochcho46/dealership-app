@@ -240,6 +240,7 @@
                             <th>Invoice ID</th>
                             <th>Place By</th>
                             <th>Vendor</th>
+                            <th>Distance</th>
                             <th>Order Status</th>
                             <th>Payment Status</th>
                             <th>Items</th>
@@ -270,6 +271,15 @@
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order->vendor->mobile ?? 'N/A' }}</small>
                                     <br><small class="text-danger">Total Due: ৳{{ number_format($order?->vendor?->due_balance, 2) ?? 'N/A' }}</small>
+                                </td>
+                                <td>
+                                    @if($order->hasLocationData())
+                                        <span class="badge bg-info">
+                                            {{ $order->getFormattedDistance() }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="badge {{ $order->status_badge_class }} status-badge">
@@ -320,7 +330,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">
+                                <td colspan="12" class="text-center py-4">
                                     <i class="mdi mdi-file-document-outline" style="font-size: 3rem; color: #ccc;"></i>
                                     <br>No invoices found
                                     <br><small class="text-muted">No shipped or delivered orders available for invoicing</small>
@@ -331,14 +341,14 @@
 
                     <tfoot class="table-secondary">
                                 <tr>
-                                    <th colspan="7" class="text-end">Page Total:</th>
+                                    <th colspan="8" class="text-end">Page Total:</th>
                                     <th class="text-primary">৳{{ number_format($pageTotalAmount, 2) }}</th>
                                     <th class="text-success">৳{{ number_format($pageTotalPaidAmount, 2) }}</th>
                                     <th class="text-danger">৳{{ number_format($pageTotalDueAmount, 2) }}</th>
                                     <th colspan="2"></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="7" class="text-end">Filtered Total:</th>
+                                    <th colspan="8" class="text-end">Filtered Total:</th>
                                     <th class="text-primary">৳{{ number_format($filteredTotalAmount, 2) }}</th>
                                     <th class="text-success">৳{{ number_format($filteredTotalPaidAmount, 2) }}</th>
                                     <th class="text-danger">৳{{ number_format($filteredTotalDueAmount, 2) }}</th>

@@ -240,6 +240,7 @@
                             <th>Invoice ID</th>
                             <th>Vendor</th>
                             <th>Place By</th>
+                            <th>Distance</th>
                             <th>Payment Status</th>
                             <th>Items</th>
                             <th>Total Amount</th>
@@ -272,6 +273,16 @@
                                 <td>
                                     <strong>{{ $order->placeBy->name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order?->placeBy?->phone ?? 'N/A' }}</small>
+                                </td>
+
+                                <td>
+                                    @if($order->hasLocationData())
+                                        <span class="badge bg-info">
+                                            {{ $order->getFormattedDistance() }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 </td>
 
                                 <td>
