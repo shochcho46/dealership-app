@@ -46,6 +46,40 @@
         padding: 0.25rem 0.5rem;
     }
 
+    .distance-link {
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .distance-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        border: none;
+    }
+
+    .distance-link:hover .distance-badge {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+    }
+
+    .distance-badge i {
+        font-size: 1rem;
+        margin-right: 4px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+
     @media (max-width: 768px) {
         .invoice-card .number {
             font-size: 1.5rem;
@@ -240,6 +274,7 @@
                             <th>Invoice ID</th>
                             <th>Place By</th>
                             <th>Vendor</th>
+                            <th>Distance</th>
                             <th>Order Status</th>
                             <th>Payment Status</th>
                             <th>Items</th>
@@ -270,6 +305,19 @@
                                     <strong>{{ $order->vendor->shop_name ?? 'N/A' }}</strong>
                                     <br><small class="text-muted">{{ $order->vendor->mobile ?? 'N/A' }}</small>
                                     <br><small class="text-danger">Total Due: ৳{{ number_format($order?->vendor?->due_balance, 2) ?? 'N/A' }}</small>
+                                </td>
+                                <td>
+                                    @if($order->hasLocationData())
+                                        <a href="{{ $order->getGoogleMapsUrl() }}" target="_blank" rel="noopener noreferrer" class="distance-link" title="Click to view route on Google Maps">
+                                            <span class="badge distance-badge">
+                                                <i class="mdi mdi-map-marker-distance"></i>
+                                                {{ $order->getFormattedDistance() }}
+                                            </span>
+                                        </a>
+                                        <br><small class="text-muted" style="font-size: 0.7rem;"><i class="mdi mdi-google-maps"></i> View Map</small>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="badge {{ $order->status_badge_class }} status-badge">
@@ -320,7 +368,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">
+                                <td colspan="12" class="text-center py-4">
                                     <i class="mdi mdi-file-document-outline" style="font-size: 3rem; color: #ccc;"></i>
                                     <br>No invoices found
                                     <br><small class="text-muted">No shipped or delivered orders available for invoicing</small>
@@ -331,14 +379,14 @@
 
                     <tfoot class="table-secondary">
                                 <tr>
-                                    <th colspan="7" class="text-end">Page Total:</th>
+                                    <th colspan="8" class="text-end">Page Total:</th>
                                     <th class="text-primary">৳{{ number_format($pageTotalAmount, 2) }}</th>
                                     <th class="text-success">৳{{ number_format($pageTotalPaidAmount, 2) }}</th>
                                     <th class="text-danger">৳{{ number_format($pageTotalDueAmount, 2) }}</th>
                                     <th colspan="2"></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="7" class="text-end">Filtered Total:</th>
+                                    <th colspan="8" class="text-end">Filtered Total:</th>
                                     <th class="text-primary">৳{{ number_format($filteredTotalAmount, 2) }}</th>
                                     <th class="text-success">৳{{ number_format($filteredTotalPaidAmount, 2) }}</th>
                                     <th class="text-danger">৳{{ number_format($filteredTotalDueAmount, 2) }}</th>

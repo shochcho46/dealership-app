@@ -237,30 +237,21 @@ class SalesPerformanceController extends Controller
             ->sum('amount');
 
         // ========================================
-        // PART 3: TARGET METRICS (for SR only)
+        // PART 3: TARGET METRICS (for any user with sales target)
         // ========================================
 
         $targetMetrics = null;
-        if ($userRole && strtolower($userRole->name) === 'sr') {
-            $targetAmount = $user->sales_target ?? 0;
+        $targetAmount = $user->sales_target ?? 0;
 
-            if ($targetAmount > 0) {
-                $completionPercentage = ($salesAmount / $targetAmount) * 100;
-                $amountRemaining = max(0, $targetAmount - $salesAmount);
+        if ($targetAmount > 0) {
+            $completionPercentage = ($salesAmount / $targetAmount) * 100;
+            $amountRemaining = max(0, $targetAmount - $salesAmount);
 
-                $targetMetrics = [
-                    'completion_percentage' => round($completionPercentage, 2),
-                    'amount_remaining' => round($amountRemaining, 2),
-                    'status' => $completionPercentage >= 100 ? 'Achieved' : 'In Progress',
-                ];
-            } else {
-                // No target set
-                $targetMetrics = [
-                    'completion_percentage' => 0,
-                    'amount_remaining' => 0,
-                    'status' => 'No Target Set',
-                ];
-            }
+            $targetMetrics = [
+                'completion_percentage' => round($completionPercentage, 2),
+                'amount_remaining' => round($amountRemaining, 2),
+                'status' => $completionPercentage >= 100 ? 'Achieved' : 'In Progress',
+            ];
         }
 
         return [
