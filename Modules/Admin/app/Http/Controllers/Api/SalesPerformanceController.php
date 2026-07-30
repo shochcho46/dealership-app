@@ -23,10 +23,11 @@ class SalesPerformanceController extends Controller
     public function index(Request $request)
     {
         try {
-            // Validate date inputs
+            // Validate date inputs and optional admin_id filter
             $validated = $request->validate([
                 'date_from' => 'nullable|date',
                 'date_to' => 'nullable|date|after_or_equal:date_from',
+                'admin_id' => 'nullable|integer|exists:admins,id',
             ]);
 
             // Set date range (default to current month)
@@ -46,17 +47,16 @@ class SalesPerformanceController extends Controller
                 ], 422);
             }
 
-            // Get all SR and DSR users (role IDs 4 and 5)
-            // Using whereHas to explicitly query roles with admin guard
-            $users = Admin::with(['roles', 'media'])
-                ->whereHas('roles', function($query) {
-                    $query->whereIn('name', ['sr', 'dsr'])
-                          ->where('guard_name', 'admin');
+            // Get ALL SR and DSR users (always needed for meta calculations)
+            $allUsers = Admin::with(['roles', 'media'])
+                ->whereHas('roles', function($q) {
+                    $q->whereIn('name', ['sr', 'dsr'])
+                      ->where('guard_name', 'admin');
                 })
                 ->where('status', 1)
                 ->get();
 
-            if ($users->isEmpty()) {
+            if ($allUsers->isEmpty()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'No SR or DSR users found',
@@ -68,15 +68,36 @@ class SalesPerformanceController extends Controller
                 ], 200);
             }
 
-            // Calculate metrics for each user
-            $performanceData = $users->map(function ($user) use ($dateFrom, $dateTo) {
+            // Determine which users to return in data section
+            if ($request->filled('admin_id')) {
+                // Filter to specific admin for data response
+                $usersForData = $allUsers->where('id', $request->admin_id);
+                
+                // If admin_id was provided but no users found, return specific error
+                if ($usersForData->isEmpty()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Admin not found, inactive, or does not have SR/DSR role'
+                    ], 422);
+                }
+            } else {
+                // Return all users in data response
+                $usersForData = $allUsers;
+            }
+
+            // Calculate metrics for filtered users (for data section)
+            $performanceData = $usersForData->map(function ($user) use ($dateFrom, $dateTo) {
                 return $this->calculateUserPerformance($user, $dateFrom, $dateTo);
             });
 
-            // Calculate system-wide totals
-            $totalOrdersAmount = $performanceData->sum('sales.amount');
-            $totalCollectionsCurrentPeriod = $performanceData->sum('individual_collections.from_current_period_orders');
-            $totalCollectionsPreviousPeriod = $performanceData->sum('individual_collections.from_previous_period_orders');
+            // Calculate system-wide totals from ALL users (for meta section)
+            $allUsersPerformance = $allUsers->map(function ($user) use ($dateFrom, $dateTo) {
+                return $this->calculateUserPerformance($user, $dateFrom, $dateTo);
+            });
+
+            $totalOrdersAmount = $allUsersPerformance->sum('sales.amount');
+            $totalCollectionsCurrentPeriod = $allUsersPerformance->sum('individual_collections.from_current_period_orders');
+            $totalCollectionsPreviousPeriod = $allUsersPerformance->sum('individual_collections.from_previous_period_orders');
 
             // Calculate total due and percentages
             $totalDueAmount = $totalOrdersAmount - $totalCollectionsCurrentPeriod;
@@ -93,7 +114,8 @@ class SalesPerformanceController extends Controller
                 'meta' => [
                     'date_from' => $dateFrom->format('Y-m-d'),
                     'date_to' => $dateTo->format('Y-m-d'),
-                    'total_users' => $users->count(),
+                    'total_users' => $allUsers->count(),
+                    'filtered_users' => $usersForData->count(),
                     'total_orders_amount' => number_format($totalOrdersAmount, 2, '.', ''),
                     'total_collections_current_period' => number_format($totalCollectionsCurrentPeriod, 2, '.', ''),
                     'total_collections_previous_period' => number_format($totalCollectionsPreviousPeriod, 2, '.', ''),
