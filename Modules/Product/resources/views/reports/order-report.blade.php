@@ -43,6 +43,26 @@
                                 <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                             </div>
                             <div class="col-md-2">
+                                <label class="form-label">Limit</label>
+                                <select name="limit" class="form-select">
+                                    <option value="25" {{ request('limit') == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ request('limit', 50) == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ request('limit') == 100 ? 'selected' : '' }}>100</option>
+                                    <option value="200" {{ request('limit') == 200 ? 'selected' : '' }}>200</option>
+                                    <option value="all" {{ request('limit') == 'all' ? 'selected' : '' }}>All</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Company</label>
+                                <select name="company_id[]" class="form-select select2" multiple>
+                                    @foreach($companies as $company)
+                                        <option value="{{ $company->id }}" {{ collect(request('company_id'))->contains($company->id) ? 'selected' : '' }}>
+                                            {{ $company->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
                                 <label class="form-label">Vendor</label>
                                 <select name="vendor_id[]" class="form-select select2" multiple>
                                     @foreach($vendors as $vendor)
@@ -62,6 +82,9 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
                             <div class="col-md-2">
                                 <label class="form-label">Placed By</label>
                                 <select name="place_by[]" class="form-select select2" multiple>
@@ -109,9 +132,9 @@
 
                     <!-- Export Button -->
                     <div class="mb-3">
-                        {{-- <button type="button" class="btn btn-success btn-sm" onclick="exportTableToExcel('orderReportTable', 'Order_Report')">
+                        <a href="{{ route('admin.reportOrderReportExport', request()->all()) }}" class="btn btn-success btn-sm">
                             <i class="mdi mdi-file-excel"></i> Export to Excel
-                        </button> --}}
+                        </a>
                     </div>
 
                     <!-- Report Table -->
