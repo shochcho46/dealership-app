@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Modules\Product\Models\Vendor;
+use Modules\Product\Models\RoutePlan;
 use Modules\Product\Models\VendorAccount;
 use Modules\Product\Models\Order;
 use App\Models\Country;
@@ -24,6 +25,7 @@ class VendorController extends Controller
     {
         $limit = request()->get('limit', 64);
         $search = request()->get('search');
+        $routePlanId = request()->get('route_plan_id');
         $query = Vendor::with('country')
             // Old Due (manual entries without order_id)
             ->withSum(
@@ -58,13 +60,16 @@ class VendorController extends Controller
                         ->orWhere('shop_name', 'like', "%{$search}%")
                         ->orWhere('contact_person', 'like', "%{$search}%");
                 });
+            })
+            ->when($routePlanId, function ($q) use ($routePlanId) {
+                $q->where('route_plan_id', $routePlanId);
             });
 
         // 🔹 Clone full query for overall totals
         $fullQuery = clone $query;
 
         // 🔹 Paginated result
-        $vendors = $query->orderBy('id', 'desc')->paginate($limit);
+        $vendors = $query->orderBy('id', 'desc')->paginate($limit)->withQueryString();
 
         // Calculate old_due and due_balance for each vendor
         $vendors->getCollection()->transform(function ($vendor) {
@@ -91,6 +96,7 @@ class VendorController extends Controller
         $pageDueBalance = $vendors->getCollection()->sum('due_balance');
 
         $businessDetail = Business::first();
+        $routePlans = RoutePlan::orderBy('name')->get();
 
         return view('product::vendor.index', compact(
             'vendors',
@@ -98,7 +104,8 @@ class VendorController extends Controller
             'overallDueBalance',
             'pageOldDue',
             'pageDueBalance',
-            'businessDetail'
+            'businessDetail',
+            'routePlans'
         ));
     }
 
@@ -108,7 +115,8 @@ class VendorController extends Controller
     public function create()
     {
         $countries = Country::all();
-        return view('product::vendor.create', compact('countries'));
+        $routePlans = RoutePlan::orderBy('name')->get();
+        return view('product::vendor.create', compact('countries', 'routePlans'));
     }
 
     /**
@@ -123,6 +131,7 @@ class VendorController extends Controller
             'email' => 'nullable|email|max:255',
             'contact_person' => 'nullable|string|max:255',
             'country_id' => 'nullable|exists:countries,id',
+            'route_plan_id' => 'nullable|exists:route_plans,id',
             'full_address' => 'nullable|string',
             'lat' => 'nullable|numeric|between:-90,90',
             'long' => 'nullable|numeric|between:-180,180',
@@ -133,6 +142,7 @@ class VendorController extends Controller
             'mobile.required' => 'Mobile number is required.',
             'email.email' => 'Please enter a valid email address.',
             'country_id.exists' => 'Selected country is invalid.',
+            'route_plan_id.exists' => 'Selected route plan is invalid.',
             'lat.between' => 'Latitude must be between -90 and 90.',
             'long.between' => 'Longitude must be between -180 and 180.',
             'vendor_image.image' => 'Vendor image must be an image file.',
@@ -149,6 +159,7 @@ class VendorController extends Controller
                 'email' => $request->email,
                 'contact_person' => $request->contact_person,
                 'country_id' => 18,
+                'route_plan_id' => $request->route_plan_id,
                 'full_address' => $request->full_address,
                 'lat' => $request->lat,
                 'long' => $request->long,
@@ -174,7 +185,8 @@ class VendorController extends Controller
     public function edit(Vendor $vendor)
     {
         $countries = Country::all();
-        return view('product::vendor.edit', compact('vendor', 'countries'));
+        $routePlans = RoutePlan::orderBy('name')->get();
+        return view('product::vendor.edit', compact('vendor', 'countries', 'routePlans'));
     }
 
     /**
@@ -189,6 +201,7 @@ class VendorController extends Controller
             'email' => 'nullable|email|max:255',
             'contact_person' => 'nullable|string|max:255',
             'country_id' => 'nullable|exists:countries,id',
+            'route_plan_id' => 'nullable|exists:route_plans,id',
             'full_address' => 'nullable|string',
             'lat' => 'nullable|numeric|between:-90,90',
             'long' => 'nullable|numeric|between:-180,180',
@@ -199,6 +212,7 @@ class VendorController extends Controller
             'mobile.required' => 'Mobile number is required.',
             'email.email' => 'Please enter a valid email address.',
             'country_id.exists' => 'Selected country is invalid.',
+            'route_plan_id.exists' => 'Selected route plan is invalid.',
             'lat.between' => 'Latitude must be between -90 and 90.',
             'long.between' => 'Longitude must be between -180 and 180.',
             'vendor_image.image' => 'Vendor image must be an image file.',
@@ -215,6 +229,7 @@ class VendorController extends Controller
                 'email' => $request->email,
                 'contact_person' => $request->contact_person,
                 'country_id' => 18,
+                'route_plan_id' => $request->route_plan_id,
                 'full_address' => $request->full_address,
                 'lat' => $request->lat,
                 'long' => $request->long,

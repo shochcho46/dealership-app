@@ -66,9 +66,18 @@
                 <div class="card card-primary card-outline mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="card-title mb-0">All Vendors</div>
-                        <form method="GET" action="{{ route("admin.vendorIndex")}}" class="d-flex" role="search">
+                        <form method="GET" action="{{ route('admin.vendorIndex') }}" class="d-flex gap-2" role="search">
                             <input type="text" name="search" class="form-control" placeholder="Search vendors..." value="{{ request('search') }}">
-                            <button type="submit" class="btn btn-outline-primary m-1">Filter</button>
+                            <select name="route_plan_id" class="form-select">
+                                <option value="">All Route Plans</option>
+                                @foreach($routePlans as $routePlan)
+                                    <option value="{{ $routePlan->id }}" {{ request('route_plan_id') == $routePlan->id ? 'selected' : '' }}>
+                                        {{ $routePlan->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary">Filter</button>
+                            <a href="{{ route('admin.vendorIndex') }}" class="btn btn-outline-secondary">Reset</a>
                         </form>
                     </div>
                     {{-- <div class="card-header">
