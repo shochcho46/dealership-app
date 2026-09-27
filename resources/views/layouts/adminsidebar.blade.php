@@ -157,9 +157,15 @@
                         <ul class="nav nav-treeview">
                             @can('vendor_list')
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->is('admin/vendor/index') || request()->is('admin/vendor/*/edit') || request()->is('admin/vendor/create') || request()->is('admin/vendor/*/account') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.vendorIndex') }}" class="nav-link {{ request()->routeIs('admin.vendorIndex', 'admin.vendorCreate', 'admin.vendorEdit', 'admin.vendorAccount') ? 'active' : '' }}">
                                         <i class="nav-icon mdi mdi-format-list-bulleted"></i>
                                         <p>Vendor List</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.routePlanIndex') }}" class="nav-link {{ request()->routeIs('admin.routePlan*') ? 'active' : '' }}">
+                                        <i class="nav-icon mdi mdi-map-marker-path"></i>
+                                        <p>Route Plan</p>
                                     </a>
                                 </li>
                              @endcan

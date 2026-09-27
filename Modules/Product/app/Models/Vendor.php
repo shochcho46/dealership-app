@@ -21,6 +21,7 @@ class Vendor extends Model implements HasMedia
         'shop_name',
         'contact_person',
         'country_id',
+        'route_plan_id',
         'full_address',
         'lat',
         'long',
@@ -29,6 +30,7 @@ class Vendor extends Model implements HasMedia
 
     protected $casts = [
         'status' => 'boolean',
+        'route_plan_id' => 'integer',
         'lat' => 'decimal:8',
         'long' => 'decimal:8',
     ];
@@ -71,6 +73,11 @@ class Vendor extends Model implements HasMedia
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function routePlan()
+    {
+        return $this->belongsTo(RoutePlan::class);
     }
 
     /**

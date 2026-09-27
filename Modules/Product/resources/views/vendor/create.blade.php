@@ -125,6 +125,20 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="route_plan_id" class="form-label">Route Plan</label>
+                                        <select class="form-select @error('route_plan_id') is-invalid @enderror" id="route_plan_id" name="route_plan_id">
+                                            <option value="">No route plan</option>
+                                            @foreach($routePlans as $routePlan)
+                                                <option value="{{ $routePlan->id }}" {{ old('route_plan_id') == $routePlan->id ? 'selected' : '' }}>{{ $routePlan->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('route_plan_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row">
