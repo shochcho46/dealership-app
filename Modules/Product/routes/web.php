@@ -7,6 +7,7 @@ use Modules\Product\Http\Controllers\OrderStatusController;
 use Modules\Product\Http\Controllers\ProductController;
 use Modules\Product\Http\Controllers\UnitController;
 use Modules\Product\Http\Controllers\VendorController;
+use Modules\Product\Http\Controllers\RoutePlanController;
 use Modules\Product\Http\Controllers\OrderController;
 use Modules\Product\Http\Controllers\WarehouseController;
 use Modules\Product\Http\Controllers\PaymentMethodController;
@@ -85,6 +86,16 @@ Route::prefix('admin')->group(function () {
             Route::get('warehouse/{warehouse}/edit', 'edit')->name('admin.warehouseEdit');
             Route::put('warehouse/{warehouse}/update', 'update')->name('admin.warehouseUpdate');
             Route::delete('warehouse/{warehouse}/delete', 'destroy')->name('admin.warehouseDestroy');
+        });
+
+        // Route Plan routes
+        Route::controller(RoutePlanController::class)->group(function () {
+            Route::get('vendor/route-plan/index', 'index')->name('admin.routePlanIndex');
+            Route::get('vendor/route-plan/create', 'create')->name('admin.routePlanCreate');
+            Route::post('vendor/route-plan/store', 'store')->name('admin.routePlanStore');
+            Route::get('vendor/route-plan/{routePlan}/edit', 'edit')->name('admin.routePlanEdit');
+            Route::put('vendor/route-plan/{routePlan}/update', 'update')->name('admin.routePlanUpdate');
+            Route::delete('vendor/route-plan/{routePlan}/delete', 'destroy')->name('admin.routePlanDestroy');
         });
 
         // Vendor routes
