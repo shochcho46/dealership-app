@@ -42,12 +42,22 @@
                                 <label class="form-label">Date To</label>
                                 <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label">Vendor</label>
                                 <select name="vendor_id[]" class="form-select select2" multiple>
                                     @foreach($vendors as $vendor)
                                         <option value="{{ $vendor->id }}" {{ collect(request('vendor_id'))->contains($vendor->id) ? 'selected' : '' }}>
                                             {{ $vendor->shop_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Company</label>
+                                <select name="company_id[]" class="form-select select2" multiple>
+                                    @foreach($companies as $company)
+                                        <option value="{{ $company->id }}" {{ collect(request('company_id'))->contains($company->id) ? 'selected' : '' }}>
+                                            {{ $company->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -62,7 +72,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label">Placed By</label>
                                 <select name="place_by[]" class="form-select select2" multiple>
                                     @foreach($admins as $admin)
@@ -81,7 +91,7 @@
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="mdi mdi-filter"></i> Filter
                                     </button>
-                                    <a href="{{ route('admin.reportOrderReport') }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('admin.reportOrderProfitReport') }}" class="btn btn-sm btn-secondary">
                                         <i class="mdi mdi-refresh"></i> Reset
                                     </a>
                                 </div>

@@ -285,4 +285,99 @@ class Order extends Model
 
         return true;
     }
+
+    /**
+     * Calculate distance from vendor location using Haversine formula
+     * Returns distance in meters, or null if location data is missing
+     * 
+     * @return float|null Distance in meters
+     */
+    public function getDistanceFromVendor()
+    {
+        // Check if all required location data exists
+        if (!$this->latitude || !$this->longitude || !$this->vendor || !$this->vendor->lat || !$this->vendor->long) {
+            return null;
+        }
+
+        $earthRadius = 6371000; // Earth's radius in meters
+
+        // Convert degrees to radians
+        $lat1 = deg2rad(floatval($this->latitude));
+        $lon1 = deg2rad(floatval($this->longitude));
+        $lat2 = deg2rad(floatval($this->vendor->lat));
+        $lon2 = deg2rad(floatval($this->vendor->long));
+
+        // Calculate differences
+        $latDelta = $lat2 - $lat1;
+        $lonDelta = $lon2 - $lon1;
+
+        // Haversine formula
+        $a = sin($latDelta / 2) * sin($latDelta / 2) +
+             cos($lat1) * cos($lat2) *
+             sin($lonDelta / 2) * sin($lonDelta / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earthRadius * $c;
+
+        return $distance; // Distance in meters
+    }
+
+    /**
+     * Get formatted distance from vendor
+     * Returns formatted string like "250 meters" or "1.25 km"
+     * 
+     * @return string|null
+     */
+    public function getFormattedDistance()
+    {
+        $distance = $this->getDistanceFromVendor();
+
+        if ($distance === null) {
+            return null;
+        }
+
+        // If distance is greater than 500 meters, convert to kilometers
+        if ($distance > 500) {
+            return number_format($distance / 1000, 2) . ' km';
+        }
+
+        return round($distance) . ' meters';
+    }
+
+    /**
+     * Check if order and vendor have location data
+     * 
+     * @return bool
+     */
+    public function hasLocationData()
+    {
+        return !empty($this->latitude) && 
+               !empty($this->longitude) && 
+               $this->vendor && 
+               !empty($this->vendor->lat) && 
+               !empty($this->vendor->long);
+    }
+
+    /**
+     * Get Google Maps directions URL
+     * Returns URL to show route between vendor and order location with markers and distance
+     * 
+     * @return string|null
+     */
+    public function getGoogleMapsUrl()
+    {
+        if (!$this->hasLocationData()) {
+            return null;
+        }
+
+        // Origin: Vendor location (starting point)
+        $origin = $this->vendor->lat . ',' . $this->vendor->long;
+        
+        // Destination: Order placement location (end point)
+        $destination = $this->latitude . ',' . $this->longitude;
+
+        // Google Maps Directions API URL (no API key required)
+        return 'https://www.google.com/maps/dir/?api=1&origin=' . urlencode($origin) . '&destination=' . urlencode($destination);
+    }
 }

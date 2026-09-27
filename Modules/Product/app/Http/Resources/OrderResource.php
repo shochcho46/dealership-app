@@ -31,6 +31,16 @@ class OrderResource extends JsonResource
                 'full_address' => $this->vendor?->full_address,
                 'due_balance' => number_format($this->vendor?->due_balance ?? 0, 2, '.', ''),
             ],
+            'location' => [
+                'order_latitude' => $this->latitude,
+                'order_longitude' => $this->longitude,
+                'vendor_latitude' => $this->vendor?->lat,
+                'vendor_longitude' => $this->vendor?->long,
+                'has_location_data' => $this->hasLocationData(),
+                'distance_from_vendor' => $this->getFormattedDistance(),
+                'distance_in_meters' => $this->getDistanceFromVendor(),
+                'google_maps_url' => $this->getGoogleMapsUrl(),
+            ],
             'placed_by' => [
                 'id' => $this->placeBy?->id,
                 'name' => $this->placeBy?->name,

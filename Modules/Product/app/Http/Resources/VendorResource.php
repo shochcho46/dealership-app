@@ -30,6 +30,8 @@ class VendorResource extends JsonResource
                 'full_address' => $this->full_address,
                 'lat' => $this->lat,
                 'long' => $this->long,
+                'location_status' => ($this->lat && $this->long) ? 'yes' : 'no',
+                'location_status_color' => ($this->lat && $this->long) ? '#800080' : '#ff0000',
             ],
             'status' => $this->status,
             'status_text' => $this->status ? 'Active' : 'Inactive',
