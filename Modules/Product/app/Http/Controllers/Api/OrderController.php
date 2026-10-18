@@ -309,9 +309,13 @@ class OrderController extends Controller
                 'per_page' => 'nullable|integer|min:1|max:100'
             ]);
 
-            $query = Order::with(['admin', 'vendor', 'orderStatus', 'placeBy', 'orderItems.product.media'])
-                ->where('place_by', $request->place_by);
-                
+            $query = Order::with(['admin', 'vendor', 'orderStatus', 'placeBy', 'orderItems.product.media']);
+
+            // Privileged roles see all orders; others only the orders they placed
+            if (!$request->user()->hasAnyRole(['SuperAdmin', 'admin', 'subadmin', 'director'])) {
+                $query->where('place_by', $request->place_by);
+            }
+
             // Apply filters
             if ($request->filled('status_filter')) {
                 $query->where('order_status_id', $request->status_filter);
