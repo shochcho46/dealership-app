@@ -353,15 +353,46 @@
 
             <!-- Vendor / Account Summary -->
             <div class="vendor-section">
+                @php
+                    $vendorQr = null;
+                    try {
+                        $qrText = 'Vendor ID: ' . $vendor->uuid
+                            . "\nName: " . $vendor->shop_name
+                            . "\nMobile: " . $vendor->mobile
+                            . "\nContact Person: " . ($vendor->contact_person ?? 'N/A')
+                            . "\nAddress: " . ($vendor->full_address ?? 'N/A')
+                            . "\nCompany: " . ($companyInfo['name'] ?? 'N/A')
+                            . "\nHotline: " . ($companyInfo['phone'] ?? 'N/A') . ' / ' . ($companyInfo['phone_two'] ?? 'N/A');
+                        $vendorQr = (new \chillerlan\QRCode\QRCode(new \chillerlan\QRCode\QROptions([
+                            'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+                            'outputBase64' => true,
+                            'scale' => 8,
+                            'quietzoneSize' => 1,
+                        ])))->render($qrText);
+                    } catch (\Throwable $e) {
+                        $vendorQr = null;
+                    }
+                @endphp
                 <div class="bill-to">
                     <div class="section-title">Bill To:</div>
-                    <div class="vendor-name">{{ $vendor->shop_name }}</div>
-                    <div>{{ $vendor->mobile }}</div>
-                    <div>{{ $vendor->address }}</div>
-                    @if ($vendor->email)
-                        <div>{{ $vendor->email }}</div>
-                    @endif
-                    <div>Sales By : {{ $order?->placeBy?->name }}</div>
+                    <table style="width:100%;border-collapse:collapse;">
+                        <tr>
+                            <td style="vertical-align:top;padding:0;font-size:9pt;">
+                                <div class="vendor-name">{{ $vendor->shop_name }}</div>
+                                <div>{{ $vendor->mobile }}</div>
+                                <div>{{ $vendor->address }}</div>
+                                @if ($vendor->email)
+                                    <div>{{ $vendor->email }}</div>
+                                @endif
+                                <div>Sales By : {{ $order?->placeBy?->name }}</div>
+                            </td>
+                            @if ($vendorQr)
+                                <td style="vertical-align:top;text-align:right;padding:2px 2px 2px 4px;width:85px;">
+                                    <img src="{{ $vendorQr }}" width="130" height="130" alt="QR">
+                                </td>
+                            @endif
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="ship-to">
