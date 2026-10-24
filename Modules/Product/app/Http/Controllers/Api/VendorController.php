@@ -81,7 +81,7 @@ class VendorController extends Controller
                 'lat' => 'nullable|numeric',
                 'long' => 'nullable|numeric',
                 'status' => 'nullable|boolean',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp'
             ]);
 
             $vendor = Vendor::create([
@@ -176,7 +176,7 @@ class VendorController extends Controller
                 'lat' => 'nullable|numeric',
                 'long' => 'nullable|numeric',
                 'status' => 'nullable|boolean',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp'
             ]);
 
             $vendor->update([
