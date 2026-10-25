@@ -119,7 +119,7 @@ class DsrCollectionController extends Controller
 
             $collection = DsrCollection::create([
                 'vendor_id' => $validated['vendor_id'],
-                'payment_method_id' => $validated['payment_method_id'],
+                'payment_method_id' => 3 ?? $validated['payment_method_id'],
                 'amount' => $validated['amount'],
                 'collection_date' => $validated['collection_date'],
                 'note' => $validated['note'] ?? null,
