@@ -27,7 +27,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h4>৳{{ number_format($totalCollected, 2) }}</h4>
-                                <p class="mb-0">Total Collected</p>
+                                <p class="mb-0">Total Credit (Collected)</p>
+                                <small>{{ $dateFrom }} to {{ $dateTo }}</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="mdi mdi-cash-multiple fa-2x"></i>
@@ -42,7 +43,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h4>৳{{ number_format($totalPending, 2) }}</h4>
-                                <p class="mb-0">Total Pending</p>
+                                <p class="mb-0">Total Debit (Pending)</p>
+                                <small>{{ $dateFrom }} to {{ $dateTo }}</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="mdi mdi-clock-outline fa-2x"></i>
@@ -58,6 +60,7 @@
                             <div>
                                 <h4>৳{{ number_format($pendingCollect, 2) }}</h4>
                                 <p class="mb-0">Need to Collect</p>
+                                <small>{{ $dateFrom }} to {{ $dateTo }}</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="mdi mdi-currency-usd fa-2x"></i>
@@ -103,19 +106,29 @@
                             </select>
                         </div>
                         <div class="col-md-2">
+                            <select name="deposited_by_filter" class="form-select">
+                                <option value="">All Deposited By</option>
+                                @foreach($admins as $admin)
+                                    <option value="{{ $admin->id }}" {{ request('deposited_by_filter') == $admin->id ? 'selected' : '' }}>
+                                        {{ $admin->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2 mt-2">
                             <select name="type_filter" class="form-select">
                                 <option value="">All Types</option>
                                 <option value="1" {{ request('type_filter') == '1' ? 'selected' : '' }}>Debit</option>
                                 <option value="2" {{ request('type_filter') == '2' ? 'selected' : '' }}>Credit</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}" placeholder="From Date">
+                        <div class="col-md-2 mt-2">
+                            <input type="date" name="date_from" class="form-control" value="{{ $dateFrom }}" placeholder="From Date">
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}" placeholder="To Date">
+                        <div class="col-md-2 mt-2">
+                            <input type="date" name="date_to" class="form-control" value="{{ $dateTo }}" placeholder="To Date">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 mt-2">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="mdi mdi-filter"></i> Filter
                             </button>
@@ -143,7 +156,7 @@
                         <tbody>
                             @forelse($collections as $collection)
                                 <tr>
-                                    <td>{{ $collection->collection_date ? $collection->collection_date->format('M d, Y') : '-' }}</td>
+                                    <td>{{ ($collection->collection_date ?? $collection->created_at)?->format('M d, Y') ?? '-' }}</td>
                                     <td>
                                         <strong>{{ $collection->vendor->shop_name ?? 'N/A' }}</strong><br>
                                         <small>{{ $collection->vendor->mobile ?? '' }}</small>

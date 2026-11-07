@@ -99,7 +99,7 @@
                 <form method="GET" id="filterForm" class="mb-4">
                     <div class="row g-2">
                         <!-- Vendor search -->
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="vendor-search-wrapper">
                                 <input type="text" id="filter_vendor_search" class="form-control"
                                     placeholder="Search vendor by name / mobile..."
@@ -115,6 +115,16 @@
                                 @foreach($paymentMethods as $method)
                                     <option value="{{ $method->id }}" {{ request('payment_method_filter') == $method->id ? 'selected' : '' }}>
                                         {{ $method->account_name ?? $method->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="deposited_by_filter" class="form-select">
+                                <option value="">All Users</option>
+                                @foreach($admins as $admin)
+                                    <option value="{{ $admin->id }}" {{ request('deposited_by_filter') == $admin->id ? 'selected' : '' }}>
+                                        {{ $admin->name }}
                                     </option>
                                 @endforeach
                             </select>
