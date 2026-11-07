@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\Admin;
 use Modules\Product\Models\DsrCollection;
 use Modules\Product\Models\Vendor;
 use Modules\Product\Models\PaymentMethod;
@@ -24,6 +25,10 @@ class DsrCollectionController extends Controller
 
         if ($request->filled('payment_method_filter')) {
             $query->where('payment_method_id', $request->payment_method_filter);
+        }
+
+        if ($request->filled('deposited_by_filter')) {
+            $query->where('deposite_by', $request->deposited_by_filter);
         }
 
         if ($request->filled('date_from')) {
@@ -44,6 +49,9 @@ class DsrCollectionController extends Controller
         if ($request->filled('payment_method_filter')) {
             $filteredQuery->where('payment_method_id', $request->payment_method_filter);
         }
+        if ($request->filled('deposited_by_filter')) {
+            $filteredQuery->where('deposite_by', $request->deposited_by_filter);
+        }
         if ($request->filled('date_from')) {
             $filteredQuery->whereDate('collection_date', '>=', $request->date_from);
         }
@@ -54,6 +62,7 @@ class DsrCollectionController extends Controller
 
         $totalAll       = DsrCollection::sum('amount');
         $paymentMethods = PaymentMethod::orderBy('id')->get();
+        $admins         = Admin::where('status', 1)->orderBy('name')->get();
 
         // Pre-load selected vendor for the search input display
         $selectedVendor = null;
@@ -62,7 +71,7 @@ class DsrCollectionController extends Controller
         }
 
         return view('product::dsr_collection.index', compact(
-            'collections', 'totalAll', 'filteredTotal', 'paymentMethods', 'selectedVendor'
+            'collections', 'totalAll', 'filteredTotal', 'paymentMethods', 'selectedVendor', 'admins'
         ));
     }
 

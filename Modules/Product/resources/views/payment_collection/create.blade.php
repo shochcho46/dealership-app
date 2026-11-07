@@ -111,11 +111,8 @@
                                         <select name="payment_method_id" id="payment_method_id" class="form-select" required>
                                             <option value="">Select Payment Method</option>
                                             @foreach($paymentMethods as $method)
-                                                <option value="{{ $method->id }}">
-                                                    {{ $method->name }}
-                                                    @if($method->account_name)
-                                                        {{ $method->account_name }}
-                                                    @endif
+                                                <option value="{{ $method->id }}" {{ old('payment_method_id', $defaultPaymentMethodId) == $method->id ? 'selected' : '' }}>
+                                                    {{ $method->account_name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -146,6 +143,7 @@
                                                 <th>Paid Amount</th>
                                                 <th>Due Amount</th>
                                                 <th>Status</th>
+                                                <th style="width:160px">Pay Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody id="orders_list">
@@ -158,9 +156,12 @@
                                 <!-- Amount -->
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
-                                        <input type="number" name="amount" id="amount" class="form-control" step="0.01" min="0" value="{{ old('amount') }}" placeholder="Enter amount">
-                                        @error('amount')
+                                        <label for="amount" class="form-label">Total Amount</label>
+                                        <input type="text" id="amount" class="form-control" value="0.00" readonly>
+                                        @error('allocations')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                        @error('allocations.*')
                                             <div class="text-danger small mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -215,9 +216,6 @@
                                 @enderror
                                 <div id="document_preview" class="mt-2"></div>
                             </div>
-
-                            <!-- Selected Orders (Hidden) -->
-                            <div id="selected_orders_input"></div>
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-success">
@@ -357,9 +355,7 @@ $(document).ready(function() {
             html += `
                 <tr>
                     <td>
-                    
-                    <input type="radio" name="selected_order" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount}">
-
+                        <input type="checkbox" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount.toFixed(2)}">
                     </td>
                     <td>${order.invoice_id || ''}</td>
                     <td>${createdAt}</td>
@@ -367,42 +363,37 @@ $(document).ready(function() {
                     <td>৳${paid.toFixed(2)}</td>
                     <td>৳${dueAmount.toFixed(2)}</td>
                     <td><span class="badge ${statusBadge}">${statusText}</span></td>
+                    <td>
+                        <input type="number" name="allocations[${order.id}]" class="form-control form-control-sm order-amount"
+                            step="0.01" min="0.01" max="${dueAmount.toFixed(2)}" placeholder="Due ${dueAmount.toFixed(2)}" disabled>
+                    </td>
                 </tr>
             `;
         });
-        // <input type="checkbox" class="order-checkbox" data-order-id="${order.id}" data-due-amount="${dueAmount}">
         $('#orders_list').html(html);
         $('#pending_orders').show();
+        calculateTotal();
     }
 
-    // Handle order selection for amount calculation
+    // Checking an invoice enables its amount input (disabled inputs are not submitted)
     $(document).on('change', '.order-checkbox', function() {
-        updateSelectedOrders();
-        calculateTotalDue();
+        const $amountInput = $(this).closest('tr').find('.order-amount');
+        if ($(this).is(':checked')) {
+            $amountInput.prop('disabled', false).focus();
+        } else {
+            $amountInput.val('').prop('disabled', true);
+        }
+        calculateTotal();
     });
 
-    function updateSelectedOrders() {
-        let selectedOrders = [];
-        $('.order-checkbox:checked').each(function() {
-            selectedOrders.push($(this).data('order-id'));
-        });
+    $(document).on('input', '.order-amount', calculateTotal);
 
-        let html = '';
-        selectedOrders.forEach(function(orderId) {
-            html += `<input type="hidden" name="order_ids[]" value="${orderId}">`;
+    function calculateTotal() {
+        let total = 0;
+        $('.order-amount:not(:disabled)').each(function() {
+            total += parseFloat($(this).val()) || 0;
         });
-        $('#selected_orders_input').html(html);
-    }
-
-    function calculateTotalDue() {
-        let totalDue = 0;
-        $('.order-checkbox:checked').each(function() {
-            totalDue += parseFloat($(this).data('due-amount') || 0);
-        });
-
-        if (totalDue > 0) {
-            $('#amount').val(totalDue.toFixed(2));
-        }
+        $('#amount').val(total.toFixed(2));
     }
 
     // Hide vendor results when clicking outside
@@ -428,10 +419,28 @@ $(document).ready(function() {
             return false;
         }
 
-        if (!$('#amount').val() || parseFloat($('#amount').val()) <= 0) {
+        const $selected = $('.order-checkbox:checked');
+        if ($selected.length === 0) {
             e.preventDefault();
-            alert('Please enter a valid amount');
-            $('#amount').focus();
+            alert('Please select at least one invoice');
+            return false;
+        }
+
+        let invalid = null;
+        $selected.each(function() {
+            const $input = $(this).closest('tr').find('.order-amount');
+            const amount = parseFloat($input.val());
+            const due = parseFloat($(this).data('due-amount'));
+            if (!amount || amount <= 0 || amount > due + 0.001) {
+                invalid = $input;
+                return false;
+            }
+        });
+
+        if (invalid) {
+            e.preventDefault();
+            alert('Enter an amount greater than 0 and not more than the due for every selected invoice');
+            invalid.focus();
             return false;
         }
     });
