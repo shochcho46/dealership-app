@@ -10,6 +10,11 @@
         object-fit: cover;
         display: none;
     }
+    @font-face {
+        font-family: 'kalpurush';
+        src: url("{{ asset('fonts/kalpurush.ttf') }}") format('truetype');
+    }
+    .bn-input { font-family: 'kalpurush', sans-serif; font-size: 1.05rem; }
 </style>
 @endpush
 
@@ -69,6 +74,19 @@
                                                id="shop_name" name="shop_name" placeholder="Enter shop name"
                                                value="{{ old('shop_name') }}" required>
                                         @error('shop_name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="shop_name_bn" class="form-label d-flex justify-content-between">
+                                            <span>Shop Name (Bangla)</span>
+                                            <a href="#" id="regenBnBtn" class="small text-decoration-none" title="Re-generate from English name">&#8635; Auto</a>
+                                        </label>
+                                        <input type="text" class="form-control bn-input @error('shop_name_bn') is-invalid @enderror"
+                                               id="shop_name_bn" name="shop_name_bn" placeholder="Auto-filled from shop name"
+                                               value="{{ old('shop_name_bn') }}">
+                                        <small class="text-muted">Auto-generated; you can correct it manually.</small>
+                                        @error('shop_name_bn')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -238,5 +256,53 @@
             }
         });
     });
+</script>
+<script>
+(function () {
+    const enInput = document.getElementById('shop_name');
+    const bnInput = document.getElementById('shop_name_bn');
+    const regenBtn = document.getElementById('regenBnBtn');
+    if (!enInput || !bnInput) return;
+
+    const url = "{{ route('admin.vendorTransliterate') }}";
+    let timer = null;
+    let lastReq = 0;
+
+    // Existing (saved/old) Bangla value counts as manual so we don't overwrite it while typing.
+    bnInput.dataset.manual = bnInput.value.trim() !== '' ? '1' : '0';
+    bnInput.addEventListener('input', function () {
+        bnInput.dataset.manual = bnInput.value.trim() !== '' ? '1' : '0';
+    });
+
+    async function fillBangla(force) {
+        const text = enInput.value.trim();
+        if (!text || (!force && bnInput.dataset.manual === '1')) return;
+        const reqId = ++lastReq;
+        try {
+            const res = await fetch(url + '?text=' + encodeURIComponent(text), {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (reqId !== lastReq) return; // a newer request is in flight
+            if (data.bn && (force || bnInput.dataset.manual !== '1')) {
+                bnInput.value = data.bn;
+                bnInput.dataset.manual = '0';
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    enInput.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { fillBangla(false); }, 600);
+    });
+
+    regenBtn?.addEventListener('click', function (e) {
+        e.preventDefault();
+        fillBangla(true);
+    });
+})();
 </script>
 @endpush

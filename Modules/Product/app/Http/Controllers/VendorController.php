@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Admin\Entities\Business;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Product\Exports\VendorExport;
+use Modules\Product\Services\BanglaTransliterator;
 
 class VendorController extends Controller
 {
@@ -58,6 +59,7 @@ class VendorController extends Controller
                     $sub->where('email', 'like', "%{$search}%")
                         ->orWhere('mobile', 'like', "%{$search}%")
                         ->orWhere('shop_name', 'like', "%{$search}%")
+                        ->orWhere('shop_name_bn', 'like', "%{$search}%")
                         ->orWhere('contact_person', 'like', "%{$search}%");
                 });
             })
@@ -127,6 +129,7 @@ class VendorController extends Controller
         // Validation
      $request->validate([
             'shop_name' => 'required|string|max:255',
+            'shop_name_bn' => 'nullable|string|max:255',
             'mobile' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
             'contact_person' => 'nullable|string|max:255',
@@ -155,6 +158,9 @@ class VendorController extends Controller
             $phoneNumber = validationMobileNumber($request->mobile,$countriesIso->iso);
             $vendor = Vendor::create([
                 'shop_name' => $request->shop_name,
+                'shop_name_bn' => filled($request->shop_name_bn)
+                    ? trim($request->shop_name_bn)
+                    : BanglaTransliterator::toBangla($request->shop_name),
                 'mobile' => $phoneNumber ?? $request->mobile,
                 'email' => $request->email,
                 'contact_person' => $request->contact_person,
@@ -197,6 +203,7 @@ class VendorController extends Controller
         // Validation
         $request->validate([
             'shop_name' => 'required|string|max:255',
+            'shop_name_bn' => 'nullable|string|max:255',
             'mobile' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
             'contact_person' => 'nullable|string|max:255',
@@ -223,8 +230,18 @@ class VendorController extends Controller
 
             $countriesIso = Country::where('id',18)->first();
             $phoneNumber = validationMobileNumber($request->mobile,$countriesIso->iso);
+            // Re-generate Bangla name when it is empty, or when the English name
+            // changed but the Bangla name was left untouched.
+            $shopNameBn = trim((string) $request->shop_name_bn);
+            $englishChanged = $request->shop_name !== $vendor->shop_name;
+            $bnUntouched = $shopNameBn === (string) $vendor->shop_name_bn;
+            if ($shopNameBn === '' || ($englishChanged && $bnUntouched)) {
+                $shopNameBn = BanglaTransliterator::toBangla($request->shop_name) ?? ($shopNameBn ?: null);
+            }
+
             $vendor->update([
                 'shop_name' => $request->shop_name,
+                'shop_name_bn' => $shopNameBn,
                 'mobile' => $phoneNumber,
                 'email' => $request->email,
                 'contact_person' => $request->contact_person,
@@ -250,6 +267,18 @@ class VendorController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to update vendor. Please try again.')->withInput();
         }
+    }
+
+    /**
+     * AJAX: transliterate an English shop name into Bangla script.
+     */
+    public function transliterate(Request $request)
+    {
+        $request->validate(['text' => 'required|string|max:255']);
+
+        return response()->json([
+            'bn' => BanglaTransliterator::toBangla($request->text),
+        ]);
     }
 
     /**
