@@ -19,6 +19,7 @@ class Vendor extends Model implements HasMedia
         'email',
         'mobile',
         'shop_name',
+        'shop_name_bn',
         'contact_person',
         'country_id',
         'route_plan_id',

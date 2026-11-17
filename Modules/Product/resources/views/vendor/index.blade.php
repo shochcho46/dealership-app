@@ -9,6 +9,20 @@
         border: 2px solid #dee2e6;
         object-fit: cover;
     }
+    @font-face {
+        font-family: 'kalpurush';
+        src: url("{{ asset('fonts/kalpurush.ttf') }}") format('truetype');
+    }
+    .bn-name {
+        font-family: 'kalpurush', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    .bn-name-list {
+        font-family: 'kalpurush', sans-serif;
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
 </style>
 @endpush
 
@@ -108,7 +122,12 @@
                                             <td>
                                                 <img src="{{ $vendor->vendor_image_thumb_url }}" alt="Vendor Image" class="vendor-image">
                                             </td>
-                                            <td>{{ $vendor->shop_name }}</td>
+                                            <td>
+                                                {{ $vendor->shop_name }}
+                                                @if($vendor->shop_name_bn)
+                                                    <div class="bn-name-list">{{ $vendor->shop_name_bn }}</div>
+                                                @endif
+                                            </td>
                                             <td>{{ $vendor->contact_person ?? 'N/A' }}</td>
                                             <td>{{ $vendor->mobile }}</td>
                                             <td>{{ $vendor->email ?? 'N/A' }}</td>
@@ -146,6 +165,7 @@
                                                             class="btn btn-sm btn-outline-success qr-btn"
                                                             data-uuid="{{ $vendor->uuid }}"
                                                             data-name="{{ $vendor->shop_name }}"
+                                                            data-name-bn="{{ $vendor->shop_name_bn }}"
                                                             data-mobile="{{ $vendor->mobile }}"
                                                             data-contact="{{ $vendor->contact_person ?? 'N/A' }}"
                                                             data-address="{{ $vendor->full_address ?? 'N/A' }}"
@@ -210,6 +230,7 @@
             <div class="modal-body text-center">
                 <canvas id="qrCanvas"></canvas>
                 <h6 class="mt-3 mb-0" id="qrVendorName"></h6>
+                <div class="bn-name" id="qrVendorNameBn"></div>
                 <small class="text-muted d-block" id="qrBusinessInfo"></small>
             </div>
             <div class="modal-footer">
@@ -228,6 +249,7 @@
         return [
             'uuid' => $vendor->uuid,
             'name' => $vendor->shop_name,
+            'name_bn' => $vendor->shop_name_bn,
             'mobile' => $vendor->mobile,
             'contact' => $vendor->contact_person ?? 'N/A',
             'address' => $vendor->full_address ?? 'N/A',
@@ -246,6 +268,13 @@
 <script>
     const allVendorsQrData = @json($vendorsQrData);
     const businessInfo = @json($businessQrData);
+    const banglaFontUrl = @json(asset('fonts/kalpurush.ttf'));
+
+    function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
 
     function buildBusinessLine() {
         return businessInfo.name + ' | Hotline: ' + businessInfo.mobileOne + ' / ' + businessInfo.mobileTwo;
@@ -265,12 +294,14 @@
         const win = window.open('', '_blank');
         win.document.write(
             '<!DOCTYPE html><html><head><title>Vendor QR Codes</title><style>'
+            + '@font-face { font-family: "kalpurush"; src: url("' + banglaFontUrl + '") format("truetype"); }'
             + '@page { size: A4; margin: 10mm; }'
             + 'body { font-family: Arial, sans-serif; margin: 0; }'
             + '.qr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 10px; }'
             + '.qr-item { text-align: center; border: 1px solid #ccc; border-radius: 6px; padding: 8px; page-break-inside: avoid; }'
             + '.qr-item img { width: 100%; max-width: 140px; height: auto; }'
             + '.qr-item h6 { margin: 6px 0 0; font-size: 12px; word-break: break-word; }'
+            + '.qr-item .bn-name { font-family: "kalpurush", sans-serif; font-size: 15px; font-weight: 600; margin: 2px 0; word-break: break-word; }'
             + '.qr-item small { display: block; font-size: 10px; color: #666; word-break: break-word; }'
             + '</style></head><body><div class="qr-grid" id="qrGrid"></div></body></html>'
         );
@@ -282,9 +313,18 @@
             const dataUrl = await QRCode.toDataURL(buildQrText(v), { width: 220, margin: 1 });
             const item = win.document.createElement('div');
             item.className = 'qr-item';
-            item.innerHTML = '<img src="' + dataUrl + '" alt="QR code"><h6>' + v.name + '</h6>'
-                + '<small>' + buildBusinessLine() + '</small>';
+            item.innerHTML = '<img src="' + dataUrl + '" alt="QR code"><h6>' + escapeHtml(v.name) + '</h6>'
+                + (v.name_bn ? '<div class="bn-name">' + escapeHtml(v.name_bn) + '</div>' : '')
+                + '<small>' + escapeHtml(buildBusinessLine()) + '</small>';
             grid.appendChild(item);
+        }
+
+        // Wait for the Bangla font to load before printing.
+        try {
+            await win.document.fonts.load('15px "kalpurush"');
+            await win.document.fonts.ready;
+        } catch (e) {
+            console.error(e);
         }
 
         setTimeout(function () {
@@ -297,6 +337,7 @@
         btn.addEventListener('click', function () {
             const d = this.dataset;
             document.getElementById('qrVendorName').textContent = d.name;
+            document.getElementById('qrVendorNameBn').textContent = d.nameBn || '';
             document.getElementById('qrBusinessInfo').textContent = buildBusinessLine();
 
             const canvas = document.getElementById('qrCanvas');
@@ -308,6 +349,7 @@
                 openQrPrintWindow([{
                     uuid: d.uuid,
                     name: d.name,
+                    name_bn: d.nameBn || '',
                     mobile: d.mobile,
                     contact: d.contact,
                     address: d.address,
