@@ -55,6 +55,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th style="width: 64px">Logo</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
@@ -68,6 +69,15 @@
                                     @forelse($companies as $company)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                @if($company->logo_url)
+                                                    <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" loading="lazy"
+                                                         style="width: 44px; height: 44px; object-fit: contain; background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 3px;">
+                                                @else
+                                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-secondary fw-bold border"
+                                                          style="width: 44px; height: 44px; font-size: 14px;" title="No logo">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($company->name, 0, 2)) }}</span>
+                                                @endif
+                                            </td>
                                             <td><strong>{{ $company->name }}</strong></td>
                                             <td>{{ $company->email ?? 'N/A' }}</td>
                                             <td>{{ $company->phone ?? 'N/A' }}</td>
@@ -93,7 +103,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center">No companies found</td>
+                                            <td colspan="9" class="text-center">No companies found</td>
                                         </tr>
                                     @endforelse
                                     @include('components.delete')

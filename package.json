@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "composer:install": "composer install --no-dev --optimize-autoloader"
+        "postinstall": "composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",

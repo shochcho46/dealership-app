@@ -45,7 +45,7 @@
                     <div class="card-header">
                         <div class="card-title">Company Information</div>
                     </div>
-                    <form action="{{ route('admin.companyStore') }}" method="post">
+                    <form action="{{ route('admin.companyStore') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                             <div class="row">
@@ -176,6 +176,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @include('product::company.partials.logo-field', ['company' => $company ?? null])
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">

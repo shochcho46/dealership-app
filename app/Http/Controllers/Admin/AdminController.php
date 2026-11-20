@@ -811,7 +811,7 @@ class AdminController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('adminLogin');
+        return redirect()->route('login');
     }
 
 
@@ -912,7 +912,7 @@ class AdminController extends Controller
                 'message' => $validator->errors()->first(),
                 'alert-type' => 'error'
             );
-            return redirect()->route('adminLogin')->with( $toster);
+            return redirect()->route('login')->with( $toster);
         }
 
 
@@ -925,7 +925,7 @@ class AdminController extends Controller
             'alert-type' => 'success'
         );
 
-        return redirect()->route('adminLogin')->with($toster);
+        return redirect()->route('login')->with($toster);
     }
 
     /**
@@ -947,12 +947,11 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:10048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp',
         ], [
             'name.required' => 'The name field is required',
             'profile_picture.image' => 'The file must be an image',
             'profile_picture.mimes' => 'Profile picture must be a file of type: jpeg, jpg, png, gif, webp',
-            'profile_picture.max' => 'Profile picture may not be greater than 10MB',
         ]);
 
         if ($validator->fails()) {
