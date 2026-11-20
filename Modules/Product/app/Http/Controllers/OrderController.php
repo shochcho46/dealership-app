@@ -121,6 +121,129 @@ class OrderController extends Controller
     }
 
     /**
+     * Printable "Loading Sheet": open orders (pending + confirm) of a date range,
+     * one page per day, grouped by the SR who placed them (place_by), with the
+     * total quantity of every product so the DSR can load and check it.
+     */
+    public function printSummary(Request $request)
+    {
+        $request->validate([
+            'date_from'       => 'nullable|date',
+            'date_to'         => 'nullable|date',
+            'place_by_filter' => 'nullable|integer',
+            'vendor_filter'   => 'nullable|integer',
+        ]);
+
+        $from = $request->filled('date_from') ? \Carbon\Carbon::parse($request->date_from)->startOfDay() : now()->startOfDay();
+        $to   = $request->filled('date_to') ? \Carbon\Carbon::parse($request->date_to)->startOfDay() : $from->copy();
+        if ($to->lt($from)) {
+            [$from, $to] = [$to, $from];
+        }
+        if ($from->diffInDays($to) > 30) {
+            $to = $from->copy()->addDays(30); // max 31 days / pages per print
+        }
+
+        $query = Order::with([
+                'vendor:id,shop_name,shop_name_bn,mobile,route_plan_id',
+                'vendor.routePlan:id,name',
+                'placeBy:id,name',
+                'orderStatus:id,name',
+                'orderItems:id,order_id,product_id,quantity,total_price',
+                'orderItems.product:id,name,package_unit_name,package_unit_quantity,measurement_unit_name',
+            ])
+            // Shipped (4), Delivered (5) and Cancelled (6) are not loaded any more
+            ->whereNotIn('order_status_id', [4, 5, 6])
+            ->whereDate('created_at', '>=', $from->toDateString())
+            ->whereDate('created_at', '<=', $to->toDateString());
+
+        $user = Auth::guard('admin')->user();
+        if (!$user->hasAnyRole(['SuperAdmin', 'admin', 'subadmin'])) {
+            $query->where('place_by', $user->id);
+        } elseif ($request->filled('place_by_filter')) {
+            $query->where('place_by', $request->place_by_filter);
+        }
+        if ($request->filled('vendor_filter')) {
+            $query->where('vendor_id', $request->vendor_filter);
+        }
+
+        $orders = $query->orderBy('created_at')->get();
+
+        $vendorName = fn ($v) => $v ? ($v->shop_name_bn ?: $v->shop_name) : 'Unknown vendor';
+
+        $days = $orders
+            ->groupBy(fn ($o) => $o->created_at->toDateString())
+            ->map(function ($dayOrders, $date) use ($vendorName) {
+                $groups = $dayOrders
+                    ->groupBy(fn ($o) => (int) $o->place_by)
+                    ->map(function ($srOrders) use ($vendorName) {
+                        $items = $srOrders->flatMap(fn ($o) => $o->orderItems->map(fn ($i) => [
+                            'item'   => $i,
+                            'vendor' => $vendorName($o->vendor),
+                        ]));
+
+                        $products = $items
+                            ->groupBy(fn ($row) => $row['item']->product_id)
+                            ->map(function ($rows) {
+                                $product = $rows->first()['item']->product;
+                                $qty     = (int) $rows->sum(fn ($r) => $r['item']->quantity);
+                                $perPack = (int) ($product->package_unit_quantity ?? 0);
+                                $pack    = null;
+                                if ($perPack > 1 && $qty >= $perPack) {
+                                    $packs = intdiv($qty, $perPack);
+                                    $loose = $qty % $perPack;
+                                    $pack  = $packs . ' ' . ($product->package_unit_name ?: 'pack')
+                                        . ($loose ? ' + ' . $loose . ' ' . ($product->measurement_unit_name ?: 'pcs') : '');
+                                }
+
+                                return [
+                                    'name'    => $product->name ?? 'Deleted product',
+                                    'qty'     => $qty,
+                                    'unit'    => $product->measurement_unit_name ?? null,
+                                    'pack'    => $pack,
+                                    // every vendor that ordered this product, on the same row
+                                    'vendors' => $rows->groupBy('vendor')
+                                        ->map(fn ($v, $name) => ['name' => $name, 'qty' => (int) $v->sum(fn ($r) => $r['item']->quantity)])
+                                        ->values(),
+                                ];
+                            })
+                            ->sortBy(fn ($p) => mb_strtolower($p['name']))
+                            ->values();
+
+                        $first = $srOrders->first();
+
+                        return [
+                            'sr'       => optional($first->placeBy)->name ?? 'Unknown',
+                            'products' => $products,
+                            'totals'   => [
+                                'orders'  => $srOrders->count(),
+                                'vendors' => $srOrders->pluck('vendor_id')->unique()->count(),
+                                'qty'     => (int) $products->sum('qty'),
+                                'amount'  => (float) $srOrders->sum('total_amount'),
+                            ],
+                        ];
+                    })
+                    ->sortBy('sr')
+                    ->values();
+
+                return [
+                    'date'   => \Carbon\Carbon::parse($date),
+                    'groups' => $groups,
+                    'totals' => [
+                        'orders'  => $dayOrders->count(),
+                        'vendors' => $dayOrders->pluck('vendor_id')->unique()->count(),
+                        'qty'     => (int) $groups->sum('totals.qty'),
+                        'amount'  => (float) $dayOrders->sum('total_amount'),
+                    ],
+                ];
+            })
+            ->values();
+
+        $business = \Modules\Admin\Entities\Business::first();
+
+        return view('product::order.print-summary', compact('days', 'from', 'to', 'business'));
+    }
+
+    /**
      * Show the form for creating a new order
      */
     public function create()

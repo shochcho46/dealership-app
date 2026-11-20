@@ -8,7 +8,8 @@
     $pageTitle   = trim($__env->yieldContent('title'));
     $fullTitle   = ($pageTitle ? $pageTitle . ' | ' : '') . $companyName . ' — ' . __('Wholesale Distributor in Rangpur');
     $metaDesc    = trim($__env->yieldContent('description')) ?: __('meta_description');
-    $assetVer    = '20261121b';
+    $assetVer    = '20261121e';
+    $deliveryFee = $business ? $business->currentDeliveryFee() : 0;
     $jsI18n      = [
                 'added'        => __('Added to your order list'),
                 'empty'        => __('Your order list is empty. Add products to get started.'),
@@ -100,6 +101,7 @@
             inquiryUrl: @json(route('inquiry.store')),
             csrf: @json(csrf_token()),
             company: @json($companyName),
+            deliveryFee: @json((float) $deliveryFee),
             i18n: @json($jsI18n),
         };
     </script>

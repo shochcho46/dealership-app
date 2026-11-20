@@ -30,6 +30,5 @@
         <label><span>{{ __('Place / delivery address') }}</span><input type="text" name="area" value="{{ old('area') }}" maxlength="150" autocomplete="street-address" placeholder="{{ __('e.g. Jahaj Company More, Rangpur') }}"></label>
     </div>
     <label><span>{{ __('What do you need?') }}</span><textarea name="message" rows="4" maxlength="2000" placeholder="{{ __('e.g. 10 cases of drinking water 500ml') }}">{{ old('message') }}</textarea></label>
-    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button type="submit" class="btn btn-primary btn-block btn-lg"><i class="mdi mdi-send"></i> {{ __('Send Request') }}</button>
 </form>
