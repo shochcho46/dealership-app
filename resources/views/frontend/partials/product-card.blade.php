@@ -8,6 +8,9 @@
     <a href="{{ $url }}" class="p-media {{ $product['has_image'] ? '' : 'is-placeholder' }}">
         <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" loading="lazy" decoding="async" width="300" height="300">
         <span class="badge-stock"><i class="mdi mdi-check-circle"></i> {{ __('In stock') }}</span>
+        @if(!empty($product['discount_pct']))
+            <span class="badge-off">-{{ Frontend::num($product['discount_pct']) }}%</span>
+        @endif
     </a>
     <div class="p-body">
         <a href="{{ route('products.index', ['company' => $product['company_id']]) }}" class="p-company">{{ $product['company'] }}</a>
@@ -21,6 +24,9 @@
                 <div class="price-row">
                     <strong>{{ Frontend::money($product['price_piece']) }}</strong>
                     <span>/ {{ __($product['unit_label']) }}</span>
+                    @if(!empty($product['mrp_piece']))
+                        <del class="p-mrp" title="{{ __('MRP') }}">{{ Frontend::money($product['mrp_piece']) }}</del>
+                    @endif
                 </div>
                 @if($product['case_price'])
                     <div class="price-row case">

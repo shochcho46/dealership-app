@@ -58,6 +58,35 @@
         @endif
     </div>
 
+    {{-- Website price: MRP and the price shown on the website. MRP - Website price = discount. --}}
+    <div class="row g-3 mb-3 web-price-row">
+        <div class="col-md-4">
+            <label for="mrp" class="form-label">MRP <small class="text-muted">(per piece)</small></label>
+            <div class="input-group">
+                <span class="input-group-text">৳</span>
+                <input type="number" step="0.01" min="0" class="form-control @error('mrp') is-invalid @enderror"
+                       id="mrp" name="mrp" placeholder="e.g. 120" value="{{ old('mrp', $isEdit ? $product->mrp : '') }}">
+                @error('mrp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="web_price" class="form-label">Website price <small class="text-muted">(per piece)</small></label>
+            <div class="input-group">
+                <span class="input-group-text">৳</span>
+                <input type="number" step="0.01" min="0" class="form-control @error('web_price') is-invalid @enderror"
+                       id="web_price" name="web_price" placeholder="e.g. 100" value="{{ old('web_price', $isEdit ? $product->web_price : '') }}">
+                @error('web_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <div class="web-discount w-100" id="webDiscount">—</div>
+        </div>
+        <div class="col-12 mt-1">
+            <small class="text-muted">Price for <b>one piece</b>. The website shows the Website price with the MRP crossed out; the difference is the discount.
+                The case/pack price is calculated automatically. Leave Website price empty to use the stock sell price.</small>
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-8">
             <label class="form-label fw-semibold mb-1">Which photo should customers see?</label>
@@ -115,6 +144,11 @@
 
 @push('custome-css')
 <style>
+    .web-discount { border: 1px dashed #ced4da; border-radius: 8px; padding: 7px 10px; font-weight: 600; color: #6c757d; background: #f8f9fa; }
+    .web-discount.ok { color: #0f5132; background: #d1e7dd; border-color: #a3cfbb; }
+    .web-discount.bad { color: #842029; background: #f8d7da; border-color: #f1aeb5; }
+</style>
+<style>
     .website-box { background: #f6fbfa; border: 1px solid #d5ece9; border-radius: 12px; padding: 18px; }
     .web-pick-grid { display: flex; flex-wrap: wrap; gap: 12px; }
     .web-pick { position: relative; width: 112px; margin: 0; cursor: pointer; text-align: center; }
@@ -141,6 +175,22 @@
 @endpush
 
 @push('custome-js')
+<script>
+(function () {
+    var mrp = document.getElementById('mrp'), web = document.getElementById('web_price'), out = document.getElementById('webDiscount');
+    if (!mrp || !web || !out) return;
+    function show() {
+        var m = parseFloat(mrp.value), w = parseFloat(web.value);
+        out.className = 'web-discount w-100';
+        if (!(m > 0) || !(w > 0)) { out.textContent = m > 0 ? 'MRP ৳' + m + ' (no website price)' : '—'; return; }
+        if (w > m) { out.classList.add('bad'); out.textContent = 'Website price is higher than MRP'; return; }
+        if (w === m) { out.textContent = 'No discount'; return; }
+        out.classList.add('ok');
+        out.textContent = 'Discount: ৳' + (m - w).toFixed(2).replace(/\.00$/, '') + ' (' + Math.round((m - w) / m * 100) + '% off)';
+    }
+    mrp.addEventListener('input', show); web.addEventListener('input', show); show();
+})();
+</script>
 <script>
 (function () {
     const box = document.getElementById('websiteBox');

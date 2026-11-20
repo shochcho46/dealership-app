@@ -57,6 +57,8 @@ class ProductController extends Controller
             'unit_id' => 'required|exists:units,id',
             'discount_type' => 'nullable|in:0,1',
             'discount_amount' => 'nullable|numeric|min:0',
+            'mrp' => 'nullable|numeric|min:0|max:99999999',
+            'web_price' => 'nullable|numeric|min:0|max:99999999' . ($request->filled('mrp') ? '|lte:mrp' : ''),
             'description' => 'nullable|string',
             'status' => 'required|boolean',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -68,6 +70,7 @@ class ProductController extends Controller
             'website_image' => ['nullable', 'string', 'regex:/^(media:\d+|new_main|new_other:\d+)$/'],
             'hero_position' => 'nullable|integer|min:1|max:' . Product::HERO_SLOTS,
         ], [
+            'web_price.lte' => 'Website price must not be higher than the MRP.',
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
             'unit_id.exists' => 'Selected unit is invalid.',
@@ -90,6 +93,8 @@ class ProductController extends Controller
                 'unit_id' => $request->unit_id,
                 'discount_type' => $request->discount_type,
                 'discount_amount' => $request->discount_amount,
+                'mrp' => $request->filled('mrp') ? $request->mrp : null,
+                'web_price' => $request->filled('web_price') ? $request->web_price : null,
                 'description' => $request->description,
                 'status' => $request->status
             ]);
@@ -189,6 +194,8 @@ class ProductController extends Controller
             'unit_id' => 'required|exists:units,id',
             'discount_type' => 'nullable|in:0,1',
             'discount_amount' => 'nullable|numeric|min:0',
+            'mrp' => 'nullable|numeric|min:0|max:99999999',
+            'web_price' => 'nullable|numeric|min:0|max:99999999' . ($request->filled('mrp') ? '|lte:mrp' : ''),
             'description' => 'nullable|string',
             'status' => 'required|boolean',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -200,6 +207,7 @@ class ProductController extends Controller
             'website_image' => ['nullable', 'string', 'regex:/^(media:\d+|new_main|new_other:\d+)$/'],
             'hero_position' => 'nullable|integer|min:1|max:' . Product::HERO_SLOTS,
         ], [
+            'web_price.lte' => 'Website price must not be higher than the MRP.',
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
             'unit_id.exists' => 'Selected unit is invalid.',
@@ -222,6 +230,8 @@ class ProductController extends Controller
                 'unit_id' => $request->unit_id,
                 'discount_type' => $request->discount_type,
                 'discount_amount' => $request->discount_amount,
+                'mrp' => $request->filled('mrp') ? $request->mrp : null,
+                'web_price' => $request->filled('web_price') ? $request->web_price : null,
                 'description' => $request->description,
                 'status' => $request->status
             ]);

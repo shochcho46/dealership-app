@@ -175,5 +175,20 @@
     "Place / delivery address": "স্থান / ডেলিভারি ঠিকানা",
     "e.g. Jahaj Company More, Rangpur": "যেমন: জাহাজ কোম্পানি মোড়, রংপুর",
     "deliver_shop": "দোকান",
-    "deliver_home": "বাসা"
+    "deliver_home": "বাসা",
+    "MRP": "এমআরপি",
+    "off": "ছাড়",
+    "You save": "আপনার সাশ্রয়",
+    "Delivery fee": "ডেলিভারি চার্জ",
+    "Total": "মোট",
+    "Subtotal": "পণ্যের দাম",
+    "Invoice": "ইনভয়েস",
+    "Print / Save PDF": "প্রিন্ট / PDF সেভ",
+    "Qty": "পরিমাণ",
+    "Price": "দাম",
+    "Amount": "টাকা",
+    "Bill to": "গ্রাহক",
+    "Order confirmed": "অর্ডার কনফার্ম",
+    "Thank you for your order!": "অর্ডারের জন্য ধন্যবাদ!",
+    "Questions? Call or WhatsApp us": "কোনো প্রশ্ন? কল বা হোয়াটসঅ্যাপ করুন"
 }

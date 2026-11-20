@@ -250,6 +250,12 @@
                         <p>Hero Images</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('website-settings.index') }}" class="nav-link {{ request()->is('admin/website/settings*') ? 'active' : '' }}">
+                        <i class="nav-icon mdi mdi-cog-outline"></i>
+                        <p>Website Settings</p>
+                    </a>
+                </li>
             @endcan
 
             @canany(['company_order_list', 'order_status_list', 'add_order', 'order_list', 'dsr_collection'])

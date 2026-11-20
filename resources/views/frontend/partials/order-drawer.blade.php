@@ -13,7 +13,9 @@
         <p class="order-empty" data-order-empty>{{ __('Your order list is empty. Add products to get started.') }}</p>
 
         <div class="order-summary" data-order-summary hidden>
-            <span>{{ __('Estimated total') }}</span>
+            <span class="os-line">{{ __('Products') }}</span><b class="os-val" data-order-subtotal>৳0</b>
+            <span class="os-line">{{ __('Delivery fee') }}</span><b class="os-val" data-order-delivery>৳0</b>
+            <span class="os-total">{{ __('Estimated total') }}</span>
             <strong data-order-total>৳0</strong>
             <small>{{ __('Final price is confirmed by phone.') }}</small>
         </div>
@@ -35,7 +37,6 @@
                 <label><span>{{ __('Note') }}</span><input type="text" name="message" maxlength="2000"></label>
             </div>
             <label><span>{{ __('Place / delivery address') }}</span><textarea name="area" rows="2" maxlength="150" autocomplete="street-address" placeholder="{{ __('e.g. Jahaj Company More, Rangpur') }}"></textarea></label>
-            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p class="form-status" data-order-status role="status"></p>
         </form>
     </div>

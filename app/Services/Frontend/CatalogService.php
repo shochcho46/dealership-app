@@ -17,7 +17,7 @@ use Modules\Product\Models\Vendor;
  */
 class CatalogService
 {
-    private const CACHE_KEY = 'frontend.catalog.v4';
+    private const CACHE_KEY = 'frontend.catalog.v5';
     private const CACHE_TTL = 600; // seconds
 
     /** All in-stock products as plain arrays, keyed by product id. */
@@ -156,6 +156,7 @@ class CatalogService
         Cache::forget('frontend.catalog.v1');
         Cache::forget('frontend.catalog.v2');
         Cache::forget('frontend.catalog.v3');
+        Cache::forget('frontend.catalog.v4');
     }
 
     // ------------------------------------------------------------------
@@ -169,9 +170,12 @@ class CatalogService
             return null;
         }
 
-        // Display price: highest sell price among available stock,
-        // otherwise latest non-zero sell price.
-        $price = (float) $available->max('sell_price');
+        // Display price: the product's Website price (set in admin) when given,
+        // otherwise highest sell price among available stock, otherwise latest non-zero sell price.
+        $price = (float) $p->web_price;
+        if ($price <= 0) {
+            $price = (float) $available->max('sell_price');
+        }
         if ($price <= 0) {
             $price = (float) optional(
                 $p->stocks->where('sell_price', '>', 0)->sortByDesc('id')->first()
@@ -188,6 +192,12 @@ class CatalogService
 
         $perPack = $isPieceish && $innerQty > 1 ? $innerQty / $packQty : null;
         $casePrice = ($price && $perPack) ? round($price * $perPack, 2) : null;
+
+        // MRP and discount (MRP - website price), only when MRP is higher.
+        $mrp         = (float) $p->mrp;
+        $mrp         = ($price && $mrp > $price) ? round($mrp, 2) : null;
+        $discountPct = $mrp ? (int) round(($mrp - $price) / $mrp * 100) : null;
+        $caseMrp     = ($mrp && $perPack) ? round($mrp * $perPack, 2) : null;
 
         $unitLabel = $isPieceish || $innerUnit === ''
             ? 'piece'
@@ -225,6 +235,9 @@ class CatalogService
             'price_piece' => $price,
             'hero_position' => $p->hero_position ?: null,
             'case_price'  => $casePrice,
+            'mrp_piece'    => $mrp,
+            'case_mrp'     => $caseMrp,
+            'discount_pct' => $discountPct ?: null,
             'created_at'  => optional($p->created_at)->timestamp,
             'updated_at'  => optional($p->updated_at)->timestamp,
         ];

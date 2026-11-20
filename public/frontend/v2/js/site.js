@@ -307,7 +307,12 @@
             });
         });
 
-        var total = l.reduce(function (s, x) { return s + (x.price > 0 ? x.price * x.qty : 0); }, 0);
+        var subtotal = l.reduce(function (s, x) { return s + (x.price > 0 ? x.price * x.qty : 0); }, 0);
+        var fee = subtotal > 0 ? (parseFloat(SITE.deliveryFee) || 0) : 0;
+        var total = subtotal + fee;
+        var subEl = $('[data-order-subtotal]'), feeEl = $('[data-order-delivery]');
+        if (subEl) subEl.textContent = money(subtotal);
+        if (feeEl) feeEl.textContent = money(fee);
         if (totalEl) totalEl.textContent = money(total);
         if (emptyEl) emptyEl.hidden = count > 0;
         if (summaryEl) summaryEl.hidden = count === 0 || total === 0;
@@ -364,7 +369,7 @@
             statusEl.textContent = T.sending || 'Sending…';
 
             var payload = {
-                name: v.name, mobile: v.mobile, delivery_type: v.delivery_type, area: v.area, message: v.message, website: v.website,
+                name: v.name, mobile: v.mobile, delivery_type: v.delivery_type, area: v.area, message: v.message,
                 items: list().map(function (x) { return { id: x.id, cases: x.qty }; })
             };
 
@@ -374,16 +379,20 @@
                 credentials: 'same-origin',
                 body: JSON.stringify(payload)
             }).then(function (res) {
-                return res.json().catch(function () { return {}; }).then(function (body) { return { ok: res.ok, body: body }; });
+                return res.json().catch(function () { return {}; }).then(function (body) { return { ok: res.ok, status: res.status, body: body }; });
             }).then(function (r) {
                 if (r.ok) {
+                    formEl.reset(); // clear name, mobile, note and delivery address
                     statusEl.textContent = (r.body && r.body.message) || T.sent;
                     statusEl.classList.add('ok');
                     save([]);
                     formEl.hidden = false; // keep the success message visible
                     if (actionsEl) actionsEl.hidden = true;
                 } else {
-                    var msg = (r.body && r.body.errors && Object.values(r.body.errors)[0] && Object.values(r.body.errors)[0][0]) || (r.body && r.body.message) || T.error;
+                    var msg = (r.body && r.body.errors && Object.values(r.body.errors)[0] && Object.values(r.body.errors)[0][0])
+                        || (r.status === 419 ? (T.expired || 'Page expired. Please refresh the page and try again.') : null)
+                        || (r.status === 429 ? (T.tooMany || 'Too many requests. Please wait a minute and try again.') : null)
+                        || (r.body && r.body.message) || T.error;
                     statusEl.textContent = msg;
                     statusEl.classList.add('err');
                 }

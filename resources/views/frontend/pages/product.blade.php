@@ -66,12 +66,22 @@
                             <small>{{ __('Single price') }}</small>
                             <strong>{{ Frontend::money($product['price_piece']) }}</strong>
                             <span>/ {{ __($product['unit_label']) }}</span>
+                            @if(!empty($product['mrp_piece']))
+                                <div class="pd-mrp">
+                                    {{ __('MRP') }} <del>{{ Frontend::money($product['mrp_piece']) }}</del>
+                                    <b>-{{ Frontend::num($product['discount_pct']) }}% {{ __('off') }}</b>
+                                </div>
+                                <em class="pd-save">{{ __('You save') }} {{ Frontend::money($product['mrp_piece'] - $product['price_piece']) }}</em>
+                            @endif
                         </div>
                         @if($product['case_price'])
                             <div class="pd-price-box case">
                                 <small>{{ __('Case price') }}</small>
                                 <strong>{{ Frontend::money($product['case_price']) }}</strong>
                                 <span>/ {{ __($product['pack_unit']) }} ({{ Frontend::num($product['per_pack']) }} {{ __('pcs') }})</span>
+                                @if(!empty($product['case_mrp']))
+                                    <div class="pd-mrp">{{ __('MRP') }} <del>{{ Frontend::money($product['case_mrp']) }}</del></div>
+                                @endif
                             </div>
                         @endif
                     @else
