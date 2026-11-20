@@ -226,6 +226,10 @@
                         <a href="{{ route('orders.index') }}" class="btn btn-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
                         </a>
+                        <button type="submit" formaction="{{ route('orders.printSummary') }}" formtarget="_blank"
+                                class="btn btn-outline-dark ms-2" title="Pending + Confirm orders of the selected dates, grouped by SR (Place By)">
+                            <i class="mdi mdi-printer"></i> Print Loading Sheet
+                        </button>
                         <a href="{{ route('orders.create') }}" class="btn btn-outline-success float-end mt-2">
                             <i class="mdi mdi-plus"></i> Create Order
                         </a>

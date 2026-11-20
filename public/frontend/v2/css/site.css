@@ -717,3 +717,16 @@ body { padding-bottom: 0; }
 .brand-img.is-logo { background: #fff; border: 1px solid var(--line); }
 .brand-img.is-logo img { padding: 8px; }
 .chip-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 6px; background: #fff; flex: none; }
+
+/* MRP / discount (Admin → Product → Website price) */
+.badge-off { position: absolute; top: 10px; right: 10px; font-size: .72rem; font-weight: 800; padding: 4px 8px; border-radius: 999px; background: #E11D48; color: #fff; }
+.pd-main .badge-off { top: 16px; right: 16px; font-size: .85rem; padding: 6px 12px; }
+.p-mrp { font-size: .75rem; color: var(--muted); font-weight: 600; }
+.pd-mrp { margin-top: 4px; font-size: .9rem; color: var(--muted); }
+.pd-mrp del { margin: 0 4px; }
+.pd-mrp b { color: #E11D48; }
+.pd-save { font-style: normal; font-size: .82rem; font-weight: 700; color: #0F7B43; }
+.order-summary .os-line { font-size: .85rem; color: rgba(255,255,255,.75); }
+.order-summary .os-val { font-weight: 700; justify-self: end; }
+.order-summary .os-total { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.2); font-weight: 700; }
+.order-summary .os-total + strong { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.2); justify-self: end; }

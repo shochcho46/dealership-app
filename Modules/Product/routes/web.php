@@ -32,6 +32,7 @@ use Modules\Product\Http\Controllers\CapitalOverviewController;
 use Modules\Product\Http\Controllers\CompanyOrderController;
 use Modules\Product\Http\Controllers\InspectionController;
 use Modules\Product\Http\Controllers\WebsiteHeroController;
+use Modules\Product\Http\Controllers\WebsiteSettingController;
 
 // Public vendor account route (outside admin middleware)
 Route::get('vendor-account/{uuid}', [VendorController::class, 'vendorPublicAccount'])->name('vendor.publicAccount');
@@ -217,6 +218,11 @@ Route::prefix('admin')->group(function () {
         // Website inquiries (from the public website)
         Route::controller(WebsiteInquiryController::class)->group(function () {
             Route::get('website-inquiries/index', 'index')->name('website-inquiries.index');
+            Route::get('website-inquiries/{websiteInquiry}/show', 'show')->name('website-inquiries.show');
+            Route::put('website-inquiries/{websiteInquiry}/pricing', 'updatePricing')->name('website-inquiries.pricing');
+            Route::put('website-inquiries/{websiteInquiry}/delivery-fee', 'updateDeliveryFee')->name('website-inquiries.deliveryFee');
+            Route::post('website-inquiries/{websiteInquiry}/send-sms', 'sendSms')->name('website-inquiries.sendSms');
+            Route::get('website-inquiries/{websiteInquiry}/invoice', 'invoice')->name('website-inquiries.invoice');
             Route::put('website-inquiries/{websiteInquiry}', 'update')->name('website-inquiries.update');
             Route::delete('website-inquiries/{websiteInquiry}', 'destroy')->name('website-inquiries.destroy');
         });
@@ -225,6 +231,13 @@ Route::prefix('admin')->group(function () {
         Route::controller(WebsiteHeroController::class)->group(function () {
             Route::get('website/hero', 'index')->name('website-hero.index');
             Route::put('website/hero', 'update')->name('website-hero.update');
+        });
+
+        // Website settings (delivery fee, inquiry SMS)
+        Route::controller(WebsiteSettingController::class)->group(function () {
+            Route::get('website/settings', 'index')->name('website-settings.index');
+            Route::put('website/settings', 'update')->name('website-settings.update');
+            Route::post('website/settings/test-sms', 'testSms')->name('website-settings.testSms');
         });
 
         // Damage/Return/Lost routes
@@ -332,6 +345,8 @@ Route::prefix('admin')->group(function () {
             Route::get('order/index', 'index')->name('orders.index');
             Route::get('order/create', 'create')->name('orders.create');
             Route::post('order/store', 'store')->name('orders.store');
+            // Static route: keep above the order/{order}/* wildcard routes
+            Route::get('order/print-summary', 'printSummary')->name('orders.printSummary');
             Route::get('order/{order}/show', 'show')->name('orders.show');
             Route::get('order/{order}/edit', 'edit')->name('orders.edit');
             Route::put('order/{order}/update', 'update')->name('orders.update');

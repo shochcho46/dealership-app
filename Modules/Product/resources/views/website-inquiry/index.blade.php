@@ -5,6 +5,16 @@
     .inq-items { margin: 0; padding-left: 1rem; font-size: .9rem; }
     .inq-msg { max-width: 280px; white-space: pre-line; font-size: .9rem; }
     .status-form select { min-width: 120px; }
+    .inq-items { list-style: none; padding-left: 0; }
+    .inq-items li { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .inq-items img { width: 36px; height: 36px; object-fit: contain; border: 1px solid #e9ecef; border-radius: 6px; background: #fff; flex: none; }
+    .inq-items .line-total { margin-left: auto; padding-left: 8px; white-space: nowrap; font-weight: 600; }
+    .fee-form .input-group { width: 150px; margin-left: auto; }
+    .fee-form input { text-align: right; }
+    .sum-box { border: 1px solid #e3e8ef; border-radius: 10px; padding: 10px 14px; background: #f8fafc; height: 100%; }
+    .sum-box .sum-val { font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
+    .sum-box.sum-total { background: #0B1F3A; border-color: #0B1F3A; color: #fff; }
+    .sum-box.sum-total small { color: rgba(255,255,255,.8); }
 </style>
 @endpush
 
@@ -88,6 +98,52 @@
                     </div>
                 @endif
 
+                {{-- Sums for all inquiries matching the filters (date range / status / search) --}}
+                @php
+                    $hasFilter = request()->hasAny(['from_date', 'to_date', 'status', 'search']) && request()->collect()->only(['from_date', 'to_date', 'status', 'search'])->filter(fn ($v) => $v !== null && $v !== '')->isNotEmpty();
+                    $period = request('from_date') || request('to_date')
+                        ? (request('from_date') ? \Carbon\Carbon::parse(request('from_date'))->format('d M Y') : 'Start') . ' – ' . (request('to_date') ? \Carbon\Carbon::parse(request('to_date'))->format('d M Y') : 'Today')
+                        : 'All dates';
+                    $a = $summary['all']; $c = $summary['confirmed'];
+                @endphp
+                <div class="inq-summary mb-3">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <strong><span class="mdi mdi-sigma"></span> Summary</strong>
+                        <span class="badge text-bg-light border"><span class="mdi mdi-calendar-range"></span> {{ $period }}</span>
+                        @if($hasFilter)<small class="text-muted">(filtered)</small>@endif
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6 col-lg-3">
+                            <div class="sum-box">
+                                <small>Orders</small>
+                                <div class="sum-val">{{ number_format($a->orders) }}</div>
+                                <small class="text-muted">Confirmed: {{ number_format($c->orders) }}</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="sum-box">
+                                <small>Products amount</small>
+                                <div class="sum-val">৳{{ number_format($a->subtotal, 2) }}</div>
+                                <small class="text-muted">Confirmed: ৳{{ number_format($c->subtotal, 2) }}</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="sum-box">
+                                <small><span class="mdi mdi-truck-delivery-outline"></span> Total delivery fee</small>
+                                <div class="sum-val">৳{{ number_format($a->delivery_fee, 2) }}</div>
+                                <small class="text-muted">Confirmed: ৳{{ number_format($c->delivery_fee, 2) }}</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="sum-box sum-total">
+                                <small>Total amount</small>
+                                <div class="sum-val">৳{{ number_format($a->total, 2) }}</div>
+                                <small>Confirmed: ৳{{ number_format($c->total, 2) }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle">
                         <thead>
@@ -97,6 +153,7 @@
                                 <th>Customer</th>
                                 <th>Requested Products</th>
                                 <th>Message</th>
+                                <th class="text-end">Total</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -125,7 +182,14 @@
                                         @if($inquiry->items)
                                             <ul class="inq-items">
                                                 @foreach($inquiry->items as $item)
-                                                    <li>{{ $item['name'] ?? 'Product' }} — <strong>{{ $item['cases'] ?? 1 }}</strong> {{ strtolower($item['pack_unit'] ?? 'case') }}</li>
+                                                    @php $pm = $products->get($item['product_id'] ?? 0); @endphp
+                                                    <li>
+                                                        <img src="{{ $pm ? $pm->website_image_url : asset('frontend/v2/img/product-placeholder.svg') }}" alt="" loading="lazy">
+                                                        <span>{{ $item['name'] ?? 'Product' }}<br>
+                                                            <small class="text-muted"><strong>{{ $item['cases'] ?? 1 }}</strong> {{ strtolower($item['pack_unit'] ?? 'case') }} × ৳{{ number_format($item['unit_price'] ?? 0, 2) }}</small>
+                                                        </span>
+                                                        <span class="line-total">৳{{ number_format($item['line_total'] ?? 0, 2) }}</span>
+                                                    </li>
                                                 @endforeach
                                             </ul>
                                         @elseif($inquiry->product)
@@ -135,22 +199,57 @@
                                         @endif
                                     </td>
                                     <td class="inq-msg">{{ $inquiry->message ?: '—' }}</td>
+                                    <td class="text-end text-nowrap">
+                                        <strong>৳{{ number_format($inquiry->total, 2) }}</strong>
+                                        @if($inquiry->isPriceLocked())
+                                            <br><small class="text-muted">incl. delivery ৳{{ number_format($inquiry->delivery_fee, 2) }}</small>
+                                            <br><span class="badge text-bg-light border mt-1" title="Order confirmed — prices and delivery fee can't change"><span class="mdi mdi-lock"></span> Locked</span>
+                                        @else
+                                            <br><small class="text-muted">products ৳{{ number_format($inquiry->subtotal, 2) }}</small>
+                                            <form method="POST" action="{{ route('website-inquiries.deliveryFee', $inquiry) }}" class="fee-form mt-1">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="input-group input-group-sm" title="Delivery fee — can be changed until the order is marked Contacted">
+                                                    <span class="input-group-text"><span class="mdi mdi-truck-delivery-outline"></span></span>
+                                                    <input type="number" name="delivery_fee" min="0" max="1000000" step="0.01" required
+                                                           class="form-control" value="{{ $inquiry->delivery_fee + 0 }}" aria-label="Delivery fee">
+                                                    <button type="submit" class="btn btn-outline-primary" title="Save delivery fee"><span class="mdi mdi-check"></span></button>
+                                                </div>
+                                            </form>
+                                        @endif
+                                    </td>
                                     <td>
                                         <form method="POST" action="{{ route('website-inquiries.update', $inquiry) }}" class="status-form">
                                             @csrf
                                             @method('PUT')
-                                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()"
+                                                    title="Marking Contacted confirms the order: prices & delivery fee get locked and the SMS is sent (if enabled)">
                                                 @foreach(\Modules\Product\Models\WebsiteInquiry::STATUSES as $value => $label)
-                                                    <option value="{{ $value }}" {{ $inquiry->status === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                    <option value="{{ $value }}" {{ $inquiry->status === $value ? 'selected' : '' }}
+                                                            @disabled($value === \Modules\Product\Models\WebsiteInquiry::STATUS_NEW && !$inquiry->canReopen())>{{ $label }}</option>
                                                 @endforeach
                                             </select>
                                         </form>
                                         @if($inquiry->handledBy)
                                             <small class="text-muted">by {{ $inquiry->handledBy->name }}</small>
                                         @endif
+                                        @if($inquiry->sms_status)
+                                            <br><span class="badge {{ ['sent' => 'text-bg-success', 'failed' => 'text-bg-danger'][$inquiry->sms_status] ?? 'text-bg-light border' }}"
+                                                      title="{{ $inquiry->sms_response }}">
+                                                <span class="mdi mdi-message-text-outline"></span> SMS {{ $inquiry->sms_status }}
+                                            </span>
+                                        @endif
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
+                                            <a href="{{ route('website-inquiries.show', $inquiry) }}" class="btn btn-sm btn-outline-info" title="Details / edit price">
+                                                <span class="mdi mdi-eye"></span>
+                                            </a>
+                                            @if($inquiry->has_invoice)
+                                                <a href="{{ route('website-inquiries.invoice', $inquiry) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="Invoice">
+                                                    <span class="mdi mdi-file-document-outline"></span>
+                                                </a>
+                                            @endif
                                             <a href="tel:{{ $inquiry->mobile }}" class="btn btn-sm btn-outline-primary" title="Call">
                                                 <span class="mdi mdi-phone"></span>
                                             </a>
@@ -170,7 +269,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">No inquiries yet.</td>
+                                    <td colspan="8" class="text-center text-muted py-4">No inquiries yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -186,3 +285,6 @@
     </div>
 </div>
 @endsection
+
+@push('custome-js')
+@endpush

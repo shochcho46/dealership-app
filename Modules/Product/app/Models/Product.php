@@ -27,12 +27,16 @@ class Product extends Model implements HasMedia
         'status',
         'website_media_id',
         'hero_position',
+        'mrp',
+        'web_price',
     ];
 
     protected $casts = [
         'status' => 'boolean',
         'website_media_id' => 'integer',
         'hero_position' => 'integer',
+        'mrp' => 'decimal:2',
+        'web_price' => 'decimal:2',
     ];
 
     /**

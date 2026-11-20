@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Frontend\InquiryController;
+use App\Http\Controllers\Frontend\InquiryInvoiceController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\SiteController;
 use App\Http\Middleware\SetFrontendLocale;
@@ -19,6 +20,9 @@ Route::middleware(SetFrontendLocale::class)->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{product}/{slug?}', [ProductController::class, 'show'])
         ->whereNumber('product')->name('products.show');
+    // Customer invoice — short link sent by SMS (/i/{code})
+    Route::get('/i/{code}', [InquiryInvoiceController::class, 'show'])
+        ->where('code', '[A-Za-z0-9]{6,12}')->middleware('throttle:60,1')->name('inquiry.invoice');
     Route::post('/inquiry', [InquiryController::class, 'store'])
         ->middleware('throttle:5,1')->name('inquiry.store');
     Route::get('/lang/{locale}', [SiteController::class, 'switchLocale'])

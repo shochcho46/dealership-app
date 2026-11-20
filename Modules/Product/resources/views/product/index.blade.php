@@ -95,7 +95,15 @@
                                             <td>
                                                 <img src="{{ $product->website_image_url }}" alt="Website image" title="Image shown on the website" class="product-image">
                                             </td>
-                                            <td>{{ $product->name }}</td>
+                                            <td>
+                                                {{ $product->name }}
+                                                @if($product->web_price || $product->mrp)
+                                                    <br><small class="text-muted" title="Website price (per piece) / MRP">
+                                                        Web ৳{{ $product->web_price ? number_format($product->web_price, 2) : '—' }}
+                                                        @if($product->mrp) · MRP <del>৳{{ number_format($product->mrp, 2) }}</del>@endif
+                                                    </small>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if($product->color)
                                                     <div class="color-preview" style="background-color: {{ $product->color->code }}"></div>
