@@ -13,6 +13,7 @@ use Modules\Product\Http\Controllers\WarehouseController;
 use Modules\Product\Http\Controllers\PaymentMethodController;
 use Modules\Product\Http\Controllers\PaymentCollectionController;
 use Modules\Product\Http\Controllers\DsrCollectionController;
+use Modules\Product\Http\Controllers\WebsiteInquiryController;
 use Modules\Product\Http\Controllers\InvoiceController;
 use Modules\Product\Http\Controllers\DamageReturnLostController;
 use Modules\Product\Http\Controllers\ExpenseHeadController;
@@ -30,6 +31,7 @@ use Modules\Product\Http\Controllers\FinancialReportController;
 use Modules\Product\Http\Controllers\CapitalOverviewController;
 use Modules\Product\Http\Controllers\CompanyOrderController;
 use Modules\Product\Http\Controllers\InspectionController;
+use Modules\Product\Http\Controllers\WebsiteHeroController;
 
 // Public vendor account route (outside admin middleware)
 Route::get('vendor-account/{uuid}', [VendorController::class, 'vendorPublicAccount'])->name('vendor.publicAccount');
@@ -151,6 +153,7 @@ Route::prefix('admin')->group(function () {
             Route::get('product/{product}/show', 'show')->name('admin.productShow');
             Route::get('product/{product}/edit', 'edit')->name('admin.productEdit');
             Route::put('product/{product}/update', 'update')->name('admin.productUpdate');
+            Route::put('product/{product}/website-image', 'updateWebsiteImage')->name('admin.productWebsiteImage');
             Route::delete('product/{product}/delete', 'destroy')->name('admin.productDestroy');
         });
 
@@ -209,6 +212,19 @@ Route::prefix('admin')->group(function () {
             Route::post('dsr-collection/store', 'store')->name('dsr-collections.store');
             Route::get('dsr-collection/{dsrCollection}/show', 'show')->name('dsr-collections.show');
             Route::delete('dsr-collection/{dsrCollection}', 'destroy')->name('dsr-collections.destroy');
+        });
+
+        // Website inquiries (from the public website)
+        Route::controller(WebsiteInquiryController::class)->group(function () {
+            Route::get('website-inquiries/index', 'index')->name('website-inquiries.index');
+            Route::put('website-inquiries/{websiteInquiry}', 'update')->name('website-inquiries.update');
+            Route::delete('website-inquiries/{websiteInquiry}', 'destroy')->name('website-inquiries.destroy');
+        });
+
+        // Website hero images (which product photos float in the home page banner)
+        Route::controller(WebsiteHeroController::class)->group(function () {
+            Route::get('website/hero', 'index')->name('website-hero.index');
+            Route::put('website/hero', 'update')->name('website-hero.update');
         });
 
         // Damage/Return/Lost routes

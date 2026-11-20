@@ -210,7 +210,7 @@
                             <div class="mb-3">
                                 <label for="payment_document" class="form-label">Payment Document <span class="text-muted">(Optional)</span></label>
                                 <input type="file" name="payment_document" id="payment_document" class="form-control" accept="image/*,.pdf">
-                                <small class="text-muted">Upload payment receipt, invoice or any supporting document (Max: 5MB, Formats: JPG, PNG, PDF)</small>
+                                <small class="text-muted">Upload payment receipt, invoice or any supporting document (Formats: JPG, PNG, PDF)</small>
                                 @error('payment_document')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror

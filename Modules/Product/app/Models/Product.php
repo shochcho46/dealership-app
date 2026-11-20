@@ -24,11 +24,15 @@ class Product extends Model implements HasMedia
         'discount_type',
         'discount_amount',
         'description',
-        'status'
+        'status',
+        'website_media_id',
+        'hero_position',
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'website_media_id' => 'integer',
+        'hero_position' => 'integer',
     ];
 
     /**
@@ -108,7 +112,7 @@ class Product extends Model implements HasMedia
     /**
      * Register media conversions
      */
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(300)
@@ -137,7 +141,36 @@ class Product extends Model implements HasMedia
         return $this->getFirstMediaUrl('product_image', 'thumb') ?: asset('assets/images/default-product.png');
     }
 
+    /** Number of floating photo slots in the public website hero. */
+    public const HERO_SLOTS = 5;
+
+    /** All product images, main image first. */
+    public function allImages()
+    {
+        return collect([$this->getFirstMedia('product_image')])
+            ->merge($this->getMedia('product_other_image'))
+            ->filter()
+            ->values();
+    }
+
     /**
+     * Image shown on the public website: the one chosen in admin,
+     * else the main image, else the first other image.
+     */
+    public function websiteMedia(): ?Media
+    {
+        $all = $this->allImages();
+
+        return ($this->website_media_id ? $all->firstWhere('id', $this->website_media_id) : null)
+            ?? $all->first();
+    }
+
+    public function getWebsiteImageUrlAttribute(): string
+    {
+        return optional($this->websiteMedia())->getUrl() ?: asset('frontend/v2/img/product-placeholder.svg');
+    }
+
+        /**
      * Get all other product images
      */
     public function getOtherImagesAttribute()

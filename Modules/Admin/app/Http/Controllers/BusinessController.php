@@ -56,7 +56,7 @@ class BusinessController extends Controller
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
             'brand_name' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp',
         ]);
 
         try {
@@ -108,7 +108,7 @@ class BusinessController extends Controller
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
             'brand_name' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp',
         ]);
 
         try {

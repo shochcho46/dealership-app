@@ -127,7 +127,7 @@ class InvestorController extends Controller
         $request->validate([
             'amount' => 'required|numeric|min:0',
             'investment_date' => 'required|date',
-            'invoice' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf|max:5120'
+            'invoice' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf'
         ]);
 
         try {

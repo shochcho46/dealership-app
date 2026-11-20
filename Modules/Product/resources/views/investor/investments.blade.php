@@ -187,7 +187,7 @@
                                    accept=".jpg,.jpeg,.png,.pdf">
                             <label class="custom-file-label" for="invoice">Choose file</label>
                         </div>
-                        <small class="form-text text-muted">Accepted formats: JPG, PNG, PDF (Max: 5MB)</small>
+                        <small class="form-text text-muted">Accepted formats: JPG, PNG, PDF</small>
                         @error('invoice')
                             <span class="invalid-feedback d-block">{{ $message }}</span>
                         @enderror

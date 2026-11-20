@@ -93,7 +93,7 @@
                                             <td>{{ $products->firstItem() + $loop->index}}</td>
                                             <td>{{ $product?->company?->name ?? 'N/A' }}</td>
                                             <td>
-                                                <img src="{{ $product->product_image_thumb_url }}" alt="Product Image" class="product-image">
+                                                <img src="{{ $product->website_image_url }}" alt="Website image" title="Image shown on the website" class="product-image">
                                             </td>
                                             <td>{{ $product->name }}</td>
                                             <td>
@@ -125,6 +125,16 @@
                                                 @else
                                                     <span class="badge bg-danger">Inactive</span>
                                                 @endif
+                                                <div class="mt-1">
+                                                    @if($websiteIds->has($product->id))
+                                                        <span class="badge bg-info text-dark" title="Visible on the public website"><span class="mdi mdi-web"></span> On website</span>
+                                                    @else
+                                                        <span class="badge bg-light text-muted border" title="Only active products with stock show on the website"><span class="mdi mdi-web-off"></span> {{ $product->status ? 'No stock' : 'Hidden' }}</span>
+                                                    @endif
+                                                    @if($product->hero_position)
+                                                        <span class="badge bg-warning text-dark" title="Pinned in the website hero banner">Hero #{{ $product->hero_position }}</span>
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">

@@ -127,7 +127,7 @@ class DamageReturnLostController extends Controller
             'quantity' => 'required|integer|min:1',
             'reason' => 'required|string|max:500',
             'unit_price' => 'required|numeric|min:0',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg'
         ]);
 
 

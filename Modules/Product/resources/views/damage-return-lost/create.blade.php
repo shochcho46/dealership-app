@@ -350,7 +350,7 @@
                                 <div class="evidence-upload" onclick="document.getElementById('evidenceInput').click()">
                                     <i class="mdi mdi-camera-plus" style="font-size: 2rem; color: #6c757d;"></i>
                                     <p class="mb-0">Click to upload evidence photos</p>
-                                    <small class="text-muted">JPEG, PNG files only. Max 2MB each.</small>
+                                    <small class="text-muted">JPEG, PNG files only.</small>
                                 </div>
                                 <input type="file" name="images[]" id="evidenceInput" multiple
                                        accept="image/jpeg,image/png,image/jpg" style="display: none;"

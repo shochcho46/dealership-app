@@ -147,7 +147,7 @@
                                     </label>
                                     <input type="file" class="form-control @error('logo') is-invalid @enderror"
                                            id="logo" name="logo" accept="image/jpeg,image/png,image/jpg,image/webp">
-                                    <small class="text-muted">Accepted formats: JPEG, PNG, JPG, WEBP. Max size: 2MB</small>
+                                    <small class="text-muted">Accepted formats: JPEG, PNG, JPG, WEBP.</small>
                                     @error('logo')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror

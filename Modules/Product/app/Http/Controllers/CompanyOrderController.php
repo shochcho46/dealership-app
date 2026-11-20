@@ -255,7 +255,7 @@ class CompanyOrderController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'nullable|date',
             'notes' => 'nullable|string',
-            'payment_slip' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:10240',
+            'payment_slip' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
         ]);
 
         try {
@@ -313,7 +313,7 @@ class CompanyOrderController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'nullable|date',
             'notes' => 'nullable|string',
-            'payment_slip' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:10240',
+            'payment_slip' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
         ]);
 
         try {

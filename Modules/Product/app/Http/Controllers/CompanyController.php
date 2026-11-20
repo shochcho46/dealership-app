@@ -14,7 +14,7 @@ class CompanyController extends Controller
     public function index()
     {
         $limit = request()->get('limit', 30);
-        $companies = Company::latest()->paginate($limit);
+        $companies = Company::with('media')->latest()->paginate($limit);
         return view('product::company.index', compact('companies'));
     }
 
@@ -42,8 +42,12 @@ class CompanyController extends Controller
             'postal_code' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
             'website' => 'nullable|url',
-            'status' => 'required|boolean'
+            'status' => 'required|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg', // no size limit
+            'remove_logo' => 'nullable|boolean',
         ], [
+            'logo.image' => 'The logo must be an image file.',
+            'logo.mimes' => 'The logo must be a JPG, PNG, WEBP, GIF or SVG file.',
             'name.required' => 'Company name is required.',
             'name.unique' => 'This company name already exists.',
             'email.email' => 'Please enter a valid email address.',
@@ -53,7 +57,7 @@ class CompanyController extends Controller
         ]);
 
         try {
-            Company::create([
+            $company = Company::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
@@ -66,7 +70,11 @@ class CompanyController extends Controller
                 'status' => $request->status
             ]);
 
-            return redirect()->route('admin.companyIndex')->with('success', 'Company created successfully!');
+            $logoError = $this->saveLogo($request, $company);
+
+            return redirect()->route('admin.companyIndex')
+                ->with('success', 'Company created successfully!')
+                ->with('error', $logoError);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create company. Please try again.')->withInput();
         }
@@ -96,8 +104,12 @@ class CompanyController extends Controller
             'postal_code' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
             'website' => 'nullable|url',
-            'status' => 'required|boolean'
+            'status' => 'required|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg', // no size limit
+            'remove_logo' => 'nullable|boolean',
         ], [
+            'logo.image' => 'The logo must be an image file.',
+            'logo.mimes' => 'The logo must be a JPG, PNG, WEBP, GIF or SVG file.',
             'name.required' => 'Company name is required.',
             'name.unique' => 'This company name already exists.',
             'email.email' => 'Please enter a valid email address.',
@@ -120,7 +132,11 @@ class CompanyController extends Controller
                 'status' => $request->status
             ]);
 
-            return redirect()->route('admin.companyIndex')->with('success', 'Company updated successfully!');
+            $logoError = $this->saveLogo($request, $company);
+
+            return redirect()->route('admin.companyIndex')
+                ->with('success', 'Company updated successfully!')
+                ->with('error', $logoError);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to update company. Please try again.')->withInput();
         }
@@ -132,10 +148,31 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         try {
+            $company->clearMediaCollection('logo');
             $company->delete();
             return redirect()->route('admin.companyIndex')->with('success', 'Company deleted successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete company. Please try again.');
         }
+    }
+
+    /**
+     * Upload a new logo (replaces the old one) or remove it when "Remove current logo" is ticked.
+     */
+    private function saveLogo(Request $request, Company $company): ?string
+    {
+        try {
+            if ($request->hasFile('logo')) {
+                $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+            } elseif ($request->boolean('remove_logo')) {
+                $company->clearMediaCollection('logo');
+            }
+        } catch (\Throwable $e) {
+            report($e);
+            // The company itself is saved; only the logo failed.
+            return 'Company saved, but the logo could not be uploaded: ' . $e->getMessage();
+        }
+
+        return null;
     }
 }

@@ -2,11 +2,31 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Frontend\InquiryController;
+use App\Http\Controllers\Frontend\ProductController;
+use App\Http\Controllers\Frontend\SiteController;
+use App\Http\Middleware\SetFrontendLocale;
 use Illuminate\Support\Facades\Route;
 
 
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'home'])->name('home');
-Route::get('/', [AdminController::class, 'adminLogin'])->name('adminLogin');
+// ---------------------------------------------------------------
+// Public website
+// ---------------------------------------------------------------
+Route::middleware(SetFrontendLocale::class)->group(function () {
+    Route::get('/', [SiteController::class, 'home'])->name('home');
+    Route::get('/contact', [SiteController::class, 'contact'])->name('contact');
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{product}/{slug?}', [ProductController::class, 'show'])
+        ->whereNumber('product')->name('products.show');
+    Route::post('/inquiry', [InquiryController::class, 'store'])
+        ->middleware('throttle:5,1')->name('inquiry.store');
+    Route::get('/lang/{locale}', [SiteController::class, 'switchLocale'])
+        ->whereIn('locale', SetFrontendLocale::LOCALES)->name('lang.switch');
+});
+Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('sitemap');
+
+// Admin login
 Route::get('/login', [AdminController::class, 'adminLogin'])->name('login');
 
 // Route::get('login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
