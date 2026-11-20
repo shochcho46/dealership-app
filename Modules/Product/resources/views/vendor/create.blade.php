@@ -207,7 +207,7 @@
                                         @error('vendor_image')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                        <small class="form-text text-muted">Max file size: 10MB. Accepted formats: JPG, PNG, GIF, WebP</small>
+                                        <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF, WebP</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

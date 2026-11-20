@@ -100,7 +100,7 @@ class PaymentCollectionController extends Controller
             'collection_date' => 'required|date',
             'deposite_by' => 'required|exists:admins,id',
             'note' => 'nullable|string|max:1000',
-            'payment_document' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,webp|max:5120',
+            'payment_document' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,webp',
             'allocations' => 'required|array|min:1',
             'allocations.*' => 'required|numeric|min:0.01',
         ], [

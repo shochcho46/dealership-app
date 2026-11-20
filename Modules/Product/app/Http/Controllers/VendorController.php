@@ -139,7 +139,7 @@ class VendorController extends Controller
             'lat' => 'nullable|numeric|between:-90,90',
             'long' => 'nullable|numeric|between:-180,180',
             'status' => 'required|boolean',
-            'vendor_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB
+            'vendor_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp', // no size limit
         ], [
             'shop_name.required' => 'Shop name is required.',
             'mobile.required' => 'Mobile number is required.',
@@ -149,7 +149,6 @@ class VendorController extends Controller
             'lat.between' => 'Latitude must be between -90 and 90.',
             'long.between' => 'Longitude must be between -180 and 180.',
             'vendor_image.image' => 'Vendor image must be an image file.',
-            'vendor_image.max' => 'Vendor image must not be larger than 10MB.',
         ]);
 
 
@@ -213,7 +212,7 @@ class VendorController extends Controller
             'lat' => 'nullable|numeric|between:-90,90',
             'long' => 'nullable|numeric|between:-180,180',
             'status' => 'required|boolean',
-            'vendor_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB
+            'vendor_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp', // no size limit
         ], [
             'shop_name.required' => 'Shop name is required.',
             'mobile.required' => 'Mobile number is required.',
@@ -223,7 +222,6 @@ class VendorController extends Controller
             'lat.between' => 'Latitude must be between -90 and 90.',
             'long.between' => 'Longitude must be between -180 and 180.',
             'vendor_image.image' => 'Vendor image must be an image file.',
-            'vendor_image.max' => 'Vendor image must not be larger than 10MB.',
         ]);
 
         try {

@@ -20,8 +20,10 @@ class ProductController extends Controller
     public function index()
     {
         $limit = request()->get('limit', 30);
-        $products = Product::with(['color', 'unit', 'company'])->latest()->paginate($limit);
-        return view('product::product.index', compact('products'));
+        $products = Product::with(['color', 'unit', 'company', 'media'])->latest()->paginate($limit);
+        // Ids of products the public website shows right now (active + in stock).
+        $websiteIds = app(\App\Services\Frontend\CatalogService::class)->products()->keys()->flip();
+        return view('product::product.index', compact('products', 'websiteIds'));
     }
 
     /**
@@ -34,7 +36,8 @@ class ProductController extends Controller
         $companies = Company::active()->get();
         $brands = Brand::active()->get();
         $tags = Tag::latest()->get();
-        return view('product::product.create', compact('colors', 'units', 'companies', 'brands', 'tags'));
+        $heroHolders = $this->heroHolders();
+        return view('product::product.create', compact('colors', 'units', 'companies', 'brands', 'tags', 'heroHolders'));
     }
 
     /**
@@ -56,12 +59,14 @@ class ProductController extends Controller
             'discount_amount' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
             'status' => 'required|boolean',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'product_other_images' => 'nullable|array|max:6',
-            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp',
             'brands' => 'nullable|array',
             'brands.*' => 'exists:brands,id',
             'tags' => 'nullable|string',
+            'website_image' => ['nullable', 'string', 'regex:/^(media:\d+|new_main|new_other:\d+)$/'],
+            'hero_position' => 'nullable|integer|min:1|max:' . Product::HERO_SLOTS,
         ], [
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
@@ -69,10 +74,8 @@ class ProductController extends Controller
             'color_id.exists' => 'Selected color is invalid.',
             'company_id.exists' => 'Selected company is invalid.',
             'product_image.image' => 'Product image must be an image file.',
-            'product_image.max' => 'Product image must not be larger than 10MB.',
             'product_other_images.max' => 'You can upload maximum 6 other images.',
             'product_other_images.*.image' => 'All other images must be image files.',
-            'product_other_images.*.max' => 'Each other image must not be larger than 10MB.',
         ]);
 
         try {
@@ -102,18 +105,22 @@ class ProductController extends Controller
             }
 
             // Handle thumbnail image upload
+            $newMain = null;
             if ($request->hasFile('product_image')) {
-                $product->addMediaFromRequest('product_image')
+                $newMain = $product->addMediaFromRequest('product_image')
                     ->toMediaCollection('product_image');
             }
 
             // Handle other images upload
+            $newOthers = [];
             if ($request->hasFile('product_other_images')) {
                 foreach ($request->file('product_other_images') as $file) {
-                    $product->addMedia($file)
+                    $newOthers[] = $product->addMedia($file)
                         ->toMediaCollection('product_other_image');
                 }
             }
+
+            $this->applyWebsiteSettings($product, $request, $newMain, $newOthers);
 
             return redirect()->route('admin.productIndex')->with('success', 'Product created successfully!');
         } catch (\Exception $e) {
@@ -132,6 +139,24 @@ class ProductController extends Controller
     }
 
     /**
+     * Choose which of the product's images is shown on the public website.
+     */
+    public function updateWebsiteImage(Request $request, Product $product)
+    {
+        $mediaIds = $product->allImages()->pluck('id')->all();
+
+        $request->validate([
+            'website_media_id' => ['required', 'integer', \Illuminate\Validation\Rule::in($mediaIds)],
+        ], [
+            'website_media_id.in' => 'Please choose one of this product\'s images.',
+        ]);
+
+        $product->update(['website_media_id' => (int) $request->website_media_id]);
+
+        return back()->with('success', 'Website image updated.');
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)
@@ -143,7 +168,8 @@ class ProductController extends Controller
         $tags = Tag::latest()->get();
         $selectedBrands = $product->brands()->pluck('brand_id')->toArray();
         $selectedTags = $product->tags()->pluck('tag_id')->toArray();
-        return view('product::product.edit', compact('product', 'colors', 'units', 'companies', 'brands', 'tags', 'selectedBrands', 'selectedTags'));
+        $heroHolders = $this->heroHolders();
+        return view('product::product.edit', compact('product', 'colors', 'units', 'companies', 'brands', 'tags', 'selectedBrands', 'selectedTags', 'heroHolders'));
     }
 
     /**
@@ -165,12 +191,14 @@ class ProductController extends Controller
             'discount_amount' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
             'status' => 'required|boolean',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'product_other_images' => 'nullable|array|max:6',
-            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'product_other_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp',
             'brands' => 'nullable|array',
             'brands.*' => 'exists:brands,id',
             'tags' => 'nullable|string',
+            'website_image' => ['nullable', 'string', 'regex:/^(media:\d+|new_main|new_other:\d+)$/'],
+            'hero_position' => 'nullable|integer|min:1|max:' . Product::HERO_SLOTS,
         ], [
             'name.required' => 'Product name is required.',
             'unit_id.required' => 'Unit is required.',
@@ -178,10 +206,8 @@ class ProductController extends Controller
             'color_id.exists' => 'Selected color is invalid.',
             'company_id.exists' => 'Selected company is invalid.',
             'product_image.image' => 'Product image must be an image file.',
-            'product_image.max' => 'Product image must not be larger than 10MB.',
             'product_other_images.max' => 'You can upload maximum 6 other images.',
             'product_other_images.*.image' => 'All other images must be image files.',
-            'product_other_images.*.max' => 'Each other image must not be larger than 10MB.',
         ]);
 
         try {
@@ -214,20 +240,24 @@ class ProductController extends Controller
             }
 
             // Handle thumbnail image upload
+            $newMain = null;
             if ($request->hasFile('product_image')) {
                 $product->clearMediaCollection('product_image');
-                $product->addMediaFromRequest('product_image')
+                $newMain = $product->addMediaFromRequest('product_image')
                     ->toMediaCollection('product_image');
             }
 
             // Handle other images upload
+            $newOthers = [];
             if ($request->hasFile('product_other_images')) {
                 $product->clearMediaCollection('product_other_image');
                 foreach ($request->file('product_other_images') as $file) {
-                    $product->addMedia($file)
+                    $newOthers[] = $product->addMedia($file)
                         ->toMediaCollection('product_other_image');
                 }
             }
+
+            $this->applyWebsiteSettings($product, $request, $newMain, $newOthers);
 
             return redirect()->route('admin.productIndex')->with('success', 'Product updated successfully!');
         } catch (\Exception $e) {
@@ -259,6 +289,62 @@ class ProductController extends Controller
     /**
      * Attach tags to product - auto-create if not exists
      */
+    /**
+     * Save the website image choice and hero slot coming from the create/edit form.
+     *
+     * website_image values: "media:{id}" (existing image), "new_main" (just-uploaded
+     * thumbnail) or "new_other:{n}" (n-th just-uploaded other image). Anything that no
+     * longer belongs to the product falls back to null = main image.
+     */
+    private function applyWebsiteSettings(Product $product, Request $request, $newMain = null, array $newOthers = []): void
+    {
+        $data = [];
+
+        if ($request->has('website_image')) {
+            $choice  = (string) $request->input('website_image');
+            $mediaId = null;
+
+            if ($choice === 'new_main') {
+                $mediaId = optional($newMain)->id;
+            } elseif (preg_match('/^new_other:(\d+)$/', $choice, $m)) {
+                $mediaId = optional($newOthers[(int) $m[1]] ?? null)->id;
+            } elseif (preg_match('/^media:(\d+)$/', $choice, $m)) {
+                $mediaId = (int) $m[1];
+            }
+
+            $product->load('media');
+            $data['website_media_id'] = $mediaId && $product->allImages()->contains('id', $mediaId) ? $mediaId : null;
+        } elseif ($newMain || $newOthers) {
+            // Images were replaced without an explicit choice: drop a stale selection.
+            $product->load('media');
+            if ($product->website_media_id && ! $product->allImages()->contains('id', $product->website_media_id)) {
+                $data['website_media_id'] = null;
+            }
+        }
+
+        if ($request->has('hero_position')) {
+            $slot = $request->filled('hero_position') ? (int) $request->input('hero_position') : null;
+            if ($slot) {
+                // One product per hero slot: free the slot first.
+                Product::where('hero_position', $slot)->where('id', '!=', $product->id)->update(['hero_position' => null]);
+            }
+            $data['hero_position'] = $slot;
+        }
+
+        if ($data) {
+            $product->update($data);
+        }
+    }
+
+    /** Products currently pinned to a website hero slot: [slot => ['id', 'name']]. */
+    private function heroHolders(): array
+    {
+        return Product::whereNotNull('hero_position')
+            ->get(['id', 'name', 'hero_position'])
+            ->mapWithKeys(fn ($p) => [$p->hero_position => ['id' => $p->id, 'name' => $p->name]])
+            ->all();
+    }
+
     private function attachTags(Product $product, $tagString)
     {
         if (empty($tagString)) {

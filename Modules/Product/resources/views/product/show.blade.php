@@ -43,6 +43,21 @@
         gap: 10px;
         margin-top: 15px;
     }
+    .web-img-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .web-img-option { position: relative; cursor: pointer; margin: 0; }
+    .web-img-option input { position: absolute; opacity: 0; pointer-events: none; }
+    .web-img-option img {
+        width: 110px; height: 110px; object-fit: cover; border-radius: 10px;
+        border: 3px solid #dee2e6; transition: border-color .2s, box-shadow .2s;
+    }
+    .web-img-option input:checked + img { border-color: #0FB5A6; box-shadow: 0 0 0 3px rgba(15,181,166,.25); }
+    .web-img-option input:focus-visible + img { outline: 2px solid #0B1F3A; outline-offset: 2px; }
+    .web-img-option .web-img-check {
+        position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%;
+        background: #0FB5A6; color: #fff; display: none; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .web-img-option input:checked ~ .web-img-check { display: flex; }
+    .web-img-option small { display: block; text-align: center; margin-top: 4px; color: #6c757d; }
     .status-badge {
         font-size: 1.1em;
         padding: 8px 16px;
@@ -87,6 +102,19 @@
                     </div>
                 </div>
 
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if(session('error') || $errors->has('website_media_id'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') ?: $errors->first('website_media_id') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <div class="row">
                     <!-- Product Images -->
                     <div class="col-md-6">
@@ -111,6 +139,58 @@
                                     <small class="text-muted">Click on thumbnails to view larger image</small>
                                 @else
                                     <p class="text-muted">No additional images available</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        @php
+                            $webImages = $product->allImages();
+                            $mainMediaId = optional($product->getFirstMedia('product_image'))->id;
+                            $chosenId = optional($product->websiteMedia())->id;
+                            $onWebsite = $product->status && $product->total_available_quantity > 0;
+                        @endphp
+                        <div class="card card-success card-outline mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="card-title"><span class="mdi mdi-web"></span> Website Image</div>
+                                <div class="ms-auto">
+                                    @if($product->hero_position)
+                                        <span class="badge bg-warning text-dark" title="Pinned in the website hero banner">Hero slot {{ $product->hero_position }}</span>
+                                    @endif
+                                    @if($onWebsite)
+                                        <a href="{{ route('products.show', [$product->id, \Illuminate\Support\Str::slug($product->name) ?: 'product']) }}"
+                                           target="_blank" rel="noopener" class="badge bg-success text-decoration-none">
+                                            <span class="mdi mdi-eye"></span> Showing on website
+                                        </a>
+                                    @else
+                                        <span class="badge bg-secondary" title="Only active products with stock are shown on the website">
+                                            <span class="mdi mdi-eye-off"></span>
+                                            Hidden ({{ $product->status ? 'no stock' : 'inactive' }})
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if($webImages->isEmpty())
+                                    <p class="text-muted mb-0">This product has no images yet. Upload images from <a href="{{ route('admin.productEdit', $product) }}">Edit</a> — the website will show a placeholder until then.</p>
+                                @else
+                                    <p class="text-muted small mb-3">Choose the photo customers see on the website product card, as the first photo on the product page and in the hero banner. You can also choose it on the Edit page.</p>
+                                    <form action="{{ route('admin.productWebsiteImage', $product) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="web-img-grid mb-3">
+                                            @foreach($webImages as $media)
+                                                <label class="web-img-option">
+                                                    <input type="radio" name="website_media_id" value="{{ $media->id }}" @checked($media->id === $chosenId)>
+                                                    <img src="{{ $media->getUrl() }}" alt="Image {{ $loop->iteration }}" loading="lazy">
+                                                    <span class="web-img-check"><span class="mdi mdi-check"></span></span>
+                                                    <small>{{ $media->id === $mainMediaId ? 'Main image' : 'Image ' . $loop->iteration }}</small>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                        <button type="submit" class="btn btn-success">
+                                            <span class="mdi mdi-content-save"></span> Save website image
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </div>

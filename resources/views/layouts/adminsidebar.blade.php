@@ -226,6 +226,32 @@
                 @endcanany
 
 
+            @canany(['website_inquiry', 'website_settings'])
+                <li class="nav-header">WEBSITE</li>
+            @endcanany
+            @can('website_inquiry')
+                @php($newInquiryCount = \Modules\Product\Models\WebsiteInquiry::where('status', 0)->count())
+                <li class="nav-item">
+                    <a href="{{ route('website-inquiries.index') }}" class="nav-link {{ request()->is('admin/website-inquiries/*') ? 'active' : '' }}">
+                        <i class="nav-icon mdi mdi-email-fast"></i>
+                        <p>
+                            Website Inquiries
+                            @if($newInquiryCount > 0)
+                                <span class="badge text-bg-warning float-end">{{ $newInquiryCount }}</span>
+                            @endif
+                        </p>
+                    </a>
+                </li>
+            @endcan
+            @can('website_settings')
+                <li class="nav-item">
+                    <a href="{{ route('website-hero.index') }}" class="nav-link {{ request()->is('admin/website/hero*') ? 'active' : '' }}">
+                        <i class="nav-icon mdi mdi-image-multiple"></i>
+                        <p>Hero Images</p>
+                    </a>
+                </li>
+            @endcan
+
             @canany(['company_order_list', 'order_status_list', 'add_order', 'order_list', 'dsr_collection'])
                 <li class="nav-header">ORDER MANAGEMENT</li>
                 <!-- Orders Section -->

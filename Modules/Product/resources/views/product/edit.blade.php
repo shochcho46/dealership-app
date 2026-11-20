@@ -342,13 +342,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="product_image" class="form-label">Product Thumbnail</label>
+                                        <label for="product_image" class="form-label">Product Thumbnail <small class="text-muted">(main image)</small></label>
                                         <input type="file" class="form-control @error('product_image') is-invalid @enderror"
                                                id="product_image" name="product_image" accept="image/*">
                                         @error('product_image')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                        <small class="form-text text-muted">Max file size: 10MB. Leave empty to keep current image.</small>
+                                        <small class="form-text text-muted">Any size. Leave empty to keep current image.</small>
                                         <div class="mt-2">
                                             <label class="form-label">Current Thumbnail:</label>
                                             <img src="{{ $product->product_image_thumb_url }}" class="image-preview" alt="Current Thumbnail">
@@ -364,7 +364,7 @@
                                         @error('product_other_images.*')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                        <small class="form-text text-muted">Max 6 images, 10MB each. Leave empty to keep current images.</small>
+                                        <small class="form-text text-muted">Up to 6 images, any size. Leave empty to keep current images.</small>
 
                                         <div class="mt-2">
                                             <label class="form-label">Current Other Images:</label>
@@ -382,6 +382,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @include('product::product.partials.website-settings', ['product' => $product ?? null])
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">
