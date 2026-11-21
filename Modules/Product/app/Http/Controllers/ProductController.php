@@ -59,6 +59,7 @@ class ProductController extends Controller
             'discount_amount' => 'nullable|numeric|min:0',
             'mrp' => 'nullable|numeric|min:0|max:99999999',
             'web_price' => 'nullable|numeric|min:0|max:99999999' . ($request->filled('mrp') ? '|lte:mrp' : ''),
+            'commission_amount' => 'nullable|numeric|min:0|max:99999999',
             'description' => 'nullable|string',
             'status' => 'required|boolean',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -95,6 +96,7 @@ class ProductController extends Controller
                 'discount_amount' => $request->discount_amount,
                 'mrp' => $request->filled('mrp') ? $request->mrp : null,
                 'web_price' => $request->filled('web_price') ? $request->web_price : null,
+                'commission_amount' => $request->filled('commission_amount') ? $request->commission_amount : null,
                 'description' => $request->description,
                 'status' => $request->status
             ]);
@@ -196,6 +198,7 @@ class ProductController extends Controller
             'discount_amount' => 'nullable|numeric|min:0',
             'mrp' => 'nullable|numeric|min:0|max:99999999',
             'web_price' => 'nullable|numeric|min:0|max:99999999' . ($request->filled('mrp') ? '|lte:mrp' : ''),
+            'commission_amount' => 'nullable|numeric|min:0|max:99999999',
             'description' => 'nullable|string',
             'status' => 'required|boolean',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -232,6 +235,7 @@ class ProductController extends Controller
                 'discount_amount' => $request->discount_amount,
                 'mrp' => $request->filled('mrp') ? $request->mrp : null,
                 'web_price' => $request->filled('web_price') ? $request->web_price : null,
+                'commission_amount' => $request->filled('commission_amount') ? $request->commission_amount : null,
                 'description' => $request->description,
                 'status' => $request->status
             ]);

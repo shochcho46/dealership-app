@@ -23,9 +23,9 @@ class InvoiceController extends Controller
     public function generateInvoice(Order $order)
     {
 
-        // Check if order is shipped or delivered
-        if (!in_array($order->order_status_id, [4, 5])) {
-            return back()->with('error', 'Invoice can only be generated for shipped or delivered orders.');
+        // Invoice is available once the order is confirmed (confirm / shipped / delivered)
+        if (!in_array($order->order_status_id, [3, 4, 5])) {
+            return back()->with('error', 'Invoice can only be generated for confirmed, shipped or delivered orders.');
         }
 
         $order->load(['vendor', 'orderItems.product', 'orderStatus', 'admin']);
@@ -88,9 +88,9 @@ class InvoiceController extends Controller
      */
     public function previewInvoice(Order $order)
     {
-        // Check if order is shipped or delivered
-        if (!in_array($order->order_status_id, [4, 5])) {
-            return back()->with('error', 'Invoice can only be generated for shipped or delivered orders.');
+        // Invoice is available once the order is confirmed (confirm / shipped / delivered)
+        if (!in_array($order->order_status_id, [3, 4, 5])) {
+            return back()->with('error', 'Invoice can only be generated for confirmed, shipped or delivered orders.');
         }
 
         $order->load(['vendor', 'orderItems.product', 'orderStatus', 'admin']);

@@ -730,3 +730,7 @@ body { padding-bottom: 0; }
 .order-summary .os-val { font-weight: 700; justify-self: end; }
 .order-summary .os-total { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.2); font-weight: 700; }
 .order-summary .os-total + strong { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.2); justify-self: end; }
+
+/* Order by pieces: pack size hint next to the quantity stepper */
+.pd-order .qty-hint { order: 3; }
+.qty-hint { display: block; width: 100%; color: var(--muted, #64748b); font-size: .85rem; margin-top: -2px; }

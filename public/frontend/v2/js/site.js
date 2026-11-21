@@ -210,7 +210,7 @@
     }
 
     /* ---------------- Order list (localStorage) ---------------- */
-    var STORE_KEY = 'sse_order_list_v1';
+    var STORE_KEY = 'sse_order_list_v2'; // v2: quantities are pieces (v1 lists were cases)
     function load() {
         try {
             var data = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
@@ -339,7 +339,6 @@
         });
         lines.push('');
         if (v.name) lines.push((T.name || 'Name') + ': ' + v.name);
-        if (v.delivery_type) lines.push((T.deliverTo || 'Deliver to') + ': ' + (v.delivery_type === 'home' ? (T.homeOpt || 'Home') : (T.shopOpt || 'Shop')));
         if (v.area) lines.push((T.place || 'Place') + ': ' + v.area);
         if (v.message) lines.push((T.note || 'Note') + ': ' + v.message);
         return lines.join('\n');
@@ -369,7 +368,7 @@
             statusEl.textContent = T.sending || 'Sending…';
 
             var payload = {
-                name: v.name, mobile: v.mobile, delivery_type: v.delivery_type, area: v.area, message: v.message,
+                name: v.name, mobile: v.mobile, area: v.area, message: v.message,
                 items: list().map(function (x) { return { id: x.id, cases: x.qty }; })
             };
 

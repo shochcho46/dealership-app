@@ -430,6 +430,33 @@
 
                     </div>
 
+                    <div class="form-group mt-2">
+                        <label for="entry_date">Date <span class="text-danger">*</span></label>
+                        <input type="date"
+                               class="form-control @error('entry_date') is-invalid @enderror"
+                               id="entry_date"
+                               name="entry_date"
+                               value="{{ old('entry_date', now()->format('Y-m-d')) }}"
+                               max="{{ now()->format('Y-m-d') }}"
+                               required>
+                        @error('entry_date')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label for="note">Note</label>
+                        <textarea class="form-control @error('note') is-invalid @enderror"
+                                  id="note"
+                                  name="note"
+                                  rows="2"
+                                  maxlength="1000"
+                                  placeholder="Optional note">{{ old('note') }}</textarea>
+                        @error('note')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
                     <input type="hidden" name="vendor_id" value="{{ $vendor->id }}">
                 </div>
                 <div class="modal-footer">

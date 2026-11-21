@@ -19,16 +19,7 @@
         <label><span>{{ __('Your name') }} *</span><input type="text" name="name" value="{{ old('name') }}" required maxlength="100" autocomplete="name"></label>
         <label><span>{{ __('Mobile') }} *</span><input type="tel" name="mobile" value="{{ old('mobile') }}" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
     </div>
-    <div class="field-row">
-        <div class="deliver-field">
-            <span class="field-label">{{ __('Deliver to') }}</span>
-            <div class="deliver-pills" role="radiogroup" aria-label="{{ __('Deliver to') }}">
-                <label class="pill-opt"><input type="radio" name="delivery_type" value="shop" @checked(old('delivery_type', 'shop') !== 'home')><span><i class="mdi mdi-storefront-outline"></i> {{ __('deliver_shop') }}</span></label>
-                <label class="pill-opt"><input type="radio" name="delivery_type" value="home" @checked(old('delivery_type') === 'home')><span><i class="mdi mdi-home-outline"></i> {{ __('deliver_home') }}</span></label>
-            </div>
-        </div>
-        <label><span>{{ __('Place / delivery address') }}</span><input type="text" name="area" value="{{ old('area') }}" maxlength="150" autocomplete="street-address" placeholder="{{ __('e.g. Jahaj Company More, Rangpur') }}"></label>
-    </div>
+    <label><span>{{ __('Place / delivery address') }}</span><input type="text" name="area" value="{{ old('area') }}" maxlength="150" autocomplete="street-address" placeholder="{{ __('e.g. Jahaj Company More, Rangpur') }}"></label>
     <label><span>{{ __('What do you need?') }}</span><textarea name="message" rows="4" maxlength="2000" placeholder="{{ __('e.g. 10 cases of drinking water 500ml') }}">{{ old('message') }}</textarea></label>
     <button type="submit" class="btn btn-primary btn-block btn-lg"><i class="mdi mdi-send"></i> {{ __('Send Request') }}</button>
 </form>

@@ -26,16 +26,7 @@
                 <label><span>{{ __('Your name') }} *</span><input type="text" name="name" required maxlength="100" autocomplete="name"></label>
                 <label><span>{{ __('Mobile') }} *</span><input type="tel" name="mobile" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
             </div>
-            <div class="field-row">
-                <div class="deliver-field">
-                    <span class="field-label">{{ __('Deliver to') }}</span>
-                    <div class="deliver-pills" role="radiogroup" aria-label="{{ __('Deliver to') }}">
-                        <label class="pill-opt"><input type="radio" name="delivery_type" value="shop" checked><span><i class="mdi mdi-storefront-outline"></i> {{ __('deliver_shop') }}</span></label>
-                        <label class="pill-opt"><input type="radio" name="delivery_type" value="home" ><span><i class="mdi mdi-home-outline"></i> {{ __('deliver_home') }}</span></label>
-                    </div>
-                </div>
-                <label><span>{{ __('Note') }}</span><input type="text" name="message" maxlength="2000"></label>
-            </div>
+            <label><span>{{ __('Note') }}</span><input type="text" name="message" maxlength="2000"></label>
             <label><span>{{ __('Place / delivery address') }}</span><textarea name="area" rows="2" maxlength="150" autocomplete="street-address" placeholder="{{ __('e.g. Jahaj Company More, Rangpur') }}"></textarea></label>
             <p class="form-status" data-order-status role="status"></p>
         </form>
