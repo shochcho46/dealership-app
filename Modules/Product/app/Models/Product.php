@@ -29,6 +29,7 @@ class Product extends Model implements HasMedia
         'hero_position',
         'mrp',
         'web_price',
+        'commission_amount',
     ];
 
     protected $casts = [
@@ -37,6 +38,7 @@ class Product extends Model implements HasMedia
         'hero_position' => 'integer',
         'mrp' => 'decimal:2',
         'web_price' => 'decimal:2',
+        'commission_amount' => 'decimal:8',
     ];
 
     /**

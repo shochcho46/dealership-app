@@ -1,8 +1,9 @@
 @php use App\Support\Frontend; @endphp
 @php
     $url      = route('products.show', [$product['id'], $product['slug']]);
-    $orderBy  = $product['per_pack'] ? $product['pack_unit'] : __('piece');
-    $unitStep = $product['per_pack'] ? ($product['case_price'] ?? 0) : ($product['price_piece'] ?? 0);
+    // Website orders are placed in pieces (quantity), priced per piece.
+    $orderBy  = __('pcs');
+    $unitStep = $product['price_piece'] ?? 0;
 @endphp
 <article class="p-card" data-reveal>
     <a href="{{ $url }}" class="p-media {{ $product['has_image'] ? '' : 'is-placeholder' }}">

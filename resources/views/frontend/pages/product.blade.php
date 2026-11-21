@@ -1,8 +1,9 @@
 @extends('frontend.layout.app')
 @php
     use App\Support\Frontend;
-    $orderBy  = $product['per_pack'] ? $product['pack_unit'] : __('piece');
-    $unitStep = $product['per_pack'] ? ($product['case_price'] ?? 0) : ($product['price_piece'] ?? 0);
+    // Website orders are placed in pieces (quantity), priced per piece.
+    $orderBy  = __('pcs');
+    $unitStep = $product['price_piece'] ?? 0;
     $waText   = __('Hello! I want the wholesale price for:') . ' ' . $product['name'] . ($product['pack_label'] ? ' (' . $product['pack_label'] . ')' : '');
 @endphp
 
@@ -109,8 +110,11 @@
                         <button type="button" data-qty-dec aria-label="{{ __('Less') }}"><i class="mdi mdi-minus"></i></button>
                         <input type="number" min="1" max="100000" value="1" data-qty-input aria-label="{{ __('Quantity') }}">
                         <button type="button" data-qty-inc aria-label="{{ __('More') }}"><i class="mdi mdi-plus"></i></button>
-                        <span class="qty-unit">{{ __($orderBy) }}</span>
+                        <span class="qty-unit">{{ __('pcs') }}</span>
                     </div>
+                    @if($product['per_pack'])
+                        <small class="qty-hint">1 {{ __($product['pack_unit']) }} = {{ Frontend::num($product['per_pack']) }} {{ __('pcs') }}</small>
+                    @endif
                     <button type="button" class="btn btn-primary btn-lg"
                             data-add-order data-with-qty
                             data-id="{{ $product['id'] }}"

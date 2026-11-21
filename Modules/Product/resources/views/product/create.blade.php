@@ -358,6 +358,8 @@
                                 </div>
                             </div>
 
+                            @include('product::product.partials.commission-field', ['product' => $product ?? null])
+
                             @include('product::product.partials.website-settings', ['product' => $product ?? null])
                         </div>
                         <div class="card-footer">

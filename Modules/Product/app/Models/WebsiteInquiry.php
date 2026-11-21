@@ -154,16 +154,16 @@ class WebsiteInquiry extends Model
      */
     public static function lineFromCatalog(array $product, int $qty): array
     {
-        $isPack    = (bool) $product['per_pack'];
-        $unitPrice = (float) ($isPack ? ($product['case_price'] ?? 0) : ($product['price_piece'] ?? 0));
-        $mrpUnit   = $isPack ? ($product['case_mrp'] ?? null) : ($product['mrp_piece'] ?? null);
+        // Website orders are in pieces: qty = number of pieces, price per piece.
+        $unitPrice = (float) ($product['price_piece'] ?? 0);
+        $mrpUnit   = $product['mrp_piece'] ?? null;
 
         return [
             'product_id' => $product['id'],
             'name'       => $product['name'],
             'cases'      => $qty,
-            'pack_unit'  => $isPack ? $product['pack_unit'] : 'piece',
-            'per_pack'   => $isPack ? (int) $product['per_pack'] : null,
+            'pack_unit'  => 'piece',
+            'per_pack'   => null,
             'unit_price' => round($unitPrice, 2),
             'mrp_unit'   => $mrpUnit ? round((float) $mrpUnit, 2) : null,
             'line_total' => round($unitPrice * $qty, 2),

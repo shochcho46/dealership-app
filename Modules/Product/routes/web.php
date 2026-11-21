@@ -21,6 +21,7 @@ use Modules\Product\Http\Controllers\ExpenseListController;
 use Modules\Product\Http\Controllers\CompanyController;
 use Modules\Product\Http\Controllers\BrandController;
 use Modules\Product\Http\Controllers\ReportController;
+use Modules\Product\Http\Controllers\CommissionController;
 use Modules\Product\Http\Controllers\InvestorController;
 use Modules\Product\Http\Controllers\AssetController;
 use Modules\Product\Http\Controllers\ProfitDistributeController;
@@ -317,6 +318,12 @@ Route::prefix('admin')->group(function () {
             Route::get('profit-disbursement/{profitDisbursement}/edit', 'edit')->name('admin.profitDisbursementEdit');
             Route::put('profit-disbursement/{profitDisbursement}/update', 'update')->name('admin.profitDisbursementUpdate');
             Route::delete('profit-disbursement/{profitDisbursement}/delete', 'destroy')->name('admin.profitDisbursementDestroy');
+        });
+
+        // Commission (SR over-price / discount per order)
+        Route::controller(CommissionController::class)->group(function () {
+            Route::get('commission/index', 'index')->name('commission.index');
+            Route::get('commission/export', 'export')->name('commission.export');
         });
 
         // Report routes
