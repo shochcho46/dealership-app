@@ -354,7 +354,7 @@
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>
                                         @endif
-                                        @if(in_array($order->order_status_id, [4, 5])) <!-- Shipped or Delivered -->
+                                        @if(in_array($order->order_status_id, [3, 4, 5])) <!-- Confirmed, Shipped or Delivered -->
                                             <button type="button" class="btn btn-outline-primary" title="Generate Invoice"
                                                     onclick="generateInvoice({{ $order->id }})">
                                                 <i class="mdi mdi-invoice"></i>

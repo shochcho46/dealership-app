@@ -8,7 +8,7 @@
     $pageTitle   = trim($__env->yieldContent('title'));
     $fullTitle   = ($pageTitle ? $pageTitle . ' | ' : '') . $companyName . ' — ' . __('Wholesale Distributor in Rangpur');
     $metaDesc    = trim($__env->yieldContent('description')) ?: __('meta_description');
-    $assetVer    = '20261121e';
+    $assetVer    = '20261122a';
     $deliveryFee = $business ? $business->currentDeliveryFee() : 0;
     $jsI18n      = [
                 'added'        => __('Added to your order list'),

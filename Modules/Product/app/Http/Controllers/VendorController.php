@@ -423,21 +423,29 @@ class VendorController extends Controller
             'vendor_id' => 'required',
             'type' => 'required|in:1,2',
             'deposite_by' => 'required|exists:admins,id',
+            'entry_date' => 'required|date|before_or_equal:today',
+            'note' => 'nullable|string|max:1000',
         ]);
 
-        $dateOfcollection = null;
-        if ($request->type == 2 ) {
-            $dateOfcollection = Carbon::now()->format('Y-m-d');
-        }
+        // Picked date (today by default). The account page filters by created_at,
+        // so the entry is stamped with the picked date (current time) to show in the right period.
+        $entryDate = Carbon::parse($request->entry_date);
+        $stampedAt = $entryDate->copy()->setTimeFrom(now());
 
         try {
-            $investment = VendorAccount::create([
+            $investment = new VendorAccount([
                 'vendor_id' => $request->vendor_id,
                 'amount' => $request->amount,
                 'type' => $request->type,
                 'deposite_by' => $request->deposite_by,
-                'collection_date' => $dateOfcollection,
+                'collection_date' => $entryDate->format('Y-m-d'),
+                'note' => $request->filled('note') ? trim($request->note) : null,
             ]);
+            if (!$entryDate->isToday()) {
+                $investment->created_at = $stampedAt;
+                $investment->updated_at = now();
+            }
+            $investment->save();
             return back()->with('success', 'Investment added successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to add investment. Please try again.')->withInput();

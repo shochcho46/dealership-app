@@ -103,6 +103,11 @@
                                                         @if($product->mrp) · MRP <del>৳{{ number_format($product->mrp, 2) }}</del>@endif
                                                     </small>
                                                 @endif
+                                                @if(!is_null($product->commission_amount))
+                                                    <br><small class="text-success" title="Commission price (per piece) — SR commission is calculated against this">
+                                                        <span class="mdi mdi-hand-coin-outline"></span> Comm ৳{{ rtrim(rtrim($product->commission_amount, '0'), '.') }}
+                                                    </small>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($product->color)

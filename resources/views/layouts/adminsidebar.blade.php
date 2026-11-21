@@ -438,13 +438,13 @@
                 @endcanany
 
 
-            @canany(['payment_collection_list', 'profit_distribute_list', 'profit_disbursment_list', 'bank_list', 'bank_transaction_list', 'capital_overview', 'investor_list', 'asset_list', 'payment_method_list', 'expense_head_list', 'expense_list'])
+            @canany(['payment_collection_list', 'commission_list', 'profit_distribute_list', 'profit_disbursment_list', 'bank_list', 'bank_transaction_list', 'capital_overview', 'investor_list', 'asset_list', 'payment_method_list', 'expense_head_list', 'expense_list'])
 
                 <!-- Financial Section -->
                 <li class="nav-header">FINANCIAL MANAGEMENT</li>
 
-                <li class="nav-item {{ request()->is('admin/payment-collection/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/payment-collection/*') || request()->is('admin/commission/*') ||  request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('admin/payment-collection/*') || request()->is('admin/commission/*') || request()->is('admin/payment-method/*') || request()->is('admin/expense-head/*') || request()->is('admin/expense-list/*') || request()->is('admin/investor/*') || request()->is('admin/asset/*') || request()->is('admin/profit-distribute/*') || request()->is('admin/profit-disbursement/*') || request()->is('admin/bank/*') || request()->is('admin/bank-transaction/*') || request()->is('admin/capital-overview') ? 'active' : '' }}">
                         <i class="nav-icon mdi mdi-finance"></i>
                         <p>
                             Financial
@@ -459,6 +459,15 @@
                             <a href="{{ route('payment-collections.index') }}" class="nav-link {{ request()->is('admin/payment-collection/*') ? 'active' : '' }}">
                                 <i class="nav-icon mdi mdi-cash-multiple"></i>
                                 <p>Payment Collection</p>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('commission_list')
+                        <li class="nav-item">
+                            <a href="{{ route('commission.index') }}" class="nav-link {{ request()->is('admin/commission/*') ? 'active' : '' }}">
+                                <i class="nav-icon mdi mdi-hand-coin-outline"></i>
+                                <p>Commission</p>
                             </a>
                         </li>
                     @endcan
